@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% set currentPage = "race" %}
+
+{% block title %}
+  Pixelracer
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block content %}
+
+  <body>
+
+
+    <canvas></canvas>
+    <div class="laps">
+
+      <div class="laps-one lap-wrapper">
+        <div>Lap <span class="lap-count"> 0</span></div>
+        <div class="lap-time-wrapper">
+          <span class="lap-time">0</span>
+        </div>
+        <div class="best-time-wrapper">
+          Best <span class="best-time">0</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="track-wrapper">
+      <div class="track">
+        <div class="place"></div>
+      </div>
+    </div>
+
+    <div class="last-lap"></div>
+
+  </body>
+</html>
+
+{% endblock %}
+

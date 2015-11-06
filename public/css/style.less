@@ -1,0 +1,205 @@
+body, html {
+  font-family: 'VT323';
+  font-family: 'Press Start 2P';
+  padding: 0;
+  margin: 0;
+  background: black;
+  overflow: hidden;
+}
+
+body {
+  perspective: 900px;
+}
+
+canvas {
+  display: none;
+}
+
+.last-lap {
+  color: white;
+  text-align: center;
+  margin: 0 auto;
+  position: absolute;
+  width: 100%;
+  padding-top: 10px;
+  font-size: 20px;
+}
+
+
+.laps {
+  color: white;
+  text-align: center;
+  margin: 0 auto;
+  position: absolute;
+  width: 100%;
+  padding-top: 10px;
+
+  .lap-wrapper {
+    font-size: 20px;
+    display: inline-block;
+
+    div {
+      margin-bottom: 8px;
+    }
+
+  }
+}
+
+.track-wrapper {
+  transform-style: preserve-3d;
+}
+
+.track {
+  margin: 0px auto 0 auto;
+  background-size: 100%;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  transform-style: preserve-3d;
+}
+
+.trail {
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  background: #32a6dc;
+  // background: #ff0000;
+  opacity: .4;
+}
+
+.place {
+  height: 15px;
+  width: 15px;
+  position: absolute;
+  // background: pink;
+  opacity: .4;
+}
+
+.car {
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  transform-style: preserve-3d;
+  // background: rgba(255,255,255,.3);
+
+  .body {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+
+  }
+
+  &[mode=under] {
+    opacity: .3;
+  }
+
+}
+
+
+
+@keyframes jump {
+  0% {
+    transform: translateZ(0px);
+    animation-timing-function: ease-out;
+  }
+  50%{
+    animation-timing-function: ease-in;
+    transform: translateZ(45px);
+  }
+  100% {
+    transform: translateZ(0px);
+  }
+}
+
+.one .body {
+  background: white;
+}
+
+.two {
+  background: transparent;
+  opacity: 1;
+
+  .body {
+    background: orange;
+  }
+}
+
+.trackPop {
+  animation-name: trackpop;
+  animation-duration:  .2s;
+  iteration-count: 1;
+  animation-delay: 0;
+}
+
+@keyframes trackpop {
+  0% {
+    transform: scale(1);
+  }
+  20%{
+    transform: scale(1.03);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.tree {
+  position: absolute;
+  height: 75px;
+  width: 45px;
+  background: url(/img/tree.gif);
+  background-size: 100%;
+  top: -45px;
+  left: 45px;
+  transform-origin: bottom;
+  transform: rotateX(-90deg) ;
+  transform-style: preserve-3d;
+}
+
+.lamp {
+  position: absolute;
+  height: 75px;
+  width: 30px;
+  background: url(/img/lamp.gif?1);
+  background-size: 100%;
+  top: -45px;
+  left: 30px;
+  transform-origin: bottom;
+  transform: rotateX(-90deg) ;
+  transform-style: preserve-3d;
+
+  &:before {
+    content: "";
+    position: absolute;
+    height: 55px;
+    width: 15px;
+    transform-origin: bottom;
+    bottom: 0;
+    left: 15px;
+    background: -webkit-linear-gradient(top, rgba(0,0,0,0),black);
+    transform: rotateX(90deg);
+    opacity: .25;
+  }
+}
+
+
+.quit .body {
+  animation: blah 1s ease-out forwards;
+}
+
+@keyframes blah {
+  0% {
+    transform: translateZ(0px);
+  }
+  30 {
+    opacity: 1;
+  }
+  100% {
+    transform: translateZ(100px);
+    opacity: 0;
+  }
+}

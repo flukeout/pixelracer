@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+    <script src="/js/keymaster.js"></script>
+    <script src="/js/nunjucks.js"></script>
+    <script src="/js/jquery.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/sock.js"></script>
+
+    <script src="/js/app.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/multiplayer.js"></script>
+
+    <link rel="stylesheet/less" href="/css/style.less" type="text/css">
+
+    {% block script %}{% endblock %}
+
+    <script>
+      less = {
+        env: "development",
+        async: false,
+        fileAsync: false,
+        poll: 1000,
+        functions: {},
+        dumpLineNumbers: "comments",
+        relativeUrls: false,
+        rootpath: ":/a.com/"
+      };
+    </script>
+    <script src="/js/less.js"></script>
+  </head>
+
+  <body>
+    {% block content %}{% endblock %}
+  </body>
+
+</html>
+
+    <!-- <a class="{% if (currentPage == "dashboard") %}selected{% endif %}" href="/">Overview</a> -->
