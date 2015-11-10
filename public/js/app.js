@@ -726,7 +726,7 @@ function trackAnimation(){
 }
 
 var tracks = ["twitter.png","jump.png","oval-jump.png","eight.png","oval.png", "oval-8.png", "big-grey.png"];
-
+var tracks = ["oval-8.png"];
 
 function loadRandomTrack(){
   var trackCount = tracks.length;
