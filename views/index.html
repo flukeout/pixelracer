@@ -7,39 +7,42 @@
 {% endblock %}
 
 {% block script %}
-
+    <script src="/js/app.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/multiplayer.js"></script>
 {% endblock %}
 
 {% block content %}
 
-  <body>
+  <canvas class="track-source"></canvas>
 
-
-    <canvas></canvas>
-    <div class="laps">
-
-      <div class="laps-one lap-wrapper">
-        <div>Lap <span class="lap-count"> 0</span></div>
+  <div class="laps">
+    <div class="lap-wrapper">
+      <div class="lap-info">
+        <div>Lap <span class="lap-count"></span>/<span class="total-laps"></span></div>
         <div class="lap-time-wrapper">
           <span class="lap-time">0</span>
         </div>
-        <div class="best-time-wrapper">
-          Best <span class="best-time">0</span>
-        </div>
       </div>
-
+      <div class="message"></div>
+      <!-- <div class="best-time-wrapper">
+        Best <span class="best-time">0</span>
+      </div> -->
     </div>
+    <div class="restart">(R)estart</div>
+      <!-- <div class="last-lap"></div> -->
+  </div>
 
-    <div class="track-wrapper">
-      <div class="track">
-        <div class="place"></div>
-      </div>
+  <div class="track-wrapper">
+    <div class="track">
+      <canvas class="skids"></canvas>
+      <!-- <div class="place"></div> -->
     </div>
+  </div>
+  <div class="driver-name-ui">
+    <input class="driver-name" type="text" />
+  </div>
 
-    <div class="last-lap"></div>
 
-  </body>
-</html>
 
 {% endblock %}
 

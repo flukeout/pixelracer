@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% set currentPage = "pad" %}
+
+{% block title %}
+  Pixelracer Pad
+{% endblock %}
+
+{% block script %}
+  <link rel="stylesheet/less" href="/css/pad.less" type="text/css">
+
+  <script src="/js/pad.js"></script>
+  <meta name="viewport" content="width=320, initial-scale=1, maximum-scale=1">
+
+  <style>
+
+  body {
+    width: 320px;
+    overflow: hidden;
+
+  }
+
+  .gas {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    height: 25%;
+    width: 125px;
+    background: red;
+  }
+
+  .wheel-wrapper {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background: pink;
+  }
+
+  .wheel {
+    position: absolute;
+    background: orange;
+    height: 300px;
+    width: 300px;
+    left: calc(50% - 50px);
+    top: calc(50%);
+/*    background: url(img/wheel.png);*/
+    background: orange;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    image-rendering: crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering:-webkit-optimize-contrast;  /* Chrome (and eventually Safari) */
+
+
+  }
+  .no-touch {
+    transition: transform .1s ease-out;
+     -webkit-transition: all .1s ease-out;
+  }
+
+
+  </style>
+
+
+{% endblock %}
+
+{% block content %}
+
+  <div class="pad">
+
+    <div class="wheel-wrapper">
+      <div class="wheel"></div>
+    </div>
+    <div class="gas"></div>
+    <!-- <div class="direction" direction="gas"></div>
+    <div class="direction" direction="left"></div>
+    <div class="direction" direction="right"></div> -->
+  </div>
+
+
+{% endblock %}
+

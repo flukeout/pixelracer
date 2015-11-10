@@ -1,10 +1,6 @@
-var messages = [];
-var myID;
-
 var othercars = {};
 
 sockjs.onopen = function(e) {
-  // console.log(e.data);
   // console.log(e.data);
 };
 
@@ -24,7 +20,20 @@ sockjs.onmessage = function(e) {
     }
   }
 
+  //When someone else joins via a browser
+  //Load all the existing cars into the othercars array
   if(details.type == "welcome") {
+    myid = message.id;
+    var car = newCar(message.id);
+    car.changeDriver("flukeout");
+    cars.push(car);
+
+    for(var i = 0; i < cars.length; i++){
+      if(cars[i].id == myid){
+        keyboardcar = cars[i];
+      }
+    }
+
     for(var i = 0; i < details.othercars.length; i++){
       addOtherCar(details.othercars[i]);
     }
@@ -35,25 +44,90 @@ sockjs.onmessage = function(e) {
     removeCar(message.id);
   }
 
-  //If a car joined
+  //If a car joined (self or other browser)
   if(details.type == "joined") {
-    addOtherCar(message.id);
+    if(myid != message.id){
+      addOtherCar(message.id);
+    }
   }
+
+  if(details.type == "padjoined") {
+    var id = message.id;
+    var car = newCar(id);
+    cars.push(car);
+  }
+
+  if(details.type == "controller") {
+    var id = message.id;
+
+    var action = message.message;
+    var thiscar;
+    for(var c in cars){
+      if(cars[c].id == id) {
+        thiscar = cars[c];
+      }
+    }
+
+    if(action.direction == "wheel"){
+      thiscar.wheelturn = action.state;
+    }
+
+    if(action.direction == "left") {
+      if(action.state == "on") {
+        thiscar.setDirection("steering","left");
+      }
+      if(action.state == "off") {
+        thiscar.setDirection("steering","none");
+      }
+    }
+
+    if(action.direction == "right") {
+      if(action.state == "on") {
+        thiscar.setDirection("steering","right");
+      }
+      if(action.state == "off") {
+        thiscar.setDirection("steering","none");
+      }
+    }
+
+    if(action.direction == "gas") {
+      if(action.state == "on") {
+        thiscar.setDirection("gas","on");
+      }
+      if(action.state == "off") {
+        thiscar.setDirection("gas","off");
+      }
+    }
+  } //controller
+
+
 }
 
 //Removes a car by ID
 function removeCar(id){
-  carEl = othercars[id].el;
-  carEl.addClass("quit");
-  setTimeout(function(carEl){
-    // el.remove();
-  },1000);
 
-  delete othercars[id];
+  for(var c in cars){
+    if(cars[c].id == id){
+      var carEl = cars[c].el;
+      carEl.remove();
+      delete cars[id];
+    }
+  }
+
+  if(othercars[id]){
+    carEl = othercars[id].el;
+    carEl.addClass("quit");
+    setTimeout(function(carEl){
+      carEl.remove();
+    },1000);
+    delete othercars[id];
+  }
+
 }
 
 //Adds ghost cars cars
 function addOtherCar(id){
+
   var car = newGhostCar(id);
   var newCar = {};
   newCar.el = car.el;
@@ -64,6 +138,8 @@ function addOtherCar(id){
   othercars[id] = newCar;
 }
 
+
+// builds a ghostcar
 function newGhostCar(carID){
   var car = {};
   car.el = $("<div class='car two'/>");

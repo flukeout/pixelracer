@@ -27,6 +27,11 @@ app.get('/', function(req, res) {
   res.render('index.html');
 });
 
+app.get('/pad', function(req, res) {
+  res.render('pad.html');
+});
+
+
 // Example of getting a parameter from a URL and passing it to a view
 
 // app.get('/user/:user_id', function(req, res) {

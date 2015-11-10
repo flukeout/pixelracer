@@ -1,5 +1,4 @@
 body, html {
-  font-family: 'VT323';
   font-family: 'Press Start 2P';
   padding: 0;
   margin: 0;
@@ -8,10 +7,18 @@ body, html {
 }
 
 body {
+  transition: background .05s linear;
+}
+
+input {
+  font-family: 'Press Start 2P';
+}
+
+body {
   perspective: 900px;
 }
 
-canvas {
+canvas.track-source {
   display: none;
 }
 
@@ -33,6 +40,7 @@ canvas {
   position: absolute;
   width: 100%;
   padding-top: 10px;
+  left: 0;
 
   .lap-wrapper {
     font-size: 20px;
@@ -43,6 +51,14 @@ canvas {
     }
 
   }
+
+  .restart {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
 }
 
 .track-wrapper {
@@ -57,6 +73,14 @@ canvas {
   transform-style: preserve-3d;
 }
 
+
+.skids {
+  display: block;
+  // width: 600px;
+  // height: 300px;
+  // display: none;
+}
+
 .trail {
   height: 1px;
   width: 1px;
@@ -65,6 +89,19 @@ canvas {
   // background: #ff0000;
   opacity: .4;
 }
+
+.spark {
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  background: white;
+  transition: transform .5s ease-out;
+  opacity: .3;
+  border-radius: 50%;
+}
+
+
+
 
 .place {
   height: 15px;
@@ -81,7 +118,17 @@ canvas {
   top: 0px;
   left: 0px;
   transform-style: preserve-3d;
-  // background: rgba(255,255,255,.3);
+
+  .name {
+    position: absolute;
+    width: 200px;
+    color: white;
+    left: ~"calc(50% - 100px)";
+    text-align: center;
+    font-size: 12px;
+    opacity: .65;
+    transform: rotateX(-70deg) translateY(-30px);
+  }
 
   .body {
     position: absolute;
@@ -89,13 +136,27 @@ canvas {
     left: 0px;
     width: 100%;
     height: 100%;
-
+    transform-style: preserve-3d;
   }
 
   &[mode=under] {
     opacity: .3;
   }
 
+}
+
+
+
+@keyframes leader {
+  0% {
+    outline: solid 10px rgba(0,200,255,.2);
+  }
+  50%{
+    outline: solid 10px rgba(0,200,255,.1);
+  }
+  100% {
+    outline: solid 10px rgba(0,200,255,.2);
+  }
 }
 
 
@@ -115,7 +176,7 @@ canvas {
 }
 
 .one .body {
-  background: white;
+
 }
 
 .two {
@@ -123,7 +184,8 @@ canvas {
   opacity: 1;
 
   .body {
-    background: orange;
+    background: white;
+    opacity: .5;
   }
 }
 
@@ -146,6 +208,43 @@ canvas {
     transform: scale(1);
   }
 }
+
+.coin {
+  position: absolute;
+  height: 15px;
+  width: 15px;
+  transform-origin: center;
+  transform-style: preserve-3d;
+  animation: coinspin 4s infinite linear;
+  background: rgba(0,0,0,.15);
+
+  .vert {
+    transform-style: preserve-3d;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    animation: coinbounce 2s infinite linear;
+
+    &:after {
+      animation: coingleam 2s infinite linear;
+      background: gold;
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: -50%;
+      left: 0;
+      transform: rotateX(-90deg);
+      transform-origin: bottom;
+    }
+
+  }
+
+}
+
+
 
 .tree {
   position: absolute;
@@ -201,5 +300,115 @@ canvas {
   100% {
     transform: translateZ(100px);
     opacity: 0;
+  }
+}
+
+
+
+.car .body {
+  background: rgba(255,255,255,.4);
+}
+
+
+// In case we want to do 3D cars - which doesn't actually look good.
+.car .body div {
+
+  position: absolute;
+  opacity: .5;
+  background: white;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background: none;
+  box-sizing: border-box;
+  border: white 2px solid;
+
+  &:nth-child(1){
+    transform: translateZ(15px);
+  }
+
+  &:nth-child(2){
+    transform-origin: left;
+    transform: rotateY(-90deg);
+  }
+
+  &:nth-child(3){
+    transform-origin: right;
+    transform: rotateY(90deg);
+  }
+
+  &:nth-child(4){
+    transform-origin: bottom;
+    transform: rotateX(-90deg);
+  }
+
+  &:nth-child(5){
+    transform-origin: top;
+    transform: rotateX(90deg);
+  }
+
+}
+
+.car .body {
+  // animation: leader .2s infinite;
+}
+
+
+.driver-name-ui {
+  text-align: center;
+
+  input {
+    font-size: 18px;
+    width: 80px;
+    text-align: center;
+    color: white;
+    background: transparent;
+    padding: 0 0 4px 0;
+    border: none;
+    text-transform: uppercase;
+
+
+    &:hover {
+      border-bottom: solid 2px rgba(255,255,255,.4);
+      cursor: pointer;
+    }
+
+    &:focus {
+      outline: none;
+      border-bottom: solid 2px white;
+    }
+
+  }
+}
+
+
+@keyframes coinbounce {
+  0% {
+    transform: translateZ(8px);
+  }
+  50%{
+    transform: translateZ(12px);
+  }
+  100%{
+    transform: translateZ(8px);
+  }
+
+}
+
+@keyframes coingleam {
+  20% {background: gold;}
+  40% { background: white;}
+  45% { background: white;}
+  46% { background: gold;}
+}
+
+
+@keyframes coinspin {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100%{
+    transform: rotateZ(359deg);
   }
 }

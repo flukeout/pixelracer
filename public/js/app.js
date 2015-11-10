@@ -1,14 +1,84 @@
+var cars = [];
+var hostcar;
+var keyboardcar;
+var ctx;
+
+var race = {
+  mode : "warmup",
+  totallaps: 2,
+  currentlap: 0,
+  laptime : 0,
+  fastestlap: {
+    player : "jim",
+    time: 0
+  },
+  winnder : 0,
+  slowestlap : {
+    player : "bob",
+    time: 0
+  },
+  updateLapUI : function(){
+    $(".laps .lap-count").text(this.currentlap);
+    $(".laps .total-laps").text(this.totallaps);
+  },
+  startRace: function(){
+    this.mode = "racing";
+    $(".laps .lap-info").show();
+    $(".laps .message").text("");
+    this.currentlap = 0;
+    this.updateLapUI();
+    this.laptime = 0;
+  },
+  finishLap : function(car){
+    this.currentlap++;
+    trackAnimation();
+    $(".last-lap").text(formatTime(this.laptime));
+    $(".laps .lap-count").text(this.currentlaps);
+
+    this.laptime = 0;
+
+    if(this.currentlap > this.totallaps){
+      this.winner = car;
+      this.finishRace();
+    } else {
+      this.updateLapUI();
+    }
+  },
+  finishRace : function(){
+    this.mode = "over";
+    $(".laps .lap-info").hide();
+    $(".laps .message").text(this.winner.name + " wins");
+  }
+
+}
+
 var sockjs_url = '/echo';
 var sockjs = new SockJS(sockjs_url);
 
+var carcolors = ["#A15417",
+"#D832E3",
+"#4E80C7",
+"#F86395",
+"#676D1E",
+"#E20747",
+"#B136A2",
+"#EF8D30",
+"#8F41BF",
+"#A8AFFC",
+"#6B60AC",
+"#7E802D"]
+
+var carcolors = ["#FFFFFF"];
+
 var laps = 0;
 var scaling = 15;
-var cars = [];
+
 
 var canvasTrack, context, trackHeight, trackWidth;
 
 var hexes = {
   "#000000" : "road",
+  "#5a5a5a" : "road",
   "#8fcf4b" : "grass",
   "#f1aa22" : "turbo",
   "#2194ca" : "water",
@@ -21,124 +91,71 @@ var hexes = {
   "#d4c921" : "jump"
 }
 
-function prepareTrack(level){
-  canvasTrack = $("canvas");
-  context = canvasTrack[0].getContext("2d");
-
-  var image = new Image();
-  $("body").append(image);
-  $(image).hide();
-  image.src = '/tracks/' + level;
-
-  $(".track").css("background-image", "url(/tracks/"+level+")");
-
-  $(image).on("load",function(){
-    context.drawImage(image, 0, 0);
-    trackHeight = $(this).height();
-    trackWidth = $(this).width();
-    $(".track").height(trackHeight * scaling);
-    $(".track").width(trackWidth * scaling);
-    canvasTrack.height(trackHeight);
-    canvasTrack.width(trackWidth);
-
-    var bodyHeight = $("body").height();
-    var offset = (bodyHeight - $(".track-wrapper").height())/2;
-    $(".track-wrapper").css("margin-top",offset - 50);
-
-    for(var i = 0; i < parseInt(trackWidth); i++){
-      for(var j = 0; j < parseInt(trackHeight); j++){
-        var result = checkPosition(i,j);
-        if(result == "start"){
-          // console.log(i,j);
-        }
-        if(result == "lamp"){
-          var lamp = $("<div class='lamp'></div>");
-          $(".track").append(lamp)
-          lamp.css("left", scaling * (i - 1));
-          lamp.css("top", scaling * (j - 4));
-        }
-
-        if(result == "tree"){
-          var tree = $("<div class='tree'></div>");
-          $(".track").append(tree)
-          tree.css("left", scaling * (i - 1));
-          tree.css("top", scaling * (j - 4));
-        }
-
-      }
+function getCar(id){
+  var foundcar;
+  for(var c in cars){
+    var car = cars[c];
+    if(car.id == id){
+      foundcar = car;
     }
-
-  });
-
+  }
+  return foundcar;
 }
 
-function trackAnimation(){
-  $(".track-wrapper").addClass("trackpop");
-
-  setTimeout(function(){
-    $(".track-wrapper").removeClass("trackpop");
-  },200);
-}
-
-var tracks = ["jump.png","oval-jump.png","eight.png","oval.png"];
-var tracks = ["oval-jump.png"];
-
-function loadRandomTrack(){
-  var trackCount = tracks.length;
-  var random = Math.floor(Math.random() * trackCount);
-  prepareTrack(tracks[random]);
-}
 
 $(document).ready(function(){
 
-  var car = newCar("one");
-  cars.push(car);
+  // var jam = newCar("jam",0);
+  // cars.push(jam);
 
   loadRandomTrack();
+  race.startRace();
+
+  $(".driver-name").on("keyup", function(e){
+    var newName = $(this).val();
+    var car = getCar(myid);
+    car.changeDriver(newName);
+    if(e.keyCode == 13) {
+      $(this).blur();
+    }
+  });
+
+
+
+  $(".restart").on("click",function(){
+    race.startRace();
+  });
 
   $(window).on("keydown",function(e){
-    var direction;
+
+    if(e.keyCode == 82) {
+      race.startRace();
+    }
+
 
     if(e.keyCode == 37) {
-      cars[0].setDirection("steering","left");
+      keyboardcar.setDirection("steering","left");
     }
-
     if(e.keyCode == 39) {
-      cars[0].setDirection("steering","right");
+      keyboardcar.setDirection("steering","right");
     }
-
     if(e.keyCode == 38) {
-      cars[0].setDirection("gas","on");
+      keyboardcar.setDirection("gas","on");
     }
-
-    // if(e.keyCode == 40) {
-    //   cars[0].setDirection("down");
-    // }
-
   });
 
 
   $(window).on("keyup",function(e){
-    var direction;
-
     if(e.keyCode == 37) {
-      cars[0].setDirection("steering","none");
+      keyboardcar.setDirection("steering","none");
     }
-
     if(e.keyCode == 39) {
-      cars[0].setDirection("steering","none");
+      keyboardcar.setDirection("steering","none");
     }
-
     if(e.keyCode == 38) {
-      cars[0].setDirection("gas","off");
+      keyboardcar.setDirection("gas","off");
     }
-    //
-    // if(e.keyCode == 40) {
-    //   cars[0].setDirection("down");
-    // }
-
   });
-
 
   gameLoop();
 
@@ -147,6 +164,7 @@ $(document).ready(function(){
 var time;
 var delta;
 var elapsedTime = 0;
+var tick = 0;
 
 function gameLoop() {
 
@@ -154,32 +172,48 @@ function gameLoop() {
   delta = now - (time || now);
   time = now;
 
-  var xtotal = 0;
-  var ytotal = 0;
+  var xtotal = 0; //what is this
+  var ytotal = 0; // what is this
 
   for(var i = 0; i < cars.length; i++){
+
     var car = cars[i];
 
     driveCar(car);
 
-    car.laptime = car.laptime + delta;
-    car.ticks++;
+    race.laptime = race.laptime + delta; //update the race lap timer
+    car.laptime = car.laptime + delta; // update the car lap timer
+
     xtotal = xtotal + car.x;
     ytotal = ytotal + car.y;
 
     $(".lap-time").text(formatTime(elapsedTime));
 
-    $(".laps-"+car.name).find(".lap-count").text(car.laps);
-    $(".laps-"+car.name).find(".lap-time").text(formatTime(car.laptime));
+    $(".laps .lap-time").text(formatTime(race.laptime));
 
   }
 
-  var xavg = xtotal / cars.length;
-  var yavg = ytotal / cars.length;
+  var xavg = xtotal / cars.length || 0;
+  var yavg = ytotal / cars.length || 0;
+
 
   var xdeg = 5 * (-1 + (2 * xavg / trackWidth));
   var ydeg = 45 + 5 * (1 - (2 * yavg / trackHeight));
+
+
   $(".track").css("transform","rotateX(" +ydeg+"deg) rotateY("+xdeg+"deg)");
+
+  // tick++;
+  // if(tick > 30) {
+  //   if(tick > 30){
+  //     tick = 0;
+  //   }
+  // }
+  // var brightness;
+  // if(cars[0]){
+  //   brightness = 1 - tick/30;
+  // }
+  // $(".track").css("-webkit-filter","brightness("+brightness+")");
 
   window.requestAnimationFrame(gameLoop);
 }
@@ -203,8 +237,8 @@ function toRadians (angle) {
   return angle * (Math.PI / 180);
 }
 
-function driveCar(car) {
 
+function driveCar(car) {
 
   car.x = Math.round(car.showx / scaling);
   car.y = Math.round(car.showy / scaling);
@@ -212,7 +246,7 @@ function driveCar(car) {
   car.currentx = car.x;
   car.currenty = car.y;
 
-  var currentPosition = checkPosition(car.x,car.y); //What it's currently sitting on
+  var currentPosition = checkPosition(car.x,car.y) || "grass"; //What it's currently sitting on
 
   if(currentPosition == "turbo") {
     car.speed = car.speed + 4;
@@ -227,7 +261,6 @@ function driveCar(car) {
 
   var speedchange = car.acceleration;
 
-
   if(car.gas == "on" && car.speed < car.maxspeed) {
     car.speed = car.speed + speedchange;
   } else if (car.mode == "jumping") {
@@ -240,12 +273,12 @@ function driveCar(car) {
     car.speed = car.speed - speedchange;
   }
 
-
   if(car.speed < 0){
     car.speed = 0;
   }
 
   var turnspeed = car.maxspeed - 1; //rate at which the wheel turns
+  // var turnspeed = 2;
 
   var turning = false;
 
@@ -258,8 +291,10 @@ function driveCar(car) {
   }
 
 
-  if(car.direction == "right" || car.direction == "left"){
 
+
+
+  if(car.direction == "right" || car.direction == "left"){
 
     if(car.direction == "left") {
       car.turnvelocity = car.turnvelocity - car.turnacceleration;
@@ -269,23 +304,38 @@ function driveCar(car) {
       }
 
     }
+
     if(car.direction == "right") {
       car.turnvelocity = car.turnvelocity + car.turnacceleration;
 
       if(car.turnvelocity > Math.abs(turnspeed)){
         car.turnvelocity = turnspeed;
       }
-
-
     }
 
     if(car.angle > 360) {
       car.angle = car.angle - 360;
     }
+
     if(car.angle < 0){
       car.angle = car.angle + 360;
     }
-  } else {
+  } else if (car.direction == "none") {
+    if(car.turnvelocity > 0) {
+      car.turnvelocity = car.turnvelocity - car.turnacceleration;
+    }
+    if(car.turnvelocity < 0 ){
+      car.turnvelocity = car.turnvelocity + car.turnacceleration;
+    }
+  } else if (Math.abs(car.wheelturn) > 0) {
+
+    car.turnvelocity = car.turnvelocity + car.turnacceleration;
+    turnspeed = turnspeed * car.wheelturn;
+    if(car.turnvelocity > turnspeed){
+      car.turnvelocity = turnspeed;
+    }
+
+  } else if (car.wheelturn == 0) {
 
     if(car.turnvelocity > 0) {
       car.turnvelocity = car.turnvelocity - car.turnacceleration;
@@ -293,7 +343,6 @@ function driveCar(car) {
     if(car.turnvelocity < 0 ){
       car.turnvelocity = car.turnvelocity + car.turnacceleration;
     }
-
 
   }
 
@@ -309,14 +358,94 @@ function driveCar(car) {
 
   var nextPosition = checkPosition(car.nextx,car.nexty);
 
+  if(car.currentx != car.nextx || car.currenty != car.nexty){
+    if(nextPosition == "tree"){
+    }
+  }
+
+  // Leave a skid mark on the track
+  // If it's on the road - then depends on speed and turning radius
+  // If it's not, then just rip it up a bit
+
+
+  if(car.currentx != car.nextx || car.currenty != car.nexty){
+
+
+  //Skid on initial accelleration
+  //   var maxskidspeed = car.maxspeed / 1.3;
+  //   if(car.gas == "on" && car.speed < maxskidspeed){
+  //     var maxopacity = .2;
+  //     var skidmax = car.maxspeed / 1.5;
+  //     var opacity = maxopacity * ((car.maxspeed / 1.5) - car.speed);
+  //     console.log(opacity);
+  //     ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
+  //     ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
+  //   }
+
+    if(currentPosition == "road") {
+      var turnpercent = Math.abs(car.turnvelocity) / 4;
+      var speedpercent = car.speed / car.maxspeed;
+      var maxopacity = .1 * speedpercent;
+
+      if(turnpercent > 0) {
+        var opacity = maxopacity * turnpercent;
+        ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
+        ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
+      }
+
+    } else {
+      ctx.fillStyle = "rgba(0,0,0,.05)";
+      ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
+    }
+  }
+
+
+  // Trail shit
+  var adjacent = Math.cos(toRadians(car.angle + 180)) * car.speed;
+  var opposite = Math.sin(toRadians(car.angle - 180)) * car.speed;
+  var xxd = opposite;
+  var yyd = -1 * adjacent;
+
+  // Particles, need a starting spot
+  // And a destination spot
+  // A timeout
+  var leavetrails = false;
+
+  //always leave a trail
+  if((car.currentx != car.nextx || car.currenty != car.nexty) && leavetrails){
+    var trail = $("<div class='spark'></div>");
+    trail.height(scaling / 1).width(scaling / 1);
+    trail.css("left",car.showx).css("top",car.showy);
+    $(".track").append(trail);
+
+    setTimeout(function(el,x,y) { return function() {
+      el.css("transform","translateY("+ y * 20 +"px) translateX("+x * 20 +"px) scale(0)");
+     }; }(trail,xxd,yyd), 1);
+
+    setTimeout(function(el) { return function() { el.remove(); }; }(trail), 500);
+  }
+
+  //collisions
+
+  if(car.currentx != car.nextx || car.currenty != car.nexty){
+    for(var c in cars){
+      var othercar = cars[c];
+      if(othercar.id != car.id){
+        if(othercar.nextx == car.nextx && othercar.nexty == car.nexty){
+          // collideCars(car,othercar);
+        }
+      }
+    }
+  }
 
   var move = true;
 
   $(".place").css("left",car.x * scaling).css("top",car.y * scaling);
 
-
   if(currentPosition == "grass" && car.mode != "jumping"){
-    car.speed = 1;
+    if(car.speed > 1){
+      car.speed = 1;
+    }
   }
 
   if(car.mode == "normal") {
@@ -343,38 +472,28 @@ function driveCar(car) {
     car.showx = car.showx + xd;
     car.showy = car.showy + yd;
   } else {
-    // car.speed = car.startspeed;
     car.speed = 1;
   }
 
-
-
-  // car.el.attr("speed",car.speed);
-  car.el.attr("direction",car.direction);
   car.el.attr("mode",car.mode);
 
   if(currentPosition == "finish" && car.angle > 180 && car.angle < 360){
     if(car.currentx != car.nextx) {
 
-      car.laps++;
+      race.finishLap(car);
 
       if(car.laptime < car.bestlap || car.bestlap == 0) {
         car.bestlap = car.laptime;
       }
 
-      $(".laps-"+car.name).find(".best-time").text(formatTime(car.bestlap));
-
-
-      $(".last-lap").text(formatTime(car.laptime));
       car.laptime = 0;
-      trackAnimation();
 
     }
   }
 
   if(car.mode == "normal" && currentPosition == "jump" && car.speed > 2) {
     car.jumpElapsed = 0;
-    car.jumpTotal = car.speed * scaling / 4; //4
+    car.jumpTotal = car.speed * scaling / 2 ;
     car.mode = "jumping";
   }
 
@@ -398,8 +517,6 @@ function driveCar(car) {
     }
 
   }
-
-
 
   var update = {
     "type" : "update",
@@ -436,12 +553,9 @@ function driveCar(car) {
 
 
 function updateGhostCars(){
-
+  // console.log("updateGhostCars");
   for(var k in othercars){
     var c = othercars[k];
-    // c.el.css("transform","scale(5)");
-
-
     // c.el.css("transform","translateX("+ c.x +"px)  rotateZ("+c.rotation+"deg) translateY("+c.y || 0+"px)");
     c.el.css("transform","translateX("+ c.x +"px) translateY("+c.y+"px) translateZ("+c.height+"px) rotateZ("+c.rotation+"deg)");
   }
@@ -451,18 +565,14 @@ function easeOutCubic(currentIteration, startValue, changeInValue, totalIteratio
 	return changeInValue * (Math.pow(currentIteration / totalIterations - 1, 3) + 1) + startValue;
 }
 
-function linearEase(currentIteration, startValue, changeInValue, totalIterations) {
-	return changeInValue * currentIteration / totalIterations + startValue;
-}
-
 function easeInCubic(currentIteration, startValue, changeInValue, totalIterations) {
 	return changeInValue * Math.pow(currentIteration / totalIterations, 3) + startValue;
 }
 
-
 function checkPosition(x,y){
   var p = context.getImageData(x, y, 1, 1).data;
   var hex = "#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6);
+  // $("body").css("background",hex);
   return hexes[hex];
 }
 
@@ -473,62 +583,164 @@ function rgbToHex(r, g, b) {
 }
 
 
-function newCar(name){
+function newCar(id){
 
   var car = {
-    id : cars.length,
-    name : name,
+    id : id,
     x : 20,
     y : 14,
-    showx : 110,
+    name : name,
+    showx : 410,
     showy : 230,
     laps : 0,
+    wheelturn : false,
     maxspeed : 5,
-    ticks : 0,
-    direction : 0,
+    direction : "",
     speed : 0,
     bestlap : 0,
     laptime: 0,
     mode: "normal",
     startspeed: 0,
     height: 0,
+    driver : "Bob",
     jumpDirection: "up",
     jumpHeight: 0,
     jumpLength: 0,
     jumpElapsed: 0,
     jumpTotal: 0,
-    angle: 90,
+    angle: 270,
     currentx : 0,
     currenty :0,
     nextx :0,
     acceleration : .06,
-    turnacceleration: .5,
+    turnacceleration: .5, //.5
     nexty : 0,
     turnvelocity : 0,
     gas : "off"
   };
 
+  //Limit the driver name to 3 uppercase CHARS
+  car.changeDriver = function(name){
+    car.driver = name.substr(0,3).toUpperCase();
+    car.el.find(".name").text(car.driver);
+    $(".driver-name").val(car.driver);
+  }
+
   car.setDirection = function(action, direction){
-    // if(this.mode == "normal" || this.mode == "under"){
     if(action == "steering") {
       this.direction = direction;
+      console.log(direction);
     }
     if(action == "gas"){
       this.gas = direction;
     }
-
-    // }
   }
 
-  car.el = $("<div class='car " +name + "'/>");
+  car.el = $("<div class='car'><div class='name'>" + car.name + "</div></div>");
   car.el.width(scaling);
   car.el.height(scaling);
+
   $(".track").append(car.el)
-  var body = $("<div class='body'></div>");
+  var body = $("<div class='body'</div>");
+  // body.append("<div/><div/><div/><div/><div/>");
+
   car.body = body;
+  var randomColor = Math.floor(Math.random() * carcolors.length);
+  car.body.css("background",carcolors[randomColor]);
 
   car.el.append(body);
   car.history = new Array();
 
   return car;
+}
+
+
+function prepareTrack(level){
+  canvasTrack = $("canvas.track-source");
+  context = canvasTrack[0].getContext("2d");
+
+  var image = new Image();
+  $("body").append(image);
+  $(image).hide();
+  image.src = '/tracks/' + level;
+
+  $(".track").css("background-image", "url(/tracks/"+level+")");
+
+  $(image).on("load",function(){
+    context.drawImage(image, 0, 0);
+
+    trackHeight = $(this).height();
+    trackWidth = $(this).width();
+    $(".track").height(trackHeight * scaling);
+    $(".track").width(trackWidth * scaling);
+    canvasTrack.height(trackHeight);
+    canvasTrack.width(trackWidth);
+
+    // Set up the skid canvas
+    var skidCanvas = $(".skids");
+    ctx = skidCanvas[0].getContext("2d");
+    skidCanvas.attr("width", trackWidth * scaling).attr("height",trackHeight * scaling);
+
+    var bodyHeight = $("body").height();
+    var offset = (bodyHeight - $(".track-wrapper").height())/2;
+    $(".track-wrapper").css("margin-top",offset - 50);
+
+    // var coin = $("<div class='coin'><div class='vert'></div></div>");
+    // $(".track").append(coin)
+    // coin.css("left", scaling * 5);
+    // coin.css("top", scaling * 5);
+
+    for(var i = 0; i < parseInt(trackWidth); i++){
+      for(var j = 0; j < parseInt(trackHeight); j++){
+        var result = checkPosition(i,j);
+        if(result == "start"){
+          // console.log(i,j);
+        }
+        if(result == "lamp"){
+          var lamp = $("<div class='lamp'></div>");
+          $(".track").append(lamp)
+          lamp.css("left", scaling * (i - 1));
+          lamp.css("top", scaling * (j - 4));
+        }
+
+        if(result == "tree"){
+          var tree = $("<div class='tree'></div>");
+          $(".track").append(tree)
+          tree.css("left", scaling * (i - 1));
+          tree.css("top", scaling * (j - 4));
+        }
+
+      }
+    }
+
+  });
+
+}
+
+function trackAnimation(){
+  $(".track-wrapper").addClass("trackpop");
+
+  setTimeout(function(){
+    $(".track-wrapper").removeClass("trackpop");
+  },200);
+}
+
+var tracks = ["twitter.png","jump.png","oval-jump.png","eight.png","oval.png", "oval-8.png", "big-grey.png"];
+
+
+function loadRandomTrack(){
+  var trackCount = tracks.length;
+  var random = Math.floor(Math.random() * trackCount);
+  prepareTrack(tracks[random]);
+}
+
+
+function collideCars(carone, cartwo){
+  //We need to do like an impulse thing..
+  // Right now speed is just a linear component
+  // straight up speed transfer
+  cartwo.speed = carone.speed / 2;
+  carone.speed = -1 * cartwo.speed / 2;
+
+
 }

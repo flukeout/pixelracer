@@ -1,0 +1,17 @@
++ fix underpass logic
+   + make it so that the first color you see after an underpass determines the valid
+   underpass color
+
++ make the steering input analog
+  + that way the touch controllers can give a scale of input
+  + make it so that the input basically sends a new value when it's updated, not just
+    wether it is on or off in absolute terms. yo.
++ make it so the scaling depends on the viewport and not on a fixed value
+  + this will help with stuff
++ gamepad API
++ count down before a race starts?
++ tilt car relative to winner
++ add an indicator for who is leading
++ should we build an array of all the x,y values of the track instead of
+sampling pixels?
+  + that way - we could add in power ups as well and could check against them.
