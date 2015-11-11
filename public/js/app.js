@@ -761,8 +761,8 @@ function trackAnimation(){
   },200);
 }
 
-var tracks = ["twitter.png","jump.png","oval-jump.png","eight.png","oval.png", "oval-8.png", "big-grey.png"];
-var tracks = ["oval-jump.png"];
+var tracks = ["twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
+
 
 function loadRandomTrack(){
   var trackCount = tracks.length;
