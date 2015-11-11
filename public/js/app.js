@@ -314,7 +314,7 @@ function driveCar(car) {
   var turnspeed = car.maxspeed - 1; //rate at which the wheel turns
   // var turnspeed = 2;
 
-  var turning = false;
+  var turning = true;
 
   if(car.mode == "jumping") {
     turning = false;
@@ -325,10 +325,7 @@ function driveCar(car) {
   }
 
 
-
-
-
-  if(car.direction == "right" || car.direction == "left"){
+  if((car.direction == "right" || car.direction == "left") && turning){
 
     if(car.direction == "left") {
       car.turnvelocity = car.turnvelocity - car.turnacceleration;
@@ -548,6 +545,7 @@ function driveCar(car) {
 
     if(car.jumpElapsed >= car.jumpTotal){
       car.mode = "normal";
+
     }
 
   }
@@ -767,6 +765,10 @@ var tracks = ["twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png
 function loadRandomTrack(){
   var trackCount = tracks.length;
   var random = Math.floor(Math.random() * trackCount);
+
+
+
+
   prepareTrack(tracks[random]);
 }
 
