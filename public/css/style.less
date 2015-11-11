@@ -366,7 +366,7 @@ canvas.track-source {
     background: transparent;
     padding: 0 0 4px 0;
     border: none;
-    text-transform: uppercase;
+
 
 
     &:hover {
@@ -410,5 +410,54 @@ canvas.track-source {
   }
   100%{
     transform: rotateZ(359deg);
+  }
+}
+
+
+
+.chat {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width:  200px;
+  font-size: 14px;
+  padding: 10px;
+  font-size: 11px;
+  line-height: 16px;
+  opacity: .5;
+  color: white;
+
+
+  .driver {
+
+  }
+
+  .message-text {
+    opacity: .7;
+  }
+
+}
+
+.chat-input-wrapper {
+  width: 100%;
+  text-align: center;
+  opacity: .5;
+
+  input {
+    margin-top: 10px;
+    font-size: 16px;
+    width: 350px;
+    text-align: center;
+    color: white;
+    background: transparent;
+    padding: 0 0 4px 0;
+    border: none;
+
+    &:focus {
+      outline: none;
+      border-bottom: solid 2px white;
+    }
+
   }
 }

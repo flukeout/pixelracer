@@ -102,6 +102,23 @@ function getCar(id){
   return foundcar;
 }
 
+var chatting = false;
+
+
+function sendChat(message){
+
+  var car = getCar(myid);
+
+  var update = {
+    "driver" : car.driver,
+    "type" : "chat",
+    "text": message
+  }
+  sockjs.send(JSON.stringify(update));
+
+  addChat(car.driver,message);
+}
+
 
 $(document).ready(function(){
 
@@ -111,6 +128,22 @@ $(document).ready(function(){
   loadRandomTrack();
   race.startRace();
 
+
+  $(window).on("keypress", function(e){
+    if(e.keyCode == 13) {
+      if(chatting == false){
+        $(".chat-input").focus();
+        chatting = true;
+      } else if (chatting == true){
+        var message = $(".chat-input").val();
+        sendChat(message);
+
+        $(".chat-input").val("").blur();
+        chatting = false;
+      }
+    }
+  });
+
   $(".driver-name").on("keyup", function(e){
     var newName = $(this).val();
     var car = getCar(myid);
@@ -119,7 +152,6 @@ $(document).ready(function(){
       $(this).blur();
     }
   });
-
 
 
   $(".restart").on("click",function(){

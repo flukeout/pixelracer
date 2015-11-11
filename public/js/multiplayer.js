@@ -35,7 +35,6 @@ sockjs.onmessage = function(e) {
       }
     }
 
-    console.log(details.othercars);
     for(var i = 0; i < details.othercars.length; i++){
       addOtherCar(details.othercars[i]);
     }
@@ -51,6 +50,15 @@ sockjs.onmessage = function(e) {
     if(myid != message.id){
       addOtherCar(message.id);
     }
+  }
+
+  //If a car joined (self or other browser)
+  if(details.type == "chat") {
+    console.log(message);
+
+    var driver = message.message.driver;
+    var text = message.message.text;
+    addChat(driver,text);
   }
 
   if(details.type == "padjoined") {
@@ -157,3 +165,9 @@ function newGhostCar(carID){
 // sockjs.onclose = function()  {
 //   console.log("closing");
 // };
+
+
+function addChat(driver,text){
+  var message = $("<div class='message'><span class='driver'>"+driver+"</span> <span class='message-text'>"+text+"</span></div>");
+  $(".chat").append(message);
+}
