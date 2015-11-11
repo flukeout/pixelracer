@@ -522,6 +522,7 @@ function driveCar(car) {
     "type" : "update",
     "x": car.showx,
     "y": car.showy,
+    "driver" : car.driver,
     "rotation" : car.angle,
     "height" : jumpHeight
   }
@@ -556,8 +557,9 @@ function updateGhostCars(){
   // console.log("updateGhostCars");
   for(var k in othercars){
     var c = othercars[k];
-    // c.el.css("transform","translateX("+ c.x +"px)  rotateZ("+c.rotation+"deg) translateY("+c.y || 0+"px)");
-    c.el.css("transform","translateX("+ c.x +"px) translateY("+c.y+"px) translateZ("+c.height+"px) rotateZ("+c.rotation+"deg)");
+    c.el.find(".name").text(c.driver);
+    c.el.find(".body").css("transform","rotateZ("+c.rotation+"deg");
+    c.el.css("transform","translateX("+ c.x +"px) translateY("+c.y+"px) translateZ("+c.height+"px)");
   }
 }
 

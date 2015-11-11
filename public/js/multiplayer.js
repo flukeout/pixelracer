@@ -15,6 +15,7 @@ sockjs.onmessage = function(e) {
     if(othercars[message.id]){
       othercars[message.id].x = details.x;
       othercars[message.id].y = details.y;
+      othercars[message.id].driver = details.driver;
       othercars[message.id].rotation = details.rotation;
       othercars[message.id].height = details.height;
     }
@@ -34,6 +35,7 @@ sockjs.onmessage = function(e) {
       }
     }
 
+    console.log(details.othercars);
     for(var i = 0; i < details.othercars.length; i++){
       addOtherCar(details.othercars[i]);
     }
@@ -117,8 +119,9 @@ function removeCar(id){
   if(othercars[id]){
     carEl = othercars[id].el;
     carEl.addClass("quit");
-    setTimeout(function(carEl){
       carEl.remove();
+    setTimeout(function(carEl){
+
     },1000);
     delete othercars[id];
   }
@@ -142,7 +145,8 @@ function addOtherCar(id){
 // builds a ghostcar
 function newGhostCar(carID){
   var car = {};
-  car.el = $("<div class='car two'/>");
+  car.el = $("<div class='car two'></div>");
+  car.el.append("<div class='name'>BOB</div>");
   car.el.width(scaling);
   car.el.height(scaling);
   $(".track").append(car.el)
