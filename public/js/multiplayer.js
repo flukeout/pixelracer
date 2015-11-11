@@ -168,6 +168,10 @@ function newGhostCar(carID){
 
 
 function addChat(driver,text){
-  var message = $("<div class='message'><span class='driver'>"+driver+"</span> <span class='message-text'>"+text+"</span></div>");
-  $(".chat").append(message);
+  var message = $("<div class='message'><span class='driver'></span> <span class='message-text'></span></div>");
+  message.find(".driver").text(driver);
+  message.find(".message-text").text(text);
+  $(".chat").prepend(message);
+
+  setTimeout(function(el) { return function() { el.remove(); }; }(message), 20000); //removes the message after 20 seconds
 }

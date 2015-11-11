@@ -128,18 +128,20 @@ $(document).ready(function(){
   loadRandomTrack();
   race.startRace();
 
-
   $(window).on("keypress", function(e){
     if(e.keyCode == 13) {
       if(chatting == false){
-        $(".chat-input").focus();
+        $(".chat-input").show().focus();
+        $(".chat-input-wrapper .instructions").hide();
         chatting = true;
       } else if (chatting == true){
         var message = $(".chat-input").val();
-        sendChat(message);
-
-        $(".chat-input").val("").blur();
+        if(message.length > 0){
+          sendChat(message);
+        }
+        $(".chat-input").val("").blur().hide();
         chatting = false;
+        $(".chat-input-wrapper .instructions").show();
       }
     }
   });
