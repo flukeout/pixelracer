@@ -211,8 +211,8 @@ canvas.track-source {
 
 .coin {
   position: absolute;
-  height: 15px;
-  width: 15px;
+  height: 45px;
+  width: 45px;
   transform-origin: center;
   transform-style: preserve-3d;
   animation: coinspin 4s infinite linear;
@@ -285,6 +285,30 @@ canvas.track-source {
   }
 }
 
+
+.windmill {
+  position: absolute;
+  height: 60px;
+  width: 30px;
+  background: url(/img/windmill.gif);
+  background-size: 100%;
+  top: -45px;
+  left: 30px;
+  transform-origin: bottom;
+  transform: rotateX(-90deg) ;
+  transform-style: preserve-3d;
+
+  .prop {
+    position: absolute;
+    height: 75px;
+    width: 75px;
+    top: -30px;
+    left: -22px;
+    background: url(/img/windprop.gif);
+    background-size: 100%;
+    animation: windmill 24s infinite linear;
+  }
+}
 
 .quit .body {
   animation: blah 1s ease-out forwards;
@@ -403,6 +427,15 @@ canvas.track-source {
   46% { background: gold;}
 }
 
+@keyframes windmill {
+  0% {
+    transform: rotateZ(0deg) translateZ(1px);
+  }
+  100%{
+    transform: rotateZ(359deg) translateZ(1px);
+  }
+}
+
 
 @keyframes coinspin {
   0% {
@@ -412,8 +445,6 @@ canvas.track-source {
     transform: rotateZ(359deg);
   }
 }
-
-
 
 .chat {
   position: fixed;

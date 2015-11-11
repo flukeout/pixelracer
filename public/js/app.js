@@ -81,6 +81,7 @@ var hexes = {
   "#5a5a5a" : "road",
   "#8fcf4b" : "grass",
   "#f1aa22" : "turbo",
+  "#b97d37" : "windmill",
   "#2194ca" : "water",
   "#6ba52d" : "tree",
   "#ffffff" : "finish",
@@ -737,6 +738,15 @@ function prepareTrack(level){
           lamp.css("top", scaling * (j - 4));
         }
 
+        if(result == "windmill"){
+          var el = $("<div class='windmill'><div class='prop'></div>");
+          $(".track").append(el)
+          el.css("left", scaling * (i - 1));
+          el.css("top", scaling * (j - 3));
+        }
+
+
+
         if(result == "tree"){
           var tree = $("<div class='tree'></div>");
           $(".track").append(tree)
@@ -760,7 +770,7 @@ function trackAnimation(){
 }
 
 var tracks = ["twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
-
+// var tracks = ["oval.png"];
 
 function loadRandomTrack(){
   var trackCount = tracks.length;
