@@ -1,3 +1,25 @@
+If we are going to do this right, then the speed and the turn velocity are both affected by
+the framerate.
+
++ i think we can only affect the acceleration and decelartion
+
+
+
+TOP
++ make the velocity dependent on the time since last frame, not just the frame tick
++ make the server emit (broadcast all) 30 times a second with an update of all the cars, including
+  + x
+  + y
+  + angle
+  + velocity
+
+that way, we can do some predictive shit, we can even try this 2 times a second to see how it feels
+
+
+
++ have the server send the track choice etc.
++ pass velocity with the network updates and apply it between updates
+
 + fix underpass logic
    + make it so that the first color you see after an underpass determines the valid
    underpass color

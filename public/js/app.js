@@ -2,6 +2,9 @@ var cars = [];
 var hostcar;
 var keyboardcar;
 var ctx;
+var oscillator;
+var sine;
+var vol;
 
 var race = {
   mode : "warmup",
@@ -123,6 +126,7 @@ function sendChat(message){
 
 $(document).ready(function(){
 
+  audioStuff();
   // var jam = newCar("jam",0);
   // cars.push(jam);
 
@@ -210,6 +214,8 @@ function gameLoop() {
   var xtotal = 0; //what is this
   var ytotal = 0; // what is this
 
+  //at 60 FPS, we are looking at at about 16.667 milliseconds per frame, so let's build off of that.
+
   for(var i = 0; i < cars.length; i++){
 
     var car = cars[i];
@@ -294,7 +300,13 @@ function driveCar(car) {
   var xd = 0;
   var yd = 0;
 
+
+
   var speedchange = car.acceleration;
+
+  var frameAdjuster = 16.67 / delta;
+
+  speedchange = speedchange * frameAdjuster;
 
   if(car.gas == "on" && car.speed < car.maxspeed) {
     car.speed = car.speed + speedchange;
@@ -313,7 +325,9 @@ function driveCar(car) {
   }
 
   var turnspeed = car.maxspeed - 1; //rate at which the wheel turns
-  // var turnspeed = 2;
+
+  // var turnspeed = 4; // moon
+
 
   var turning = true;
 
@@ -325,11 +339,13 @@ function driveCar(car) {
     turnspeed = turnspeed / 3;
   }
 
+  var turnchange = car.turnacceleration * frameAdjuster;
+
 
   if((car.direction == "right" || car.direction == "left") && turning){
 
     if(car.direction == "left") {
-      car.turnvelocity = car.turnvelocity - car.turnacceleration;
+      car.turnvelocity = car.turnvelocity - turnchange;
 
       if(Math.abs(car.turnvelocity) > turnspeed){
         car.turnvelocity = -1 * turnspeed;
@@ -338,7 +354,7 @@ function driveCar(car) {
     }
 
     if(car.direction == "right") {
-      car.turnvelocity = car.turnvelocity + car.turnacceleration;
+      car.turnvelocity = car.turnvelocity + turnchange;
 
       if(car.turnvelocity > Math.abs(turnspeed)){
         car.turnvelocity = turnspeed;
@@ -354,14 +370,14 @@ function driveCar(car) {
     }
   } else if (car.direction == "none") {
     if(car.turnvelocity > 0) {
-      car.turnvelocity = car.turnvelocity - car.turnacceleration;
+      car.turnvelocity = car.turnvelocity - turnchange;
     }
     if(car.turnvelocity < 0 ){
-      car.turnvelocity = car.turnvelocity + car.turnacceleration;
+      car.turnvelocity = car.turnvelocity + turnchange;
     }
   } else if (Math.abs(car.wheelturn) > 0) {
 
-    car.turnvelocity = car.turnvelocity + car.turnacceleration;
+    car.turnvelocity = car.turnvelocity + turnchange;
     turnspeed = turnspeed * car.wheelturn;
     if(car.turnvelocity > turnspeed){
       car.turnvelocity = turnspeed;
@@ -370,15 +386,16 @@ function driveCar(car) {
   } else if (car.wheelturn == 0) {
 
     if(car.turnvelocity > 0) {
-      car.turnvelocity = car.turnvelocity - car.turnacceleration;
+      car.turnvelocity = car.turnvelocity - turnchange;
     }
     if(car.turnvelocity < 0 ){
-      car.turnvelocity = car.turnvelocity + car.turnacceleration;
+      car.turnvelocity = car.turnvelocity + turnchange;
     }
 
   }
 
   car.angle = car.angle + car.turnvelocity;
+
 
   var adjacent = Math.cos(toRadians(car.angle)) * car.speed;
   var opposite = Math.sin(toRadians(car.angle)) * car.speed;
@@ -399,7 +416,7 @@ function driveCar(car) {
   // If it's on the road - then depends on speed and turning radius
   // If it's not, then just rip it up a bit
 
-
+  var turnpercent = Math.abs(car.turnvelocity) / 4;
   if(car.currentx != car.nextx || car.currenty != car.nexty){
 
 
@@ -415,21 +432,26 @@ function driveCar(car) {
   //   }
 
     if(currentPosition == "road") {
-      var turnpercent = Math.abs(car.turnvelocity) / 4;
+
       var speedpercent = car.speed / car.maxspeed;
       var maxopacity = .1 * speedpercent;
-
+      var opacity;
       if(turnpercent > 0) {
-        var opacity = maxopacity * turnpercent;
+        opacity = maxopacity * turnpercent;
         ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
         ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
       }
+
+      // This does the skiddin..
+
 
     } else {
       ctx.fillStyle = "rgba(0,0,0,.05)";
       ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
     }
   }
+
+  vol.gain.value = .3 * turnpercent || 0;
 
 
   // Trail shit
@@ -476,7 +498,7 @@ function driveCar(car) {
 
   if(currentPosition == "grass" && car.mode != "jumping"){
     if(car.speed > 1){
-      car.speed = 1;
+      car.speed = 1; //moon
     }
   }
 
@@ -491,9 +513,14 @@ function driveCar(car) {
     if(currentPosition == "overpass" && nextPosition == "road"){
       move = false;
     }
-    if(currentPosition == "ledge" && nextPosition == "road" ) {
+    if(currentPosition == "ledge" && nextPosition == "road") {
       car.mode = "normal";
     }
+    if(currentPosition == "ledge" && nextPosition == "grass") {
+      move = false;
+    }
+
+
   }
   //
   if(car.mode == "jumping") {
@@ -506,6 +533,17 @@ function driveCar(car) {
   } else {
     car.speed = 1;
   }
+
+  var maxfq = 800;
+  var minfq = 400;
+
+  if(car.mode == "jumping"){
+    maxfq = 0;
+  }
+
+  var frequency = minfq + ((car.speed/car.maxspeed) * (maxfq - minfq));
+  enginesine.frequency.value = frequency / 10;
+  engine.frequency.value = frequency;
 
   car.el.attr("mode",car.mode);
 
@@ -523,7 +561,7 @@ function driveCar(car) {
     }
   }
 
-  if(car.mode == "normal" && currentPosition == "jump" && car.speed > 2) {
+  if(car.mode == "normal" && currentPosition == "jump" && car.speed > 1) {
     car.jumpElapsed = 0;
     car.jumpTotal = car.speed * scaling / 2 ;
     car.mode = "jumping";
@@ -534,6 +572,8 @@ function driveCar(car) {
   if(car.mode == "jumping") {
 
     var maxHeight = car.jumpTotal / scaling;
+    //moon
+    // var maxHeight = car.jumpTotal / scaling * 10;
 
     if(car.jumpElapsed < car.jumpTotal /2) {
       jumpHeight = easeOutCubic(car.jumpElapsed + 1 , 0, maxHeight , car.jumpTotal/2);
@@ -542,11 +582,11 @@ function driveCar(car) {
     }
 
     jumpHeight = jumpHeight * 15;
-    car.jumpElapsed++;
+    car.jumpElapsed++; //moon
+    // car.jumpElapsed = car.jumpElapsed + .2;//moon
 
     if(car.jumpElapsed >= car.jumpTotal){
       car.mode = "normal";
-
     }
 
   }
@@ -568,10 +608,12 @@ function driveCar(car) {
 
   if(jumpHeight > 0){
     if(car.currentx != car.nextx || car.currenty != car.nexty){
-      var trail = $("<div class='trail'></div>");
+      var trail = $("<div class='trail'><div class='shadow'></div></div>");
       trail.height(scaling).width(scaling);
+
       trail.css("left",car.x * scaling).css("top",car.y * scaling);
       trail.css("transform","translateZ("+ jumpHeight +"px)");
+      trail.find(".shadow").css("transform","translateZ("+ -1 * jumpHeight +"px)");
       $(".track").prepend(trail);
       setTimeout(function(el) { return function() { el.remove(); }; }(trail), 400);
     }
@@ -579,15 +621,21 @@ function driveCar(car) {
 
   // moves the car holder
   car.el.css("transform", "translateY("+car.showy+"px) translateX("+car.showx+"px)");
+
   //makes the body jump
-  car.body.css("transform", "rotateZ("+car.angle+"deg) translateZ("+jumpHeight+"px");
+
+  if(currentPosition == "overpass" && car.mode == "normal") {
+    car.body.css("transform", "scale(1.1) rotateZ("+car.angle+"deg) translateZ("+jumpHeight+"px");
+  } else {
+    car.body.css("transform", " rotateZ("+car.angle+"deg) translateZ("+jumpHeight+"px");
+  }
+  car.shadow.css("transform", "rotateZ("+car.angle+"deg)");
 
   updateGhostCars();
 }
 
 
 function updateGhostCars(){
-  // console.log("updateGhostCars");
   for(var k in othercars){
     var c = othercars[k];
     c.el.find(".name").text(c.driver);
@@ -629,7 +677,8 @@ function newCar(id){
     showy : 230,
     laps : 0,
     wheelturn : false,
-    maxspeed : 5,
+    maxspeed : 5, //moon
+
     direction : "",
     speed : 0,
     bestlap : 0,
@@ -664,7 +713,6 @@ function newCar(id){
   car.setDirection = function(action, direction){
     if(action == "steering") {
       this.direction = direction;
-      console.log(direction);
     }
     if(action == "gas"){
       this.gas = direction;
@@ -676,14 +724,19 @@ function newCar(id){
   car.el.height(scaling);
 
   $(".track").append(car.el)
-  var body = $("<div class='body'</div>");
-  // body.append("<div/><div/><div/><div/><div/>");
 
+  var shadow = $("<div class='shadow'></div>");
+  car.shadow = shadow;
+
+  var body = $("<div class='body'></div>");
   car.body = body;
+
   var randomColor = Math.floor(Math.random() * carcolors.length);
   car.body.css("background",carcolors[randomColor]);
 
+  car.el.append(shadow);
   car.el.append(body);
+
   car.history = new Array();
 
   return car;
@@ -769,16 +822,12 @@ function trackAnimation(){
   },200);
 }
 
-var tracks = ["twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
-// var tracks = ["oval.png"];
+var tracks = ["moon.png","twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
+var tracks = ["ampersand.png"];
 
 function loadRandomTrack(){
   var trackCount = tracks.length;
   var random = Math.floor(Math.random() * trackCount);
-
-
-
-
   prepareTrack(tracks[random]);
 }
 
@@ -789,6 +838,55 @@ function collideCars(carone, cartwo){
   // straight up speed transfer
   cartwo.speed = carone.speed / 2;
   carone.speed = -1 * cartwo.speed / 2;
+}
+
+
+function audioStuff(){
+  // create web audio api context
+  var context = new AudioContext();
+
+  vol = context.createGain();
+  vol.gain.value = 0;
+  vol.connect(context.destination);
+
+  oscillator = context.createOscillator();
+  oscillator.connect(vol);
+  oscillator.type = 'square';
+  oscillator.frequency.value = 1200; // value in hertz
+
+  oscillator.start(0);
+
+  sine = context.createOscillator();
+  sine.type = 'square';
+  sine.frequency.value = 20;
+  sine.start(0);
+
+  var sineGain = context.createGain();
+  sineGain.gain.value = 10;
+
+  sine.connect(sineGain);
+  sineGain.connect(oscillator.frequency);
+
+
+
+  engine = context.createOscillator();
+  engine.connect(context.destination);
+  engine.type = 'sine';
+  engine.frequency.value = 440; // value in hertz
+  engine.start(0);
+
+
+  enginesine = context.createOscillator();
+  enginesine.type = 'sine';
+  enginesine.frequency.value = 40;
+  enginesine.start(0);
+
+  var sineGainba = context.createGain();
+  sineGainba.gain.value = 400;
+
+  enginesine.connect(sineGainba); //connecxts the sine wave to the gain
+
+  sineGainba.connect(engine.frequency);
 
 
 }
