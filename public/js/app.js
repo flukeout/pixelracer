@@ -940,7 +940,7 @@ function trackAnimation(){
 }
 
 var tracks = ["floppy.png","moon.png","twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
-var tracks = ["ampersand.png"];
+var tracks = ["oval.png"];
 
 function loadRandomTrack(){
   var trackCount = tracks.length;
