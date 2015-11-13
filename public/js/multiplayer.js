@@ -1,4 +1,5 @@
 var othercars = {};
+var playerStates = {};
 
 sockjs.onopen = function(e) {
   // console.log(e.data);
@@ -19,6 +20,10 @@ sockjs.onmessage = function(e) {
       othercars[message.id].rotation = details.rotation;
       othercars[message.id].height = details.height;
     }
+  }
+
+  if(message.type == "playerStates") {
+    playerStates = message.message;
   }
 
   //When someone else joins via a browser
@@ -54,7 +59,6 @@ sockjs.onmessage = function(e) {
 
   //If a car joined (self or other browser)
   if(details.type == "chat") {
-    console.log(message);
 
     var driver = message.message.driver;
     var text = message.message.text;

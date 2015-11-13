@@ -5,6 +5,7 @@ var ctx;
 var oscillator;
 var sine;
 var vol;
+var frameAdjuster;
 
 var race = {
   mode : "warmup",
@@ -304,7 +305,7 @@ function driveCar(car) {
 
   var speedchange = car.acceleration;
 
-  var frameAdjuster = 16.67 / delta;
+  frameAdjuster = 16.67 / delta;
 
   speedchange = speedchange * frameAdjuster;
 
@@ -340,7 +341,7 @@ function driveCar(car) {
   }
 
   var turnchange = car.turnacceleration * frameAdjuster;
-
+  var turnchange = car.turnacceleration;
 
   if((car.direction == "right" || car.direction == "left") && turning){
 
@@ -368,6 +369,7 @@ function driveCar(car) {
     if(car.angle < 0){
       car.angle = car.angle + 360;
     }
+
   } else if (car.direction == "none") {
     if(car.turnvelocity > 0) {
       car.turnvelocity = car.turnvelocity - turnchange;
@@ -420,16 +422,16 @@ function driveCar(car) {
   if(car.currentx != car.nextx || car.currenty != car.nexty){
 
 
-  //Skid on initial accelleration
-  //   var maxskidspeed = car.maxspeed / 1.3;
-  //   if(car.gas == "on" && car.speed < maxskidspeed){
-  //     var maxopacity = .2;
-  //     var skidmax = car.maxspeed / 1.5;
-  //     var opacity = maxopacity * ((car.maxspeed / 1.5) - car.speed);
-  //     console.log(opacity);
-  //     ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
-  //     ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
-  //   }
+    //Skid on initial accelleration
+    //   var maxskidspeed = car.maxspeed / 1.3;
+    //   if(car.gas == "on" && car.speed < maxskidspeed){
+    //     var maxopacity = .2;
+    //     var skidmax = car.maxspeed / 1.5;
+    //     var opacity = maxopacity * ((car.maxspeed / 1.5) - car.speed);
+    //     console.log(opacity);
+    //     ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
+    //     ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
+    //   }
 
     if(currentPosition == "road") {
 
@@ -542,6 +544,7 @@ function driveCar(car) {
   }
 
   var frequency = minfq + ((car.speed/car.maxspeed) * (maxfq - minfq));
+
   enginesine.frequency.value = frequency / 10;
   engine.frequency.value = frequency;
 
@@ -591,13 +594,28 @@ function driveCar(car) {
 
   }
 
+  // var update = {
+  //   "type" : "update",
+  //   "x": car.showx.toFixed(2),
+  //   "y": car.showy.toFixed(2),
+  //   "driver" : car.driver,
+  //   "rotation" : car.angle.toFixed(1),
+  //   "height" : jumpHeight,
+  //   "velocity" : car.speed.toFixed(2),
+  //   "turnvelocity" : car.turnvelocity.toFixed(2)
+  // }
+
+
   var update = {
     "type" : "update",
     "x": car.showx,
     "y": car.showy,
+    "gas" : car.gas,
     "driver" : car.driver,
     "rotation" : car.angle,
-    "height" : jumpHeight
+    "height" : jumpHeight,
+    "velocity" : car.speed,
+    "turnvelocity" : car.turnvelocity
   }
 
   try {
@@ -634,13 +652,77 @@ function driveCar(car) {
   updateGhostCars();
 }
 
+//This checks the playerStates and updates the cars accordingly....
+// Except - we need to drive this shit, not just 'update it'
+
+
+var xdelta;
+var lastrotation = 0;
+var ydelta;
 
 function updateGhostCars(){
+
   for(var k in othercars){
-    var c = othercars[k];
-    c.el.find(".name").text(c.driver);
-    c.el.find(".body").css("transform","rotateZ("+c.rotation+"deg");
-    c.el.css("transform","translateX("+ c.x +"px) translateY("+c.y+"px) translateZ("+c.height+"px)");
+    var thisState = playerStates[k];
+
+      var c = othercars[k];
+
+      //If there is some new info, that we haven't seen yet.....
+      if(thisState){
+
+        c.x =             thisState.x;
+        c.y =             thisState.y;
+        c.turnvelocity =  thisState.turnvelocity;
+        c.driver =        thisState.driver;
+        c.velocity =      thisState.velocity;
+        c.rotation =      thisState.rotation;
+        c.gas =           thisState.gas;
+
+        delete playerStates[k];
+
+      }
+
+      tick++;
+
+      // BUT IN THE MEANTIME IF WE DONT HAVE NEW DATA
+      // so lets calcualte it
+
+      c.rotation = parseInt(c.rotation) + parseInt(c.turnvelocity);
+
+      if(c.rotation > 360) {
+        c.rotation = c.rotation - 360;
+      }
+
+      if(c.rotation < 0){
+        c.rotation = c.rotation + 360;
+      }
+
+      if(c.gas == "on") {
+        c.velocity = c.velocity + .06;
+        if(c.velocity > 5) {
+          c.velocity = 5;
+        }
+      }
+
+      if(c.gas == "off") {
+        c.velocity = c.velocity - .06;
+        if(c.velocity < 0){
+          c.velocity = 0;
+        }
+      }
+
+      var opposite = Math.sin(toRadians(c.rotation)) * c.velocity;
+      var adjacent = Math.cos(toRadians(c.rotation)) * c.velocity;
+
+      var xd = opposite;
+      var yd = -1 * adjacent;
+
+      c.x = parseFloat(c.x) + xd;
+      c.y = parseFloat(c.y) + yd;
+
+      c.el.find(".name").text(c.driver);
+      c.el.find(".body").css("transform","rotateZ("+c.rotation+"deg");
+      c.el.css("transform","translateX("+ c.x +"px) translateY("+c.y+"px) translateZ("+c.height+"px)");
   }
 }
 
@@ -853,7 +935,6 @@ function audioStuff(){
   oscillator.connect(vol);
   oscillator.type = 'square';
   oscillator.frequency.value = 1200; // value in hertz
-
   oscillator.start(0);
 
   sine = context.createOscillator();
@@ -867,6 +948,14 @@ function audioStuff(){
   sine.connect(sineGain);
   sineGain.connect(oscillator.frequency);
 
+  var filter = context.createBiquadFilter();
+  // Create the audio graph.
+
+  // filter.connect(context.destination);
+  // Create and specify parameters for the low-pass filter.
+  filter.type = 'lowpass'; // Low-pass filter. See BiquadFilterNode docs
+  filter.frequency.value = 2000; // Set cutoff to 440 HZ
+  // Playback the sound.
 
 
   engine = context.createOscillator();
@@ -874,7 +963,6 @@ function audioStuff(){
   engine.type = 'sine';
   engine.frequency.value = 440; // value in hertz
   engine.start(0);
-
 
   enginesine = context.createOscillator();
   enginesine.type = 'sine';
@@ -887,6 +975,5 @@ function audioStuff(){
   enginesine.connect(sineGainba); //connecxts the sine wave to the gain
 
   sineGainba.connect(engine.frequency);
-
 
 }
