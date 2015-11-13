@@ -7,6 +7,11 @@ var sine;
 var vol;
 var frameAdjuster;
 
+var ghostData = [];
+var ghostFrameIndex = 0;
+var ghostPlayData = [];
+var recordGhost = true;
+
 var race = {
   mode : "warmup",
   totallaps: 2,
@@ -14,7 +19,7 @@ var race = {
   laptime : 0,
   fastestlap: {
     player : "jim",
-    time: 0
+    time: 1000000000000000000
   },
   winnder : 0,
   slowestlap : {
@@ -39,7 +44,7 @@ var race = {
     $(".last-lap").text(formatTime(this.laptime));
     $(".laps .lap-count").text(this.currentlaps);
 
-    this.laptime = 0;
+
 
     if(this.currentlap > this.totallaps){
       this.winner = car;
@@ -47,6 +52,18 @@ var race = {
     } else {
       this.updateLapUI();
     }
+
+    if(this.laptime < this.fastestlap.time) {
+      this.fastestlap.time = this.laptime;
+      ghostPlayData = ghostData;
+    }
+
+    this.laptime = 0;
+
+    ghostData = [];
+
+    ghostFrameIndex = 0;
+
   },
   finishRace : function(){
     this.mode = "over";
@@ -300,8 +317,6 @@ function driveCar(car) {
 
   var xd = 0;
   var yd = 0;
-
-
 
   var speedchange = car.acceleration;
 
@@ -649,6 +664,26 @@ function driveCar(car) {
   }
   car.shadow.css("transform", "rotateZ("+car.angle+"deg)");
 
+    ghostData.push({
+      "time" : race.laptime,
+      "x" : car.showx,
+      "y" : car.showy
+    })
+
+    for(var i = ghostFrameIndex; i < ghostPlayData.length; i++){
+      var frame = ghostPlayData[i];
+      if(frame.time >= race.laptime){
+        var thisFrame = frame;
+        ghostFrameIndex = i;
+        break;
+      }
+    }
+
+    // if(thisFrame){
+    //   $(".ghost").css("left", thisFrame.x).css("top", thisFrame.y);
+    // }
+
+
   updateGhostCars();
 }
 
@@ -904,7 +939,7 @@ function trackAnimation(){
   },200);
 }
 
-var tracks = ["moon.png","twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
+var tracks = ["floppy.png","moon.png","twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
 var tracks = ["ampersand.png"];
 
 function loadRandomTrack(){
@@ -912,7 +947,6 @@ function loadRandomTrack(){
   var random = Math.floor(Math.random() * trackCount);
   prepareTrack(tracks[random]);
 }
-
 
 function collideCars(carone, cartwo){
   //We need to do like an impulse thing..
@@ -935,12 +969,12 @@ function audioStuff(){
   oscillator.connect(vol);
   oscillator.type = 'square';
   oscillator.frequency.value = 1200; // value in hertz
-  oscillator.start(0);
+  // oscillator.start(0);
 
   sine = context.createOscillator();
   sine.type = 'square';
   sine.frequency.value = 20;
-  sine.start(0);
+  // sine.start(0);
 
   var sineGain = context.createGain();
   sineGain.gain.value = 10;
@@ -962,12 +996,12 @@ function audioStuff(){
   engine.connect(context.destination);
   engine.type = 'sine';
   engine.frequency.value = 440; // value in hertz
-  engine.start(0);
+  // engine.start(0);
 
   enginesine = context.createOscillator();
   enginesine.type = 'sine';
   enginesine.frequency.value = 40;
-  enginesine.start(0);
+  // enginesine.start(0);
 
   var sineGainba = context.createGain();
   sineGainba.gain.value = 400;

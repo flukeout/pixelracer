@@ -77,6 +77,7 @@ canvas.track-source {
 
 .skids {
   display: block;
+  position: absolute;
   // width: 600px;
   // height: 300px;
   // display: none;
@@ -536,4 +537,13 @@ canvas.track-source {
   100% {
     transform: scale(5) rotateX(720deg) rotateZ(180deg);
   }
+}
+
+
+.ghost {
+  position: absolute;
+  height: 15px;
+  width: 15px;
+  background: orange;
+  opacity: .4;
 }
