@@ -32,6 +32,7 @@ app.get('/pad', function(req, res) {
 });
 
 
+
 // Example of getting a parameter from a URL and passing it to a view
 
 // app.get('/user/:user_id', function(req, res) {
@@ -49,5 +50,7 @@ var server = app.listen(process.env.PORT, function () {
   var port = server.address().port;
 });
 
-socket(server);
+socket.server(server);
+
+
 // server.listen(9999, '0.0.0.0');

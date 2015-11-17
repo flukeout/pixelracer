@@ -43,6 +43,17 @@ sockjs.onmessage = function(e) {
     for(var i = 0; i < details.othercars.length; i++){
       addOtherCar(details.othercars[i]);
     }
+
+    race.welcome(details);
+
+    // Load the track we got from the server
+    // Should be it's own thing though
+    prepareTrack(details.track);
+
+  }
+
+  if(details.type == "changetrack") {
+    race.prepareTrack(details.track);
   }
 
   //Car leaves
@@ -59,10 +70,34 @@ sockjs.onmessage = function(e) {
 
   //If a car joined (self or other browser)
   if(details.type == "chat") {
-
     var driver = message.message.driver;
     var text = message.message.text;
     addChat(driver,text);
+  }
+
+  //If a car joined (self or other browser)
+  if(details.type == "lapcount") {
+    var currentlap = message.message.lapcount;
+    race.updateLap(currentlap);
+  }
+
+  // All of the modes
+
+  if(details.type == "startrace") {
+    race.startRace(message.message.totallaps);
+  }
+
+  if(details.type == "startwarmup") {
+    race.startWarmup(message.message);
+  }
+
+  if(details.type == "raceover") {
+    var winner = message.message.winner;
+    race.finishRace(winner);
+  }
+
+  if(details.type == "startcountdown") {
+    race.startCountdown();
   }
 
   if(details.type == "padjoined") {

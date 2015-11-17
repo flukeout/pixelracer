@@ -63,6 +63,7 @@ canvas.track-source {
 }
 
 .track-wrapper {
+  transform: rotateZ(0deg);
   transform-style: preserve-3d;
 }
 
@@ -515,7 +516,6 @@ canvas.track-source {
   }
 }
 
-
 .spaceguy {
   position: absolute;
   height: 4px;
@@ -539,11 +539,58 @@ canvas.track-source {
   }
 }
 
-
 .ghost {
   position: absolute;
   height: 15px;
   width: 15px;
-  background: orange;
-  opacity: .4;
+  background: white;
+  opacity: .3;
+}
+
+.transition-in {
+  animation: trackin 1s ease-out forwards;
+}
+
+@keyframes trackout {
+  0% {
+    opacity: 0;
+    transform: scale(.9);
+  }
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+.track-wrapper {
+  transition: opacity 1s linear;
+}
+
+
+
+.game-message {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: 60px;
+  color: white;
+  text-align: center;
+  display: flex;
+  background: black;
+  align-items: center;
+  justify-items: center;
+  opacity: 0;
+  transition: opacity .25s ease-out;
+
+  .message {
+    width: 100%;
+    text-align: center;
+    opacity: 0;
+    transition: all .25s ease-out;
+  }
+
 }
