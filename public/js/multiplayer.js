@@ -183,6 +183,7 @@ function addOtherCar(id){
   newCar.el = car.el;
   newCar.x = 0;
   newCar.y = 0;
+  newCar.shadow = car.el.find(".shadow");
   newCar.rotation = 0;
   newCar.height = 0;
   othercars[id] = newCar;
@@ -191,13 +192,20 @@ function addOtherCar(id){
 
 // builds a ghostcar
 function newGhostCar(carID){
+  console.log("adding ghost car");
   var car = {};
   car.el = $("<div class='car two'></div>");
   car.el.append("<div class='name'>BOB</div>");
   car.el.width(scaling);
   car.el.height(scaling);
-  $(".track").append(car.el)
+
+  car.shadow = $("<div class='shadow'></div>");
+
   car.el.append("<div class='body'></div>");
+  car.el.find(".body").append(car.shadow);
+
+  $(".track").append(car.el)
+
   return car;
 }
 

@@ -854,6 +854,7 @@ function updateGhostCars(){
         c.velocity =      thisState.velocity;
         c.rotation =      thisState.rotation;
         c.gas =           thisState.gas;
+        c.height =        thisState.height || 0;
 
         delete playerStates[k];
 
@@ -897,8 +898,16 @@ function updateGhostCars(){
       c.x = parseFloat(c.x) + xd;
       c.y = parseFloat(c.y) + yd;
 
+
+      if(c.height > 0){
+        c.shadow.show();
+      } else {
+        c.shadow.hide();
+      }
+
       c.el.find(".name").text(c.driver);
       c.el.find(".body").css("transform","rotateZ("+c.rotation+"deg");
+      c.shadow.css("transform","translateZ("+ -1 * c.height+"px)");
       c.el.css("transform","translateX("+ c.x +"px) translateY("+c.y+"px) translateZ("+c.height+"px)");
   }
 }
@@ -1074,7 +1083,7 @@ function prepareTrack(level){
       }
     }
 
-    console.log(race.startPositions);
+    // console.log(race.startPositions);
 
   });
 
