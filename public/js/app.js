@@ -144,10 +144,12 @@ var race = {
   },
   startRace: function(laps){
 
-    $(".laps .lap-info").show();
+
+
     setTimeout(function(){
-      $(".laps .message").text("").hide();
-    },500);
+      $(".laps .message").hide();
+      $(".laps .lap-info").show();
+    },1000);
 
     //Rest all car lap counts
     for(var c in cars){
@@ -162,7 +164,7 @@ var race = {
 
     $(".laps .lap-count").text(this.currentlap);
     $(".laps .total-laps").text(this.totallaps);
-    $(".laps .message").hide();
+
 
   },
   finishLap : function(car){
