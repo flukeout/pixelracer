@@ -44,7 +44,8 @@ canvas.track-source {
   left: 0;
 
   .lap-wrapper {
-    font-size: 20px;
+    margin-top: 15px;
+    font-size: 25px;
     display: inline-block;
 
     div {
@@ -403,12 +404,12 @@ canvas.track-source {
     color: white;
     background: transparent;
     padding: 0 0 4px 0;
-    border: none;
-
-
+    border-width: 0 0 0 0 ;
+    text-transform: uppercase;
+    border-bottom: solid 2px rgba(255,255,255,.4);
 
     &:hover {
-      border-bottom: solid 2px rgba(255,255,255,.4);
+
       cursor: pointer;
     }
 
@@ -564,15 +565,21 @@ canvas.track-source {
 
 
 .track-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 100px;
+  display: flex;
+  align-items: center;
   transition: opacity 1s linear;
 }
-
-
 
 .game-message {
   position: absolute;
   width: 100%;
   top: 0;
+  pointer-events: none;
   left: 0;
   right: 0;
   bottom: 0;
@@ -593,4 +600,10 @@ canvas.track-source {
     transition: all .25s ease-out;
   }
 
+}
+
+.bottom-stuff {
+  position: absolute;
+  width: 100%;
+  bottom: 50px;
 }

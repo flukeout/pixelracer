@@ -305,6 +305,11 @@ $(document).ready(function(){
     }
   });
 
+
+  $(".driver-name").on("click", function(e){
+    $(this).select();
+  });
+
   $(".driver-name").on("keyup", function(e){
     var newName = $(this).val();
     var car = getCar(myid);
@@ -1027,7 +1032,7 @@ function prepareTrack(level){
 
     var bodyHeight = $("body").height();
     var offset = (bodyHeight - $(".track-wrapper").height())/2;
-    $(".track-wrapper").css("margin-top",offset - 50);
+    // $(".track-wrapper").css("margin-top",offset - 50);
 
     // var coin = $("<div class='coin'><div class='vert'></div></div>");
     // $(".track").append(coin)

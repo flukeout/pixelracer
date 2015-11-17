@@ -31,7 +31,7 @@ sockjs.onmessage = function(e) {
   if(details.type == "welcome") {
     myid = message.id;
     var car = newCar(message.id);
-    car.changeDriver("flukeout");
+    car.changeDriver("bob");
     cars.push(car);
 
     for(var i = 0; i < cars.length; i++){
