@@ -333,12 +333,6 @@ canvas.track-source {
   }
 }
 
-
-
-.car .body {
-  background: rgba(255,255,255,.4);
-}
-
 .car .shadow {
   opacity: .3;
   background: black;
@@ -348,51 +342,6 @@ canvas.track-source {
   width: 100%;
   height: 100%;
 }
-
-// In case we want to do 3D cars - which doesn't actually look good.
-.car .body div {
-
-  // position: absolute;
-  // opacity: .5;
-  // background: white;
-  // top: 0px;
-  // left: 0px;
-  // width: 100%;
-  // height: 100%;
-  // background: none;
-  // box-sizing: border-box;
-  // border: white 2px solid;
-
-  // &:nth-child(1){
-  //   transform: translateZ(15px);
-  // }
-  //
-  // &:nth-child(2){
-  //   transform-origin: left;
-  //   transform: rotateY(-90deg);
-  // }
-  //
-  // &:nth-child(3){
-  //   transform-origin: right;
-  //   transform: rotateY(90deg);
-  // }
-  //
-  // &:nth-child(4){
-  //   transform-origin: bottom;
-  //   transform: rotateX(-90deg);
-  // }
-  //
-  // &:nth-child(5){
-  //   transform-origin: top;
-  //   transform: rotateX(90deg);
-  // }
-
-}
-
-.car .body {
-  // animation: leader .2s infinite;
-}
-
 
 .driver-name-ui {
   text-align: center;
@@ -409,7 +358,6 @@ canvas.track-source {
     border-bottom: solid 2px rgba(255,255,255,.4);
 
     &:hover {
-
       cursor: pointer;
     }
 
@@ -417,7 +365,6 @@ canvas.track-source {
       outline: none;
       border-bottom: solid 2px white;
     }
-
   }
 }
 
@@ -432,11 +379,10 @@ canvas.track-source {
   100%{
     transform: translateZ(8px);
   }
-
 }
 
 @keyframes coingleam {
-  20% {background: gold;}
+  20% { background: gold;}
   40% { background: white;}
   45% { background: white;}
   46% { background: gold;}
@@ -450,7 +396,6 @@ canvas.track-source {
     transform: rotateZ(359deg) translateZ(1px);
   }
 }
-
 
 @keyframes coinspin {
   0% {
@@ -475,21 +420,14 @@ canvas.track-source {
   opacity: .7;
 
   color: #8fcf4b;
-  // background: rgba(255,255,255,.3);
-
-  .driver {
-
-  }
 
   .message {
     margin-bottom: 5px;
   }
 
-
   .message-text {
     opacity: .7;
   }
-
 }
 
 .chat-input-wrapper {
@@ -517,35 +455,12 @@ canvas.track-source {
   }
 }
 
-.spaceguy {
-  position: absolute;
-  height: 4px;
-  width: 3px;
-  left: -10%;
-  top: 50%;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  transform-style: preserve-3d;
-  background: ~"url(img/minispaceguy.png)";
-  transform: scale(5);
-  animation: spaceguy 20s linear infinite;
-}
-
-@keyframes spaceguy {
-  0% {
-    transform: scale(5) rotateX(0deg) rotateZ(0deg);
-  }
-  100% {
-    transform: scale(5) rotateX(720deg) rotateZ(180deg);
-  }
-}
-
 .ghost {
   position: absolute;
   height: 15px;
   width: 15px;
   background: white;
-  opacity: .3;
+  opacity: .5;
 }
 
 .transition-in {
@@ -562,7 +477,6 @@ canvas.track-source {
     transform: scale(1);
   }
 }
-
 
 .track-wrapper {
   position: absolute;

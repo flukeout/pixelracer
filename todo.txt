@@ -1,27 +1,26 @@
-+ ghosts??
-+ inputs? or.... x,y updates?? probably x,yers..........
-
-MULTIPLAYER IDEAS
- + send a lap challange... try to beat this lap time  pixelracer/ad3adb
- + slight decrease in top speed for each lap winner
+* Add intro screen
+* Add a singleplayer / ghost mode alongside the multiplayer
 
 
-GHOST MODE
+MULTIPLAYER
+* Just race on random tracks against whoever else has joined
+*
 
-OR RACE MODE <- gotta work on race mode first, we'll need it for Pach's
+SINGLE PLAYER
+* Pick a track, race your ghost
+*
 
 
-that way, we can do some predictive shit, we can even try this 2 times a second to see how it feels
+SEND A GHOST
++ Send a lap challange... try to beat this lap time  pixelracer/ad3adb
++ slight decrease in top speed for each lap winner
+
 
 + some kind of weird bug still when you are turning left right in close sucession, try going
 left right left right without moving, it kidn of locks up at some point.
 
 
-+ have the server send the track choice etc.
 
-+ fix underpass logic
-   + make it so that the first color you see after an underpass determines the valid
-   underpass color
 
 + make the steering input analog
   + that way the touch controllers can give a scale of input

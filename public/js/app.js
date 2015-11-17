@@ -268,13 +268,7 @@ $(document).ready(function(){
 
   audioStuff();
 
-  // var jam = newCar("jam",0);
-  // cars.push(jam);
-  // loadRandomTrack();
-
   $(window).on("keypress", function(e){
-
-    console.log(e.keyCode);
 
     if(e.keyCode == 114){
       race.startRace(5);
@@ -323,12 +317,11 @@ $(document).ready(function(){
 
   $(window).on("keydown",function(e){
 
-
     if(e.keyCode == 37) {
-      keyboardcar.setDirection("steering","left");
+      keyboardcar.setDirection("steering","left-on");
     }
     if(e.keyCode == 39) {
-      keyboardcar.setDirection("steering","right");
+      keyboardcar.setDirection("steering","right-on");
     }
     if(e.keyCode == 38) {
       keyboardcar.setDirection("gas","on");
@@ -338,10 +331,10 @@ $(document).ready(function(){
 
   $(window).on("keyup",function(e){
     if(e.keyCode == 37) {
-      keyboardcar.setDirection("steering","none");
+      keyboardcar.setDirection("steering","left-off");
     }
     if(e.keyCode == 39) {
-      keyboardcar.setDirection("steering","none");
+      keyboardcar.setDirection("steering","right-off");
     }
     if(e.keyCode == 38) {
       keyboardcar.setDirection("gas","off");
@@ -945,8 +938,8 @@ function newCar(id){
     showy : 230,
     laps : 0,
     wheelturn : false,
-    maxspeed : 5, //moon
-    direction : "",
+    maxspeed : 5,
+    direction : "none",
     speed : 0,
     bestlap : 0,
     laptime: 0,
@@ -967,10 +960,12 @@ function newCar(id){
     turnacceleration: .5, //.5
     nexty : 0,
     turnvelocity : 0,
-    gas : "off"
+    gas : "off",
+    left : "off",
+    right : "off"
   };
 
-  //Limit the driver name to 3 uppercase CHARS
+  //Limit the driver name to 3 uppercase letters
   car.changeDriver = function(name){
     car.driver = name.substr(0,3).toUpperCase();
     car.el.find(".name").text(car.driver);
@@ -978,12 +973,52 @@ function newCar(id){
   }
 
   car.setDirection = function(action, direction){
+
     if(action == "steering") {
-      this.direction = direction;
+
+      if(direction == "right-on"){
+        this.right = "on";
+        if(this.direction == "none") {
+          this.direction = "right";
+        } else if (this.direction == "left") {
+          this.direction = "none";
+        }
+      }
+
+      if(direction == "right-off"){
+        this.right = "off";
+        if(this.left == "on") {
+          this.direction = "left";
+        } else {
+          this.direction = "none";
+        }
+      }
+
+
+      if(direction == "left-on"){
+        this.left = "on";
+        if(this.direction == "none") {
+          this.direction = "left";
+        } else if (this.direction == "right") {
+          this.direction = "none";
+        }
+      }
+
+      if(direction == "left-off"){
+        this.left = "off";
+        if(this.right == "on") {
+          this.direction = "right";
+        } else {
+          this.direction = "none";
+        }
+      }
+
     }
+
     if(action == "gas"){
       this.gas = direction;
     }
+
   }
 
   car.el = $("<div class='car'><div class='name'>" + car.name + "</div></div>");
