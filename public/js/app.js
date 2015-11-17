@@ -271,15 +271,15 @@ $(document).ready(function(){
   $(window).on("keypress", function(e){
 
     if(e.keyCode == 114){
-      race.startRace(5);
+      // race.startRace(5);
     }
 
     if(e.keyCode == 99){
-      race.startCountdown();
+      // race.startCountdown();
     }
 
     if(e.keyCode == 119){
-      race.startWarmup();
+      // race.startWarmup();
     }
 
     if(e.keyCode == 13) {
