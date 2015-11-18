@@ -716,7 +716,7 @@ function driveCar(car) {
 
   if(car.mode == "normal" && currentPosition == "jump" && car.speed > 1) {
     car.jumpElapsed = 0;
-    car.jumpTotal = car.speed * scaling / 2 ;
+    car.jumpTotal = car.speed * scaling / 2.5 ;//jump distance relative to speed
     car.mode = "jumping";
   }
 

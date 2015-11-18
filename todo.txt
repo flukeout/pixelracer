@@ -1,25 +1,36 @@
+BUGS
+* The flex display is messing with the track sizing.. make sure you enforce a minimum and maximum
+* LOOK into IT
+
+
+TILES
+* LAVA (explode and respawn)
+* HOLE.. fall through and respawn
+* unpassable terrain
+
+
+MULTIPLAYER FEATURES
++ add an indicator for who is leading
++ add an indicator for who won the race
++ perfect lap..
+
+
 * Add intro screen
 * Add a singleplayer / ghost mode alongside the multiplayer
+* Add a way to change your car color
 
 
 MULTIPLAYER
 * Just race on random tracks against whoever else has joined
-*
+
 
 SINGLE PLAYER
 * Pick a track, race your ghost
-*
 
 
 SEND A GHOST
 + Send a lap challange... try to beat this lap time  pixelracer/ad3adb
 + slight decrease in top speed for each lap winner
-
-
-+ some kind of weird bug still when you are turning left right in close sucession, try going
-left right left right without moving, it kidn of locks up at some point.
-
-
 
 
 + make the steering input analog
@@ -30,10 +41,14 @@ left right left right without moving, it kidn of locks up at some point.
 
 + make it so the scaling depends on the viewport and not on a fixed value
   + this will help with stuff
+
+
 + gamepad API
-+ count down before a race starts?
+
 + tilt car relative to winner
-+ add an indicator for who is leading
+
+
 + should we build an array of all the x,y values of the track instead of
 sampling pixels?
   + that way - we could add in power ups as well and could check against them.
+  + true enough, not just pixel values....
