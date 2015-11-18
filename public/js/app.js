@@ -10,23 +10,7 @@ var ghostData = [];
 var ghostFrameIndex = 0;
 var ghostPlayData = [];
 var recordGhost = false;
-
-function showMessage(message){
-  $(".game-message").css("opacity",1);
-
-  setTimeout(function(){
-    $(".game-message .message").text(message).css("opacity",1);
-  },500);
-
-  setTimeout(function(){
-    $(".game-message .message").css("opacity",0);
-  },1500);
-
-  setTimeout(function(){
-    $(".game-message").css("opacity",0);
-  },2000);
-
-}
+var trackEl;
 
 var race = {
   mode : "warmup",
@@ -252,7 +236,7 @@ function sendChat(message){
 // When a car finishes a lap
 function finishLap(car){
 
-  console.log(car.laps);
+  console.log("Finished " + car.laps);
 
   var update = {
     "type" : "finishlap",
@@ -541,7 +525,6 @@ function driveCar(car) {
 
   car.angle = car.angle + car.turnvelocity;
 
-
   var adjacent = Math.cos(toRadians(car.angle)) * car.speed;
   var opposite = Math.sin(toRadians(car.angle)) * car.speed;
   var xd = opposite;
@@ -562,42 +545,31 @@ function driveCar(car) {
   // If it's not, then just rip it up a bit
 
   var turnpercent = Math.abs(car.turnvelocity) / 4;
+  var speedpercent = car.speed / car.maxspeed;
+
+
+
   if(car.currentx != car.nextx || car.currenty != car.nexty){
 
-
-    //Skid on initial accelleration
-    //   var maxskidspeed = car.maxspeed / 1.3;
-    //   if(car.gas == "on" && car.speed < maxskidspeed){
-    //     var maxopacity = .2;
-    //     var skidmax = car.maxspeed / 1.5;
-    //     var opacity = maxopacity * ((car.maxspeed / 1.5) - car.speed);
-    //     console.log(opacity);
-    //     ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
-    //     ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
-    //   }
+    var averagepercent = (speedpercent + turnpercent) / 2 * 100;
+    var jam  = -75 + averagepercent;
+    var opacity = jam/25 * .1;
 
     if(currentPosition == "road") {
-
-      var speedpercent = car.speed / car.maxspeed;
-      var maxopacity = .1 * speedpercent;
-      var opacity;
-      if(turnpercent > 0) {
-        opacity = maxopacity * turnpercent;
-        ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
-        ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
-      }
-
-      // This does the skiddin..
-
-
+      ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
+      ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
     } else {
       ctx.fillStyle = "rgba(0,0,0,.05)";
       ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
     }
   }
 
-  vol.gain.value = .3 * turnpercent || 0;
-
+  //Controls the Skidding volume oscillator, which is always on
+  if(turnpercent == 1 && speedpercent > .5) {
+    vol.gain.value = .012 * turnpercent || 0;
+  } else {
+    vol.gain.value = 0;
+  }
 
   // Trail shit
   var adjacent = Math.cos(toRadians(car.angle + 180)) * car.speed;
@@ -1106,7 +1078,7 @@ function prepareTrack(level){
           el.css("top", scaling * (j - 3));
         }
 
-
+        console.log(result);
 
         if(result == "tree"){
           var tree = $("<div class='tree'></div>");
@@ -1149,7 +1121,7 @@ function collideCars(carone, cartwo){
   carone.speed = -1 * cartwo.speed / 2;
 }
 
-
+var enginevol;
 function audioStuff(){
   // create web audio api context
   var context = new AudioContext();
@@ -1175,20 +1147,18 @@ function audioStuff(){
   sine.connect(sineGain);
   sineGain.connect(oscillator.frequency);
 
-  var filter = context.createBiquadFilter();
-  // Create the audio graph.
+  // ENGINE
 
-  // filter.connect(context.destination);
-  // Create and specify parameters for the low-pass filter.
-  filter.type = 'lowpass'; // Low-pass filter. See BiquadFilterNode docs
-  filter.frequency.value = 2000; // Set cutoff to 440 HZ
-  // Playback the sound.
+  enginevol = context.createGain();
+  enginevol.gain.value = .15;
+  enginevol.connect(context.destination);
 
   engine = context.createOscillator();
-  engine.connect(context.destination);
+  engine.connect(enginevol);
   engine.type = 'sine';
   engine.frequency.value = 440; // value in hertz
   // engine.start(0);
+
 
   enginesine = context.createOscillator();
   enginesine.type = 'sine';
@@ -1199,7 +1169,22 @@ function audioStuff(){
   sineGainba.gain.value = 400;
 
   enginesine.connect(sineGainba); //connecxts the sine wave to the gain
-
   sineGainba.connect(engine.frequency);
+}
+
+function showMessage(message){
+  $(".game-message").css("opacity",1);
+
+  setTimeout(function(){
+    $(".game-message .message").text(message).css("opacity",1);
+  },500);
+
+  setTimeout(function(){
+    $(".game-message .message").css("opacity",0);
+  },1500);
+
+  setTimeout(function(){
+    $(".game-message").css("opacity",0);
+  },2000);
 
 }
