@@ -1,4 +1,4 @@
-var othercars = {};
+
 var playerStates = {};
 
 sockjs.onopen = function(e) {
@@ -177,7 +177,6 @@ function removeCar(id){
 
 //Adds ghost cars cars
 function addOtherCar(id){
-
   var car = newGhostCar(id);
   var newCar = {};
   newCar.el = car.el;

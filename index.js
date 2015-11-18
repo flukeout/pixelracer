@@ -32,6 +32,10 @@ app.get('/pad', function(req, res) {
 });
 
 
+app.get('/single', function(req, res) {
+  res.render('single.html');
+});
+
 
 // Example of getting a parameter from a URL and passing it to a view
 

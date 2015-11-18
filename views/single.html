@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% set currentPage = "single" %}
+
+{% block title %}
+  Pixelracer
+{% endblock %}
+
+{% block script %}
+  <script src="/js/utils.js"></script>
+  <script src="/js/single.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet/less" href="/css/single.less" type="text/css">
+{% endblock %}
+
+{% block content %}
+
+  <canvas class="track-source"></canvas>
+
+  <div class="laps">
+    <div class="lap-wrapper">
+      <div class="lap-info">
+
+        <div class="lap-time-wrapper">
+          <span class="lap-time">0.00</span>
+        </div>
+
+        <div class="best-time-wrapper">
+          Best <span class="best-time"></span>
+        </div>
+
+        <div>
+          <span class="delta-time"></span>
+        </div>
+
+      </div>
+      <div class="message"></div>
+
+    </div>
+
+      <!-- <div class="last-lap"></div> -->
+  </div>
+
+  <div class="track-wrapper">
+
+    <div class="track">
+
+      <div class="ghost"></div>
+      <canvas class="skids"></canvas>
+    </div>
+  </div>
+
+  <!-- chat messages go here -->
+
+
+  <div class="game-message">
+    <div class="message">Blahblahblah</div>
+  </div>
+
+
+
+
+{% endblock %}
+
