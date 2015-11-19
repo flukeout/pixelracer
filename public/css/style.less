@@ -4,6 +4,8 @@ body, html {
   margin: 0;
   background: black;
   overflow: hidden;
+  position: relative;
+  height: 100%;
   // background: url(http://img12.deviantart.net/7da3/i/2011/017/6/f/starfield_stock_by_freelancah-d2k5mcu.jpg);
 }
 
@@ -63,11 +65,6 @@ canvas.track-source {
 
 }
 
-.track-wrapper {
-  transform: rotateZ(0deg);
-  transform-style: preserve-3d;
-}
-
 .track {
   margin: 0px auto 0 auto;
   background-size: 100%;
@@ -89,11 +86,9 @@ canvas.track-source {
   height: 1px;
   width: 1px;
   position: absolute;
-  background: #32a6dc;
 
   opacity: .4;
   transform-style: preserve-3d;
-
 }
 
 .spark {
@@ -455,13 +450,6 @@ canvas.track-source {
   }
 }
 
-.ghost {
-  position: absolute;
-  height: 15px;
-  width: 15px;
-  background: white;
-  opacity: .5;
-}
 
 .transition-in {
   animation: trackin 1s ease-out forwards;
@@ -485,8 +473,12 @@ canvas.track-source {
   right: 0;
   bottom: 100px;
   display: flex;
+  display: -moz-flex;
   align-items: center;
   transition: opacity 1s linear;
+  transform: rotateZ(0deg);
+  transform-style: preserve-3d;
+
 }
 
 .game-message {

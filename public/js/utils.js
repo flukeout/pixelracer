@@ -1,3 +1,18 @@
+var hexes = {
+  "#000000" : "road",
+  "#5a5a5a" : "road",
+  "#8fcf4b" : "grass",
+  "#f1aa22" : "turbo",
+  "#b97d37" : "windmill",
+  "#2194ca" : "water",
+  "#6ba52d" : "tree",
+  "#ffffff" : "finish",
+  "#a9a9a9" : "ledge",
+  "#373737" : "overpass",
+  "#7dba3d" : "lamp",
+  "#d4c921" : "jump"
+}
+
 var othercars = {};
 var startpositions = [];
 
@@ -85,8 +100,6 @@ function trackAnimation(){
 
 var tracks = ["moon.png","twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
 // var tracks = ["floppy.png"];
-
-
 
 
 
@@ -442,3 +455,55 @@ function newCar(id){
   return car;
 }
 
+
+function tiltTrack(){
+  //Tilts the track according to where all the cars are
+
+  var xtotal = 0;
+  var ytotal = 0;
+
+  for(var i = 0; i < cars.length; i++){
+    var car = cars[i];
+    xtotal = xtotal + car.x;
+    ytotal = ytotal + car.y;
+  }
+
+  var xavg = xtotal / cars.length || 0;
+  var yavg = ytotal / cars.length || 0;
+  var xdeg = 5 * (-1 + (2 * xavg / trackWidth));
+  var ydeg = 45 + 5 * (1 - (2 * yavg / trackHeight));
+  $(".track").css("transform","rotateX(" +ydeg+"deg) rotateY("+xdeg+"deg)");
+}
+
+function formatTime(total){
+  var ms = Math.floor(total / 10 % 100);
+  if(ms < 10){
+    ms = "0" + ms;
+  }
+  var sec = Math.floor(total / 1000 % 60);
+
+  return sec + "." + ms;
+}
+
+function toDegrees (angle) {
+  return angle * (180 / Math.PI);
+}
+
+function toRadians (angle) {
+  return angle * (Math.PI / 180);
+}
+
+
+function spawnCars(){
+  console.log("spawnCars() - placing cars near start line");
+  for(var c in cars) {
+    var car = cars[c];
+    car.angle = 270;
+    var random = Math.floor(Math.random() * startpositions.length);
+    car.x = startpositions[random].x + 2;
+    car.y = startpositions[random].y;
+    car.showx = car.x * scaling;
+    car.showy = car.y * scaling;
+    car.el.find(".name").remove();
+  }
+}

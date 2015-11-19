@@ -1,22 +1,67 @@
 var cars = [];
-var hostcar;
 var keyboardcar;
-var ctx;
-var oscillator;
-var sine;
-var vol;
-var frameAdjuster;
+var ctx, oscillator,sine, vol; // Audio stuff
+var frameAdjuster; // Adjusts speed based on framerate
+
+//Should move this to the race object
 var ghostRecording = false;
 var ghostData = [];
 var ghostFrameIndex = 0;
 var ghostPlayData = [];
 var updateTime = false;
 
-var trackEl;
+var scaling = 15;
+var canvasTrack, context, trackHeight, trackWidth; //Need to revisit where these go
+var time, delta; //keep track of time between laps
+
+var carcolors = ["#FFFFFF"];
+var trailcolor;
+var leaveSkids = true;
+
+$(document).ready(function(){
+
+  race.startTrial();
+
+  //add this to the fricken car??
+  audioStuff();
+
+  $(window).on("keypress", function(e){
+    if(e.keyCode == 114){
+      race.startTrial();
+    }
+  });
+
+  $(window).on("keydown",function(e){
+
+    if(e.keyCode == 37) {
+      keyboardcar.setDirection("steering","left-on");
+    }
+    if(e.keyCode == 39) {
+      keyboardcar.setDirection("steering","right-on");
+    }
+    if(e.keyCode == 38) {
+      keyboardcar.setDirection("gas","on");
+    }
+  });
+
+
+  $(window).on("keyup",function(e){
+    if(e.keyCode == 37) {
+      keyboardcar.setDirection("steering","left-off");
+    }
+    if(e.keyCode == 39) {
+      keyboardcar.setDirection("steering","right-off");
+    }
+    if(e.keyCode == 38) {
+      keyboardcar.setDirection("gas","off");
+    }
+  });
+
+  gameLoop();
+
+});
 
 var race = {
-  mode : "warmup",
-  totallaps: 2,
   currentlap: 0,
   laptime : 0,
   bestlap : "",
@@ -25,89 +70,29 @@ var race = {
       prepareTrack(track);
     },500);
   },
-  updateUI: function(){
-    if(this.mode == "racing"){
-      $(".laps .message").hide();
-      $(".lap-info").show();
-      $(".lap-info .lap-count").text(this.currentlap);
-      $(".lap-info .total-laps").text(this.totallaps);
-    }
-  },
-  startWarmup : function(){
+  startTrial: function(laps){
 
-    showMessage("warmup");
-    this.mode = "warmup";
+    console.log("race.startTrial - begin the single player time trial");
 
-    setTimeout(function(that){ return function(){
-        for(var c in cars) {
-          var car = cars[c];
-          car.angle = 270;
-          var random = Math.floor(Math.random() * that.startPositions.length);
-          car.x = that.startPositions[random].x + 2;
-          car.y = that.startPositions[random].y;
-          car.showx = car.x * scaling;
-          car.showy = car.y * scaling;
-        }
-      }
-    }(this),1000);
+    $(".track-wrapper").css("opacity",0);
+    prepareRandomTrack();
+    showMessage("do fast laps!");
 
-    $(".laps .lap-info").hide();
+    //Resets all the the cars in case there are other ones...
+    cars = [];
+    $(".car").remove();
+
+    var car = newCar("single");
+    car.changeDriver("bob");
+    car.el.find(".name").remove();
+    cars.push(car);
+    keyboardcar = car;
 
     setTimeout(function(){
-      $(".laps .message").show().text("Warm up");
+      spawnCars();
+      $(".track-wrapper").css("opacity",1);
     },500);
 
-    for(var c in cars) {
-      var car = cars[c];
-      car.speed = 0;
-    }
-
-  },
-  startCountdown : function(){
-
-    showMessage("race time!");
-
-    //how long does a modeswitch take???? 3000....
-
-    this.mode = "countdown";
-
-    setTimeout(function(that){ return function(){
-        for(var c in cars) {
-          var car = cars[c];
-          car.mode = "frozen";
-          car.angle = 270;
-          var random = Math.floor(Math.random() * that.startPositions.length);
-          car.x = that.startPositions[random].x + 2;
-          car.y = that.startPositions[random].y;
-          car.showx = car.x * scaling;
-          car.showy = car.y * scaling;
-        }
-      }
-    }(this),1000);
-
-    $(".laps .lap-info").hide();
-
-    $(".laps .message").text("").show();
-    setTimeout(function(){  $(".laps .message").text("READY");    },3000);
-    setTimeout(function(){  $(".laps .message").text("SET");    },4000);
-    setTimeout(function(){  $(".laps .message").text("GO!!!");    },5000);
-
-  },
-  startRace: function(laps){
-
-    setTimeout(function(){
-      $(".laps .message").hide();
-      $(".laps .lap-info").show();
-    },1000);
-
-    //Rest all car lap counts
-    for(var c in cars){
-      var car = cars[c];
-      car.laps = 0;
-      car.mode = "normal";
-    }
-
-    this.mode = "racing";
 
   },
   finishLap : function(car){
@@ -116,7 +101,6 @@ var race = {
     updateTime = false;
 
     $(".delta-time").show();
-
 
     if(this.currentlap == 0) {
       updateTime = true;
@@ -165,157 +149,33 @@ var race = {
     ghostData = [];
     ghostFrameIndex = 0;
 
-
-
     this.laptime = 0;
-
     this.currentlap++;
-  },
-  finishRace : function(winner){
-
-    this.mode = "over";
-    $(".laps .lap-info").hide();
-    $(".laps .message").text(winner + " WINS!");
   }
 }
 
 
-var carcolors = ["#FFFFFF"];
-
-var laps = 0;
-var scaling = 15;
-
-
-var canvasTrack, context, trackHeight, trackWidth;
-
-var hexes = {
-  "#000000" : "road",
-  "#5a5a5a" : "road",
-  "#8fcf4b" : "grass",
-  "#f1aa22" : "turbo",
-  "#b97d37" : "windmill",
-  "#2194ca" : "water",
-  "#6ba52d" : "tree",
-  "#ffffff" : "finish",
-  "#a9a9a9" : "ledge",
-  "#373737" : "overpass",
-  "#7dba3d" : "lamp",
-  "#d4c921" : "jump"
-}
-
 function prepareRandomTrack(){
+  console.log("prepareRandomTrack() - picks a track at random and loads it");
   var tracks = ["superjump.png","moon.png","twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
+  var tracks = ["noirjump.png"];
   var randomTrack = Math.floor(Math.random() * tracks.length);
-  prepareTrack(tracks[randomTrack]);
+  var chosenTrack = tracks[randomTrack];
+
+
+  var trackDefinition = trackDefinitions[chosenTrack];
+
+  if(trackDefinition){
+    hexes = trackDefinition.hexes;
+    carcolors = trackDefinition.carcolors;
+    trailcolor = trackDefinition.trailcolor;
+    leaveSkids = trackDefinition.leavekids;
+  }
+
+  console.log(chosenTrack);
+  prepareTrack(chosenTrack);
 }
 
-$(document).ready(function(){
-
-  prepareRandomTrack();
-
-  setTimeout(function(){
-
-    var car = newCar("single");
-    car.changeDriver("bob");
-    cars.push(car);
-    keyboardcar = car;
-
-    for(var c in cars) {
-      var car = cars[c];
-      car.angle = 270;
-      var random = Math.floor(Math.random() * startpositions.length);
-      car.x = startpositions[random].x + 2;
-      car.y = startpositions[random].y;
-      car.showx = car.x * scaling;
-      car.showy = car.y * scaling;
-      car.el.find(".name").remove();
-    }
-
-  },500);
-
-
-
-  audioStuff();
-
-  $(window).on("keypress", function(e){
-
-    if(e.keyCode == 114){
-      // race.startRace(5);
-    }
-
-    if(e.keyCode == 99){
-      // race.startCountdown();
-    }
-
-    if(e.keyCode == 119){
-      // race.startWarmup();
-    }
-
-    if(e.keyCode == 13) {
-      if(chatting == false){
-        $(".chat-input").show().focus();
-        $(".chat-input-wrapper .instructions").hide();
-        chatting = true;
-      } else if (chatting == true){
-        var message = $(".chat-input").val();
-        if(message.length > 0){
-          sendChat(message);
-        }
-        $(".chat-input").val("").blur().hide();
-        chatting = false;
-        $(".chat-input-wrapper .instructions").show();
-      }
-    }
-  });
-
-  $(".driver-name").on("click", function(e){
-    $(this).select();
-  });
-
-  $(".driver-name").on("keyup", function(e){
-    var newName = $(this).val();
-    var car = getCar(myid);
-    car.changeDriver(newName);
-    if(e.keyCode == 13) {
-      $(this).blur();
-    }
-  });
-
-
-  $(window).on("keydown",function(e){
-
-    if(e.keyCode == 37) {
-      keyboardcar.setDirection("steering","left-on");
-    }
-    if(e.keyCode == 39) {
-      keyboardcar.setDirection("steering","right-on");
-    }
-    if(e.keyCode == 38) {
-      keyboardcar.setDirection("gas","on");
-    }
-  });
-
-
-  $(window).on("keyup",function(e){
-    if(e.keyCode == 37) {
-      keyboardcar.setDirection("steering","left-off");
-    }
-    if(e.keyCode == 39) {
-      keyboardcar.setDirection("steering","right-off");
-    }
-    if(e.keyCode == 38) {
-      keyboardcar.setDirection("gas","off");
-    }
-  });
-
-  gameLoop();
-
-});
-
-var time;
-var delta;
-var elapsedTime = 0;
-var tick = 0;
 
 function gameLoop() {
 
@@ -323,59 +183,21 @@ function gameLoop() {
   delta = now - (time || now);
   time = now;
 
-  var xtotal = 0; //what is this
-  var ytotal = 0; // what is this
-
   for(var i = 0; i < cars.length; i++){
-
     var car = cars[i];
     driveCar(car);
-
-    race.laptime = race.laptime + delta; //update the race lap timer
-    car.laptime = car.laptime + delta; // update the car lap timer
-
-    xtotal = xtotal + car.x;
-    ytotal = ytotal + car.y;
-
-
-    if(updateTime){
-      $(".lap-time").text(formatTime(race.laptime));
-    }
-
-
   }
 
+  race.laptime = race.laptime + delta; //update the race lap timer
 
+  if(updateTime){
+    $(".lap-time").text(formatTime(race.laptime));
+  }
 
-  var xavg = xtotal / cars.length || 0;
-  var yavg = ytotal / cars.length || 0;
-
-  var xdeg = 5 * (-1 + (2 * xavg / trackWidth));
-  var ydeg = 45 + 5 * (1 - (2 * yavg / trackHeight));
-
-
-  $(".track").css("transform","rotateX(" +ydeg+"deg) rotateY("+xdeg+"deg)");
-
+  tiltTrack();
   window.requestAnimationFrame(gameLoop);
 }
 
-function formatTime(total){
-  var ms = Math.floor(total / 10 % 100);
-  if(ms < 10){
-    ms = "0" + ms;
-  }
-  var sec = Math.floor(total / 1000 % 60);
-
-  return sec + "." + ms;
-}
-
-function toDegrees (angle) {
-  return angle * (180 / Math.PI);
-}
-
-function toRadians (angle) {
-  return angle * (Math.PI / 180);
-}
 
 function driveCar(car) {
 
@@ -515,18 +337,19 @@ function driveCar(car) {
   var turnpercent = Math.abs(car.turnvelocity) / 4;
   var speedpercent = car.speed / car.maxspeed;
 
-  if(car.currentx != car.nextx || car.currenty != car.nexty){
+  if(leaveSkids) {
+    if(car.currentx != car.nextx || car.currenty != car.nexty){
+      var averagepercent = (speedpercent + turnpercent) / 2 * 100;
+      var jam  = -75 + averagepercent;
+      var opacity = jam/25 * .1;
 
-    var averagepercent = (speedpercent + turnpercent) / 2 * 100;
-    var jam  = -75 + averagepercent;
-    var opacity = jam/25 * .1;
-
-    if(currentPosition == "road") {
-      ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
-      ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
-    } else {
-      ctx.fillStyle = "rgba(0,0,0,.05)";
-      ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
+      if(currentPosition == "road") {
+        ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
+        ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
+      } else {
+        ctx.fillStyle = "rgba(0,0,0,.05)";
+        ctx.fillRect(car.currentx * scaling, car.currenty * scaling, scaling, scaling);
+      }
     }
   }
 
@@ -537,43 +360,6 @@ function driveCar(car) {
     vol.gain.value = 0;
   }
 
-  // Trail shit
-  var adjacent = Math.cos(toRadians(car.angle + 180)) * car.speed;
-  var opposite = Math.sin(toRadians(car.angle - 180)) * car.speed;
-  var xxd = opposite;
-  var yyd = -1 * adjacent;
-
-  // Particles, need a starting spot
-  // And a destination spot
-  // A timeout
-  var leavetrails = false;
-
-  //always leave a trail
-  if((car.currentx != car.nextx || car.currenty != car.nexty) && leavetrails){
-    var trail = $("<div class='spark'></div>");
-    trail.height(scaling / 1).width(scaling / 1);
-    trail.css("left",car.showx).css("top",car.showy);
-    $(".track").append(trail);
-
-    setTimeout(function(el,x,y) { return function() {
-      el.css("transform","translateY("+ y * 20 +"px) translateX("+x * 20 +"px) scale(0)");
-     }; }(trail,xxd,yyd), 1);
-
-    setTimeout(function(el) { return function() { el.remove(); }; }(trail), 500);
-  }
-
-  //collisions
-
-  if(car.currentx != car.nextx || car.currenty != car.nexty){
-    for(var c in cars){
-      var othercar = cars[c];
-      if(othercar.id != car.id){
-        if(othercar.nextx == car.nextx && othercar.nexty == car.nexty){
-          // collideCars(car,othercar);
-        }
-      }
-    }
-  }
 
   var move = true;
 
@@ -638,7 +424,6 @@ function driveCar(car) {
   if(currentPosition == "finish" && car.angle > 180 && car.angle < 360){
     if(car.currentx != car.nextx) {
       race.finishLap(car);
-      car.laptime = 0;
     }
   }
 
@@ -648,13 +433,13 @@ function driveCar(car) {
     car.mode = "jumping";
   }
 
+
+
+  //Jump the car
+
   var jumpHeight = 0;
-
   if(car.mode == "jumping") {
-
     var maxHeight = car.jumpTotal / scaling;
-    //moon
-    // var maxHeight = car.jumpTotal / scaling * 10;
 
     if(car.jumpElapsed < car.jumpTotal /2) {
       jumpHeight = easeOutCubic(car.jumpElapsed + 1 , 0, maxHeight , car.jumpTotal/2);
@@ -664,42 +449,19 @@ function driveCar(car) {
 
     jumpHeight = jumpHeight * 15;
     car.jumpElapsed++; //moon
-    // car.jumpElapsed = car.jumpElapsed + .2;//moon
 
     if(car.jumpElapsed >= car.jumpTotal){
       car.mode = "normal";
     }
-
-  }
-
-  // use toFixed for the longer values to reduce decimal points
-
-  var update = {
-    "type" : "update",
-    "x": car.showx,
-    "y": car.showy,
-    "gas" : car.gas,
-    "driver" : car.driver,
-    "rotation" : car.angle,
-    "height" : jumpHeight,
-    "velocity" : car.speed,
-    "turnvelocity" : car.turnvelocity
-  }
-
-  try {
-    sockjs.send(JSON.stringify(update));
-  } catch(err) {
-
   }
 
   if(jumpHeight > 0){
     if(car.currentx != car.nextx || car.currenty != car.nexty){
-      var trail = $("<div class='trail'><div class='shadow'></div></div>");
+      var trail = $("<div class='trail'></div>");
+      trail.css("background",trailcolor || "#32a6dc")
       trail.height(scaling).width(scaling);
-
       trail.css("left",car.x * scaling).css("top",car.y * scaling);
       trail.css("transform","translateZ("+ jumpHeight +"px)");
-      trail.find(".shadow").css("transform","translateZ("+ -1 * jumpHeight +"px)");
       $(".track").prepend(trail);
       setTimeout(function(el) { return function() { el.remove(); }; }(trail), 400);
     }
@@ -709,126 +471,43 @@ function driveCar(car) {
   car.el.css("transform", "translateY("+car.showy+"px) translateX("+car.showx+"px)");
 
   //makes the body jump
-
   if(currentPosition == "overpass" && car.mode == "normal") {
     car.body.css("transform", "scale(1.1) rotateZ("+car.angle+"deg) translateZ("+jumpHeight+"px");
   } else {
     car.body.css("transform", " rotateZ("+car.angle+"deg) translateZ("+jumpHeight+"px");
   }
+
   car.shadow.css("transform", "rotateZ("+car.angle+"deg)");
 
-    if(ghostRecording){
+  //Ghost Stuff
 
-      ghostData.push({
-        "time" : race.laptime,
-        "x" : car.showx,
-        "y" : car.showy,
-        "angle" : car.angle
-      })
+  if(ghostRecording){
+    ghostData.push({
+      "time" : race.laptime,
+      "x" : car.showx,
+      "y" : car.showy,
+      "angle" : car.angle,
+      "jumpHeight" : jumpHeight
+    })
+  }
 
-    }
-
-    for(var i = ghostFrameIndex; i < ghostPlayData.length; i++){
+  if(ghostPlayData.length > 1) {
+    for(var i = ghostFrameIndex-1; i < ghostPlayData.length; i++){
       var frame = ghostPlayData[i];
-      if(frame.time >= race.laptime){
-        var thisFrame = frame;
-        ghostFrameIndex = i;
-        break;
-      }
-    }
-
-    if(thisFrame){
-      $(".ghost").css("left", thisFrame.x).css("top", thisFrame.y).css("transform","rotateZ("+thisFrame.angle+"deg)");
-    }
-
-  if(othercars){
-    updateGhostCars();
-  }
-
-}
-
-//This checks the playerStates and updates the cars accordingly....
-// Except - we need to drive this shit, not just 'update it'
-
-
-var xdelta;
-var lastrotation = 0;
-var ydelta;
-
-function updateGhostCars(){
-
-  for(var k in othercars){
-    var thisState = playerStates[k];
-
-      var c = othercars[k];
-
-      //If there is some new info, that we haven't seen yet.....
-      if(thisState){
-
-        c.x =             thisState.x;
-        c.y =             thisState.y;
-        c.turnvelocity =  thisState.turnvelocity;
-        c.driver =        thisState.driver;
-        c.velocity =      thisState.velocity;
-        c.rotation =      thisState.rotation;
-        c.gas =           thisState.gas;
-        c.height =        thisState.height || 0;
-
-        delete playerStates[k];
-
-      }
-
-      tick++;
-
-      // BUT IN THE MEANTIME IF WE DONT HAVE NEW DATA
-      // so lets calcualte it
-
-      c.rotation = parseInt(c.rotation) + parseInt(c.turnvelocity);
-
-      if(c.rotation > 360) {
-        c.rotation = c.rotation - 360;
-      }
-
-      if(c.rotation < 0){
-        c.rotation = c.rotation + 360;
-      }
-
-      if(c.gas == "on") {
-        c.velocity = c.velocity + .06;
-        if(c.velocity > 5) {
-          c.velocity = 5;
+      if(frame){
+        if(frame.time >= race.laptime){
+          var thisFrame = frame;
+          ghostFrameIndex = i;
+          break;
         }
       }
-
-      if(c.gas == "off") {
-        c.velocity = c.velocity - .06;
-        if(c.velocity < 0){
-          c.velocity = 0;
-        }
-      }
-
-      var opposite = Math.sin(toRadians(c.rotation)) * c.velocity;
-      var adjacent = Math.cos(toRadians(c.rotation)) * c.velocity;
-
-      var xd = opposite;
-      var yd = -1 * adjacent;
-
-      c.x = parseFloat(c.x) + xd;
-      c.y = parseFloat(c.y) + yd;
-
-
-      if(c.height > 0){
-        c.shadow.show();
-      } else {
-        c.shadow.hide();
-      }
-
-      c.el.find(".name").text(c.driver);
-      c.el.find(".body").css("transform","rotateZ("+c.rotation+"deg");
-      c.shadow.css("transform","translateZ("+ -1 * c.height+"px)");
-      c.el.css("transform","translateX("+ c.x +"px) translateY("+c.y+"px) translateZ("+c.height+"px)");
+    }
   }
+
+  if(thisFrame){
+    $(".ghost").css("left", thisFrame.x).css("top", thisFrame.y).css("transform","rotateZ("+thisFrame.angle+"deg)");
+    $(".ghost").find(".body").css("transform", "translateZ("+ thisFrame.jumpHeight+"px)");
+  }
+  // end ghost stuff
+
 }
-
-
-
