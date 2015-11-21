@@ -1,5 +1,8 @@
 # pixelnode
 
+![screenshot.png](screenshot.png)
+
+
 ### Startup Instructions
 1. Run `npm install`.
 2. Copy `sample.env` to `.env`: `cp sample.env .env`.
