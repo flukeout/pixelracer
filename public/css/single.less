@@ -57,3 +57,47 @@
 
 
 }
+
+#track-editor-cursor {
+  display: none;
+
+  &.show {
+    display: block;
+  }
+
+  pointer-events: none;
+
+  .cube {
+    position: absolute;
+    transform-style: preserve-3d;
+    transform: translateZ(7px);
+
+    & > div {
+      margin: 0;
+      width: 16px;
+      height: 16px;
+      display: block;
+      position: absolute;
+      background: rgba(30, 200, 50, 0.3);
+
+      &.front  { transform: rotateY(   0deg ) translateZ( 7px ); }
+      &.back   { transform: rotateX( 180deg ) translateZ( 7px ); }
+      &.right  { transform: rotateY(  90deg ) translateZ( 7px ); }
+      &.left   { transform: rotateY( -90deg ) translateZ( 7px ); }
+      &.top    { transform: rotateX(  90deg ) translateZ( 7px ); }
+      &.bottom { transform: rotateX( -90deg ) translateZ( 7px ); }
+    }
+  }
+}
+
+#inspector {
+  display: none;
+  color: white;
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+
+  &.show {
+    display: block;
+  }
+}
