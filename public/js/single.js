@@ -529,6 +529,5 @@ window.startEditor = function () {
     var mapType = checkPosition(px, py) || '[none]';
     cursorCube.style.transform = 'translate3d(' + fixX + 'px, ' + fixY + 'px, 7px)';
     inspector.innerText = 'P: ' + px + ',' + py + ' => ' + mapType + '';
-    console.log();
   };
 };
