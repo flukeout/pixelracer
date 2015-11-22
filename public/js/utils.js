@@ -260,6 +260,11 @@ function spawnCar(car){
   console.log("spawnCar() - spawning individual car");
   car.angle = 270;
   var random = Math.floor(Math.random() * trackData.startPositions.length);
+
+  car.body.css("background",trackData.carcolors[0]);
+  car.nameEl.css("color",trackData.carcolors[0]);
+  car.trailColor = trackData.trailcolor;
+
   car.x = trackData.startPositions[random].x + 2;
   car.y = trackData.startPositions[random].y;
   car.showx = car.x * scaling;
@@ -286,7 +291,6 @@ function driveCar(car) {
   }
 
   var speedchange = car.acceleration;
-
   var frameAdjuster = 16.67 / delta;
 
   speedchange = speedchange * frameAdjuster;
