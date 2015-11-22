@@ -131,7 +131,6 @@ var race = {
   }
 }
 
-
 function prepareRandomTrack(){
   console.log("prepareRandomTrack() - picks a track at random and loads it");
 
@@ -142,7 +141,6 @@ function prepareRandomTrack(){
 
   var randomIndex = Math.floor(Math.random() * tracknames.length);
   var trackName = tracknames[randomIndex];
-  // var trackName = "moon.png";
   trackData = trackList[trackName];
 
   prepareTrack(trackData.filename);
@@ -186,14 +184,16 @@ function gameLoop() {
   }
 
   if(thisFrame){
+    $(".ghost").show();
     $(".ghost").css("left", thisFrame.x).css("top", thisFrame.y).css("transform","rotateZ("+thisFrame.angle+"deg)");
     $(".ghost").find(".body").css("transform", "translateZ("+ thisFrame.jumpHeight+"px)");
-
     if(thisFrame.jumpHeight > 0){
       $(".ghost").find(".shadow").show();
     } else {
       $(".ghost").find(".shadow").hide();
     }
+  } else {
+    $(".ghost").hide();
   }
   // end ghost stuff
 
