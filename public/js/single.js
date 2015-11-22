@@ -86,7 +86,6 @@ var race = {
           $(".delta-time").hide();
         }; }(this), 1000);
 
-
     }
 
     var timeString = "";
@@ -143,7 +142,7 @@ function prepareRandomTrack(){
 
   var randomIndex = Math.floor(Math.random() * tracknames.length);
   var trackName = tracknames[randomIndex];
-  var trackName = "oval.png";
+  // var trackName = "moon.png";
   trackData = trackList[trackName];
 
   prepareTrack(trackData.filename);
@@ -168,7 +167,7 @@ function gameLoop() {
       "x" : keyboardcar.showx,
       "y" : keyboardcar.showy,
       "angle" : keyboardcar.angle,
-      "jumpHeight" : 0 //fix that up yo, give it to the car
+      "jumpHeight" : car.jumpHeight
     })
   }
 
@@ -189,6 +188,12 @@ function gameLoop() {
   if(thisFrame){
     $(".ghost").css("left", thisFrame.x).css("top", thisFrame.y).css("transform","rotateZ("+thisFrame.angle+"deg)");
     $(".ghost").find(".body").css("transform", "translateZ("+ thisFrame.jumpHeight+"px)");
+
+    if(thisFrame.jumpHeight > 0){
+      $(".ghost").find(".shadow").show();
+    } else {
+      $(".ghost").find(".shadow").hide();
+    }
   }
   // end ghost stuff
 

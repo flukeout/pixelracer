@@ -37,16 +37,12 @@ var trackList = {
     filename : "moon.png",
     carcolors : ["#ffffff"],
     trailcolor : "#32a6dc",
-    laps : 5,
-    leaveSkids : true,
+    leaveSkids : false,
+    lapt : 0,
     hexes : {
-      "#5a5a5a" : "road",
-      "#8fcf4b" : "grass",
-      "#f1aa22" : "turbo",
-      "#2194ca" : "water",
-      "#6ba52d" : "tree",
+      "#d6c550" : "road",
       "#ffffff" : "finish",
-      "#d4c921" : "jump"
+      "#b0a13c" : "jump"
     }
   },
   "twitter.png" : {
