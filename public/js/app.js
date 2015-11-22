@@ -231,6 +231,7 @@ var race = {
 
 
     //Sort results by totalpoints!
+    // console.log(standings);
 
     playerStandings.sort(function(x,y){
       if(x.totalPoints > y.totalPoints){
