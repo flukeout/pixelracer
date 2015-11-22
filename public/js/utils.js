@@ -314,7 +314,6 @@ function driveCar(car) {
 
   // Rate at which the car turns
   var turnspeed = car.maxspeed - 1;
-
   var turning = true;
 
   if(car.mode == "jumping" || car.mode == "frozen") {
@@ -344,9 +343,15 @@ function driveCar(car) {
     } else if (car.direction == "none" || car.wheelturn == 0) {
       if(car.turnvelocity > 0) {
         car.turnvelocity = car.turnvelocity - turnchange;
+        if(car.turnvelocity < 0){
+          car.turnvelocity = 0;
+        }
       }
       if(car.turnvelocity < 0 ){
         car.turnvelocity = car.turnvelocity + turnchange;
+        if(car.turnvelocity > 0){
+          car.turnvelocity = 0;
+        }
       }
     } else if (Math.abs(car.wheelturn) > 0) {
       car.turnvelocity = car.turnvelocity + turnchange;
@@ -357,6 +362,7 @@ function driveCar(car) {
     }
 
     car.angle = car.angle + car.turnvelocity;
+
     if(car.angle > 360) {
       car.angle = car.angle - 360;
     }
