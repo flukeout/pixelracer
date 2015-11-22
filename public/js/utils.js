@@ -46,12 +46,12 @@ function audioStuff(){
   oscillator.connect(vol);
   oscillator.type = 'square';
   oscillator.frequency.value = 1200; // value in hertz
-  oscillator.start(0);
+  // oscillator.start(0);
 
   sine = context.createOscillator();
   sine.type = 'square';
   sine.frequency.value = 20;
-  sine.start(0);
+  // sine.start(0);
 
   var sineGain = context.createGain();
   sineGain.gain.value = 10;
@@ -69,13 +69,13 @@ function audioStuff(){
   engine.connect(enginevol);
   engine.type = 'sine';
   engine.frequency.value = 440; // value in hertz
-  engine.start(0);
+  // engine.start(0);
 
 
   enginesine = context.createOscillator();
   enginesine.type = 'sine';
   enginesine.frequency.value = 40;
-  enginesine.start(0);
+  // enginesine.start(0);
 
   var sineGainba = context.createGain();
   sineGainba.gain.value = 400;
@@ -265,6 +265,8 @@ function spawnCar(car){
   car.nameEl.css("color",trackData.carcolors[0]);
   car.trailColor = trackData.trailcolor;
 
+  $(".ghost").find(".body").css("background",trackData.carcolors[0]);
+
   car.x = trackData.startPositions[random].x + 2;
   car.y = trackData.startPositions[random].y;
   car.showx = car.x * scaling;
@@ -330,7 +332,6 @@ function driveCar(car) {
 
   var turnchange = car.turnacceleration * frameAdjuster;
 
-  if(turning) {
     if(car.direction == "right" || car.direction == "left"){
       if(car.direction == "left") {
         car.turnvelocity = car.turnvelocity - turnchange;
@@ -365,7 +366,9 @@ function driveCar(car) {
       }
     }
 
-    car.angle = car.angle + car.turnvelocity;
+    if(turning) {
+      car.angle = car.angle + car.turnvelocity;
+    }
 
     if(car.angle > 360) {
       car.angle = car.angle - 360;
@@ -374,7 +377,7 @@ function driveCar(car) {
       car.angle = car.angle + 360;
     }
 
-  }
+
 
   // END TURNING
 
