@@ -1,5 +1,3 @@
-
-
 $(document).ready(function(){
 
   race.startTrial();
@@ -81,10 +79,14 @@ var race = {
     if(this.currentlap == 0) {
       this.updateTime = true;
     } else {
-      setTimeout(function(){
-        this.updateTime = true;
-        $(".delta-time").hide();
-      },1000);
+
+      setTimeout(function(t) {
+        return function() {
+          t.updateTime = true;
+          $(".delta-time").hide();
+        }; }(this), 1000);
+
+
     }
 
     var timeString = "";
@@ -140,7 +142,9 @@ function prepareRandomTrack(){
   }
 
   var randomIndex = Math.floor(Math.random() * tracknames.length);
-  trackData = trackList[tracknames[randomIndex]];
+  var trackName = tracknames[randomIndex];
+  var trackName = "oval.png";
+  trackData = trackList[trackName];
 
   prepareTrack(trackData.filename);
 }
