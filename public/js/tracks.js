@@ -63,6 +63,7 @@ var trackList = {
     laps : 6,
     leaveSkids : true,
     hexes : {
+      "#4c4a4a" : "road",
       "#5a5a5a" : "road",
       "#8fcf4b" : "grass",
       "#f1aa22" : "turbo",
