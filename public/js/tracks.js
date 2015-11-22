@@ -72,7 +72,7 @@ var trackList = {
       "#6ba52d" : "tree",
       "#ffffff" : "finish",
       "#a9a9a9" : "ledge",
-      "#373737" : "overpass",
+      "#747474" : "overpass",
       "#7dba3d" : "lamp",
       "#d4c921" : "jump"
     }
