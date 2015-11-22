@@ -86,8 +86,8 @@ canvas.track-source {
   height: 1px;
   width: 1px;
   position: absolute;
-
-  opacity: .4;
+  background: #32a6dc;
+  opacity: .25;
   transform-style: preserve-3d;
 }
 
@@ -101,14 +101,10 @@ canvas.track-source {
   border-radius: 50%;
 }
 
-
-
-
 .place {
   height: 15px;
   width: 15px;
   position: absolute;
-  // background: pink;
   opacity: .4;
 }
 
@@ -509,8 +505,95 @@ canvas.track-source {
 }
 
 .bottom-stuff {
-  position: absolute;
+  position: fixed;
   width: 100%;
   bottom: 50px;
 }
 
+.stats-wrapper {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  top: 0;
+  background: rgba(0,0,0,.9);
+  display: none;
+  z-index: 99999;
+
+  h2 {
+    margin: 0 0 30px 0;
+    font-size: 18px;
+  }
+
+  .details {
+    margin-bottom: 40px;
+    opacity: .6;
+  }
+
+  .stats {
+    text-align: left;
+    margin: 0 auto;
+
+    padding:35px;
+    color: white;
+    width: 500px;
+  }
+
+  .lap-stats {
+    .fastest-lap, .slowest-lap {
+      overflow: auto;
+      margin-bottom: 20px;
+      font-size: 18px;
+      h3 {
+        float: left;
+        margin: 0;
+        font-size: 18px;
+        width: 180px;
+      }
+    }
+
+    .fastest-lap h3 {
+      color: #84bc2c;
+    }
+
+    .slowest-lap h3 {
+      color: #cf451a;
+    }
+
+    .driver,.time {
+      opacity: .6;
+    }
+
+    .driver {
+      float: left;
+    }
+
+    .time {
+      float: right;
+    }
+
+  }
+
+  .detail {
+    font-size: 18px;
+    border-bottom: solid 3px rgba(255,255,255,.4);
+    padding: 15px 0;
+    overflow: auto;
+
+    .name {
+      float: left;
+    }
+
+    .position {
+      float: left;
+    }
+
+    .points {
+      float: right;
+    }
+
+    &:last-child {
+      border: none;
+    }
+  }
+
+}

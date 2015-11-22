@@ -1,5 +1,16 @@
+* BUG on server
+  * Race finishes too soon...
+
+* playerStats needs to know the name of the players
+
+* checkPosition should only fire if we're in a new x,y - not every frame at the start of driveCar
+* we should wait until the track is fully loaded and has startpositions before trying to add cars
+
+
+* Make it not depend on a 15x scaling?
+
 BUGS
-* The flex display is messing with the track sizing.. make sure you enforce a minimum and maximum
+* The flex display is messing with the track sizing.. make sure you enforce a minimum and maximum <- (K)
 
 TILES
 * LAVA (explode and respawn)
@@ -11,11 +22,16 @@ MULTIPLAYER FEATURES
 + add an indicator for who won the race
 + perfect lap..
 
+MULTIPLAYER STATS
+* position + points
+* slowest lap
+* fastest lap
+* perfect lap count
+* track record?
 
 * Add intro screen
 * Add a singleplayer / ghost mode alongside the multiplayer
 * Add a way to change your car color
-
 
 SINGLE PLAYER
 * Pick a track, race your ghost

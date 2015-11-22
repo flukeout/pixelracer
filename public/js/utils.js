@@ -1,23 +1,23 @@
-var hexes = {
-  "#000000" : "road",
-  "#5a5a5a" : "road",
-  "#8fcf4b" : "grass",
-  "#f1aa22" : "turbo",
-  "#b97d37" : "windmill",
-  "#2194ca" : "water",
-  "#6ba52d" : "tree",
-  "#ffffff" : "finish",
-  "#a9a9a9" : "ledge",
-  "#373737" : "overpass",
-  "#7dba3d" : "lamp",
-  "#d4c921" : "jump"
-}
-
+var scaling = 15;
 var othercars = {};
-var startpositions = [];
+var ctx, oscillator,sine,vol;
+var cars = [];
+var keyboardcar;
+var enginevol;
+var time, delta, elapsedTime; //keep track of time between laps
+var canvasTrack, context, trackHeight, trackWidth; //Need to revisit where these gos
+var trackData = {};
 
+// filename
+// carcolors
+// trailcolor
+// leaveskids
+// hexes
+// startPositions - added by prepareTrack()
+// laps
 
 function showMessage(message){
+  console.log("showMessage() - " + message);
   $(".game-message").css("opacity",1);
 
   setTimeout(function(){
@@ -31,11 +31,9 @@ function showMessage(message){
   setTimeout(function(){
     $(".game-message").css("opacity",0);
   },2000);
-
 }
 
 
-var enginevol;
 function audioStuff(){
   // create web audio api context
   var context = new AudioContext();
@@ -48,12 +46,12 @@ function audioStuff(){
   oscillator.connect(vol);
   oscillator.type = 'square';
   oscillator.frequency.value = 1200; // value in hertz
-  // oscillator.start(0);
+  oscillator.start(0);
 
   sine = context.createOscillator();
   sine.type = 'square';
   sine.frequency.value = 20;
-  // sine.start(0);
+  sine.start(0);
 
   var sineGain = context.createGain();
   sineGain.gain.value = 10;
@@ -71,13 +69,13 @@ function audioStuff(){
   engine.connect(enginevol);
   engine.type = 'sine';
   engine.frequency.value = 440; // value in hertz
-  // engine.start(0);
+  engine.start(0);
 
 
   enginesine = context.createOscillator();
   enginesine.type = 'sine';
   enginesine.frequency.value = 40;
-  // enginesine.start(0);
+  enginesine.start(0);
 
   var sineGainba = context.createGain();
   sineGainba.gain.value = 400;
@@ -85,9 +83,6 @@ function audioStuff(){
   enginesine.connect(sineGainba); //connecxts the sine wave to the gain
   sineGainba.connect(engine.frequency);
 }
-
-
-
 
 
 function trackAnimation(){
@@ -98,10 +93,8 @@ function trackAnimation(){
   },200);
 }
 
-var tracks = ["moon.png","twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
+// var tracks = ["moon.png","twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
 // var tracks = ["floppy.png"];
-
-
 
 
 function prepareTrack(level){
@@ -142,16 +135,14 @@ function prepareTrack(level){
     // coin.css("left", scaling * 5);
     // coin.css("top", scaling * 5);
 
-    race.startPositions = [];
-    startpositions = [];
+    trackData.startPositions = [];
 
     for(var i = 0; i < parseInt(trackWidth); i++){
       for(var j = 0; j < parseInt(trackHeight); j++){
         var result = checkPosition(i,j);
 
         if(result == "finish"){
-          race.startPositions.push({"x": i, "y" : j});
-          startpositions.push({"x": i, "y" : j});
+          trackData.startPositions.push({"x": i, "y" : j});
         }
 
         if(result == "lamp"){
@@ -197,125 +188,6 @@ function getCar(id){
   return foundcar;
 }
 
-
-function newCar(id){
-
-  var car = {
-    id : id,
-    x : 20,
-    y : 14,
-    name : name,
-    showx : 410,
-    showy : 230,
-    laps : 0,
-    wheelturn : false,
-    maxspeed : 5,
-    direction : "none",
-    speed : 0,
-    bestlap : 0,
-    laptime: 0,
-    mode: "normal",
-    startspeed: 0,
-    height: 0,
-    driver : "Bob",
-    jumpDirection: "up",
-    jumpHeight: 0,
-    jumpLength: 0,
-    jumpElapsed: 0,
-    jumpTotal: 0,
-    angle: 270,
-    currentx : 0,
-    currenty :0,
-    nextx :0,
-    acceleration : .06,
-    turnacceleration: .5, //.5
-    nexty : 0,
-    turnvelocity : 0,
-    gas : "off",
-    left : "off",
-    right : "off"
-  };
-
-  //Limit the driver name to 3 uppercase letters
-  car.changeDriver = function(name){
-    car.driver = name.substr(0,3).toUpperCase();
-    car.el.find(".name").text(car.driver);
-    $(".driver-name").val(car.driver);
-  }
-
-  car.setDirection = function(action, direction){
-
-    if(action == "steering") {
-
-      if(direction == "right-on"){
-        this.right = "on";
-        if(this.direction == "none") {
-          this.direction = "right";
-        } else if (this.direction == "left") {
-          this.direction = "none";
-        }
-      }
-
-      if(direction == "right-off"){
-        this.right = "off";
-        if(this.left == "on") {
-          this.direction = "left";
-        } else {
-          this.direction = "none";
-        }
-      }
-
-
-      if(direction == "left-on"){
-        this.left = "on";
-        if(this.direction == "none") {
-          this.direction = "left";
-        } else if (this.direction == "right") {
-          this.direction = "none";
-        }
-      }
-
-      if(direction == "left-off"){
-        this.left = "off";
-        if(this.right == "on") {
-          this.direction = "right";
-        } else {
-          this.direction = "none";
-        }
-      }
-
-    }
-
-    if(action == "gas"){
-      this.gas = direction;
-    }
-
-  }
-
-  car.el = $("<div class='car'><div class='name'>" + car.name + "</div></div>");
-  car.el.width(scaling);
-  car.el.height(scaling);
-
-  $(".track").append(car.el)
-
-  var shadow = $("<div class='shadow'></div>");
-  car.shadow = shadow;
-
-  var body = $("<div class='body'></div>");
-  car.body = body;
-
-  var randomColor = Math.floor(Math.random() * carcolors.length);
-  car.body.css("background",carcolors[randomColor]);
-
-  car.el.append(shadow);
-  car.el.append(body);
-
-  car.history = new Array();
-
-  return car;
-}
-
-
 function easeOutCubic(currentIteration, startValue, changeInValue, totalIterations) {
 	return changeInValue * (Math.pow(currentIteration / totalIterations - 1, 3) + 1) + startValue;
 }
@@ -327,8 +199,7 @@ function easeInCubic(currentIteration, startValue, changeInValue, totalIteration
 function checkPosition(x,y){
   var p = context.getImageData(x, y, 1, 1).data;
   var hex = "#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6);
-  // $("body").css("background",hex);
-  return hexes[hex];
+  return trackData.hexes[hex];
 }
 
 function rgbToHex(r, g, b) {
@@ -338,125 +209,8 @@ function rgbToHex(r, g, b) {
 }
 
 
-function newCar(id){
-
-  var car = {
-    id : id,
-    x : 20,
-    y : 14,
-    name : name,
-    showx : 410,
-    showy : 230,
-    laps : 0,
-    wheelturn : false,
-    maxspeed : 5,
-    direction : "none",
-    speed : 0,
-    bestlap : 0,
-    laptime: 0,
-    mode: "normal",
-    startspeed: 0,
-    height: 0,
-    driver : "Bob",
-    jumpDirection: "up",
-    jumpHeight: 0,
-    jumpLength: 0,
-    jumpElapsed: 0,
-    jumpTotal: 0,
-    angle: 270,
-    currentx : 0,
-    currenty :0,
-    nextx :0,
-    acceleration : .06,
-    turnacceleration: .5, //.5
-    nexty : 0,
-    turnvelocity : 0,
-    gas : "off",
-    left : "off",
-    right : "off"
-  };
-
-  //Limit the driver name to 3 uppercase letters
-  car.changeDriver = function(name){
-    car.driver = name.substr(0,3).toUpperCase();
-    car.el.find(".name").text(car.driver);
-    $(".driver-name").val(car.driver);
-  }
-
-  car.setDirection = function(action, direction){
-
-    if(action == "steering") {
-
-      if(direction == "right-on"){
-        this.right = "on";
-        if(this.direction == "none") {
-          this.direction = "right";
-        } else if (this.direction == "left") {
-          this.direction = "none";
-        }
-      }
-
-      if(direction == "right-off"){
-        this.right = "off";
-        if(this.left == "on") {
-          this.direction = "left";
-        } else {
-          this.direction = "none";
-        }
-      }
-
-
-      if(direction == "left-on"){
-        this.left = "on";
-        if(this.direction == "none") {
-          this.direction = "left";
-        } else if (this.direction == "right") {
-          this.direction = "none";
-        }
-      }
-
-      if(direction == "left-off"){
-        this.left = "off";
-        if(this.right == "on") {
-          this.direction = "right";
-        } else {
-          this.direction = "none";
-        }
-      }
-
-    }
-
-    if(action == "gas"){
-      this.gas = direction;
-    }
-
-  }
-
-  car.el = $("<div class='car'><div class='name'>" + car.name + "</div></div>");
-  car.el.width(scaling);
-  car.el.height(scaling);
-
-  $(".track").append(car.el)
-
-  var shadow = $("<div class='shadow'></div>");
-  car.shadow = shadow;
-
-  var body = $("<div class='body'></div>");
-  car.body = body;
-
-  var randomColor = Math.floor(Math.random() * carcolors.length);
-  car.body.css("background",carcolors[randomColor]);
-
-  car.el.append(shadow);
-  car.el.append(body);
-
-  car.history = new Array();
-
-  return car;
-}
-
-
 function tiltTrack(){
+
   //Tilts the track according to where all the cars are
 
   var xtotal = 0;
@@ -498,12 +252,409 @@ function spawnCars(){
   console.log("spawnCars() - placing cars near start line");
   for(var c in cars) {
     var car = cars[c];
-    car.angle = 270;
-    var random = Math.floor(Math.random() * startpositions.length);
-    car.x = startpositions[random].x + 2;
-    car.y = startpositions[random].y;
-    car.showx = car.x * scaling;
-    car.showy = car.y * scaling;
-    car.el.find(".name").remove();
+    spawnCar(car);
   }
+}
+
+function spawnCar(car){
+  console.log("spawnCar() - spawning individual car");
+  car.angle = 270;
+  var random = Math.floor(Math.random() * trackData.startPositions.length);
+  car.x = trackData.startPositions[random].x + 2;
+  car.y = trackData.startPositions[random].y;
+  car.showx = car.x * scaling;
+  car.showy = car.y * scaling;
+}
+
+function driveCar(car) {
+
+  car.x = Math.round(car.showx / scaling);
+  car.y = Math.round(car.showy / scaling);
+
+  //If nothing comes up - it's 'grass' - meaning slow..........
+  // we should only do this, in case it's different from the last one...
+
+  var currentPosition = checkPosition(car.x,car.y) || "grass";
+
+  // SPEED
+  if(currentPosition == "turbo") {
+    car.speed = car.speed + 4;
+  }
+
+  if(car.speed > 10){
+    car.speed = 10;
+  }
+
+  var speedchange = car.acceleration;
+
+  var frameAdjuster = 16.67 / delta;
+
+  speedchange = speedchange * frameAdjuster;
+
+  // If gas is on, make it faster - otherwise slow it down
+
+  if(car.gas == "on" && car.speed <= car.maxspeed) {
+    car.speed = car.speed + speedchange;
+  } else if (car.mode == "jumping") {
+    //no change to car speed
+  }
+  else {
+    car.speed = car.speed - speedchange;
+  }
+
+  if(car.speed > car.maxspeed) {
+    car.speed = car.speed - speedchange;
+  }
+
+  if(car.speed < 0){
+    car.speed = 0;
+  }
+
+  // CAR TURNING
+
+  // Rate at which the car turns
+  var turnspeed = car.maxspeed - 1;
+
+  var turning = true;
+
+  if(car.mode == "jumping" || car.mode == "frozen") {
+    turning = false;
+  }
+
+  if(currentPosition == "water"){
+    turnspeed = turnspeed / 3;
+  }
+
+  var turnchange = car.turnacceleration * frameAdjuster;
+
+  if(turning) {
+    if(car.direction == "right" || car.direction == "left"){
+      if(car.direction == "left") {
+        car.turnvelocity = car.turnvelocity - turnchange;
+        if(Math.abs(car.turnvelocity) > turnspeed){
+          car.turnvelocity = -1 * turnspeed;
+        }
+      }
+      if(car.direction == "right") {
+        car.turnvelocity = car.turnvelocity + turnchange;
+        if(car.turnvelocity > Math.abs(turnspeed)){
+          car.turnvelocity = turnspeed;
+        }
+      }
+    } else if (car.direction == "none" || car.wheelturn == 0) {
+      if(car.turnvelocity > 0) {
+        car.turnvelocity = car.turnvelocity - turnchange;
+      }
+      if(car.turnvelocity < 0 ){
+        car.turnvelocity = car.turnvelocity + turnchange;
+      }
+    } else if (Math.abs(car.wheelturn) > 0) {
+      car.turnvelocity = car.turnvelocity + turnchange;
+      turnspeed = turnspeed * car.wheelturn;
+      if(car.turnvelocity > turnspeed){
+        car.turnvelocity = turnspeed;
+      }
+    }
+
+    car.angle = car.angle + car.turnvelocity;
+    if(car.angle > 360) {
+      car.angle = car.angle - 360;
+    }
+    if(car.angle < 0){
+      car.angle = car.angle + 360;
+    }
+
+  }
+
+  // END TURNING
+
+
+  // CAR POSITION
+
+  var adjacent = Math.cos(toRadians(car.angle)) * car.speed;
+  var opposite = Math.sin(toRadians(car.angle)) * car.speed;
+  var xd = opposite;
+  var yd = -1 * adjacent;
+
+  car.nextx = Math.round((car.showx + xd) / scaling);
+  car.nexty = Math.round((car.showy + yd) / scaling);
+
+  var nextPosition = checkPosition(car.nextx,car.nexty);
+
+  // CAR SKIDS
+
+  // Leave a skid mark on the track
+  // If it's on the road - then depends on speed and turning radius
+  // If it's not, then just rip it up a bit
+
+  var turnpercent = Math.abs(car.turnvelocity) / 4;
+  var speedpercent = car.speed / car.maxspeed;
+
+  if(trackData.leaveSkids) {
+    if(car.x != car.nextx || car.y != car.nexty){
+      var averagepercent = (speedpercent + turnpercent) / 2 * 100;
+      var jam  = -75 + averagepercent;
+      var opacity = jam/25 * .1;
+
+      if(currentPosition == "road") {
+        ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
+        ctx.fillRect(car.x * scaling, car.y * scaling, scaling, scaling);
+      } else {
+        ctx.fillStyle = "rgba(0,0,0,.05)";
+        ctx.fillRect(car.x * scaling, car.y * scaling, scaling, scaling);
+      }
+    }
+  }
+
+  // CAR SKID SOUND
+
+  //Controls the Skidding volume oscillator, which is always on
+  if(turnpercent == 1 && speedpercent > .5) {
+    vol.gain.value = .012 * turnpercent || 0;
+  } else {
+    vol.gain.value = 0;
+  }
+
+
+  var move = true;
+
+  if(car.mode == "frozen"){
+    move = false;
+  }
+
+  $(".place").css("left",car.x * scaling).css("top",car.y * scaling);
+
+  if(currentPosition == "grass" && car.mode != "jumping"){
+    if(car.speed > 1){
+      car.speed = 1;
+    }
+  }
+
+  if(car.mode == "normal") {
+    if(currentPosition == "overpass" && nextPosition == "ledge" ) {
+      move = false;
+    }
+    if(currentPosition == "road" && nextPosition == "ledge" ) {
+      car.mode = "under";
+    }
+  } else if (car.mode == "under") {
+    if(currentPosition == "overpass" && nextPosition == "road"){
+      move = false;
+    }
+    if(currentPosition == "ledge" && nextPosition == "road") {
+      car.mode = "normal";
+    }
+    if(currentPosition == "ledge" && nextPosition == "grass") {
+      move = false;
+    }
+  }
+
+  if(move){
+    car.showx = car.showx + xd;
+    car.showy = car.showy + yd;
+  } else {
+    car.speed = 1;
+  }
+
+  // CAR ENGINE
+
+  var maxfq = 800;
+  var minfq = 400;
+
+  if(car.mode == "jumping"){
+    maxfq = 0;
+  }
+
+  var frequency = minfq + ((car.speed/car.maxspeed) * (maxfq - minfq));
+
+  enginesine.frequency.value = frequency / 10;
+  engine.frequency.value = frequency;
+
+  car.el.attr("mode",car.mode);
+
+  if(currentPosition == "finish" && car.angle > 180 && car.angle < 360){
+    if(car.x != car.nextx) {
+      car.laps++;
+      race.finishLap(car);
+      car.laptime = 0;
+    }
+  }
+
+  if(car.mode == "normal" && currentPosition == "jump" && car.speed > 1) {
+    car.jumpElapsed = 0;
+    car.jumpTotal = car.speed * scaling / 2.5 ;//jump distance relative to speed
+    car.mode = "jumping";
+  }
+
+  //Jump the car
+
+  car.jumpHeight = 0;
+
+  if(car.mode == "jumping") {
+    var maxHeight = car.jumpTotal / scaling;
+
+    if(car.jumpElapsed < car.jumpTotal /2) {
+      car.jumpHeight = easeOutCubic(car.jumpElapsed + 1 , 0, maxHeight , car.jumpTotal/2);
+    } else {
+      car.jumpHeight = easeInCubic(car.jumpElapsed - car.jumpTotal/2, maxHeight, -1 * maxHeight, car.jumpTotal/2);
+    }
+
+    car.jumpHeight = car.jumpHeight * scaling;
+    car.jumpElapsed++; //moon
+
+    if(car.jumpElapsed >= car.jumpTotal){
+      car.mode = "normal";
+    }
+  }
+
+  // CAR JUMP TRAIL
+  if(car.jumpHeight > 0){
+    if(car.x != car.nextx || car.y != car.nexty){
+      var trail = $("<div class='trail'></div>");
+      trail.css("background",car.trailColor || "#32a6dc")
+      trail.height(scaling).width(scaling);
+      trail.css("left",car.x * scaling).css("top",car.y * scaling);
+      trail.css("transform","translateZ("+ car.jumpHeight +"px)");
+      $(".track").prepend(trail);
+      setTimeout(function(el) { return function() { el.remove(); }; }(trail), 400);
+    }
+  }
+
+  // moves the car holder
+  car.el.css("transform", "translateY("+car.showy+"px) translateX("+car.showx+"px)");
+
+  //makes the body jump
+  if(currentPosition == "overpass" && car.mode == "normal") {
+    car.body.css("transform", "scale(1.1) rotateZ("+car.angle+"deg) translateZ("+car.jumpHeight+"px");
+  } else {
+    car.body.css("transform", " rotateZ("+car.angle+"deg) translateZ("+car.jumpHeight+"px");
+    car.nameEl.css("transform", "translateZ("+ parseInt(38 + car.jumpHeight) + "px) rotateX(-70deg)");
+  }
+
+  car.shadow.css("transform", "rotateZ("+car.angle+"deg)");
+}
+
+function newCar(id,config){
+
+  var carconfig = config || {};
+
+  var car = {
+    id : id,
+    x : 0,
+    y : 0,
+    showx : 410,
+    showy : 230,
+    nextx :0,
+    nexty : 0,
+    mode: "normal",
+    driver : "Bob",
+    showname : true,
+    laps : 0,
+    wheelturn : false,
+    maxspeed : 5,
+    direction : "none",
+    speed : 0,
+    trailColor : "#ffffff",
+    bestlap : 0,
+    laptime: 0,
+    height: 0,
+    jumpElapsed: 0,
+    jumpTotal: 0,
+    jumpHeight : 0,
+    angle: 270,
+    acceleration : .06,
+    turnacceleration: .5,
+    turnvelocity : 0, // Max turn per frame
+    gas : "off",
+    left : "off",
+    right : "off"
+  };
+
+  // Updates car defaults based on what is passed in
+  for(var key in carconfig){
+    car[key] = carconfig[key];
+  }
+
+  //Limit the driver name to 3 uppercase letters
+  car.changeDriver = function(name){
+    car.driver = name.substr(0,3).toUpperCase();
+    car.el.find(".name").text(car.driver);
+    $(".driver-name").val(car.driver);
+  }
+
+  car.setDirection = function(action, direction){
+
+    if(action == "steering") {
+
+      if(direction == "right-on"){
+        this.right = "on";
+        if(this.direction == "none") {
+          this.direction = "right";
+        } else if (this.direction == "left") {
+          this.direction = "none";
+        }
+      }
+
+      if(direction == "right-off"){
+        this.right = "off";
+        if(this.left == "on") {
+          this.direction = "left";
+        } else {
+          this.direction = "none";
+        }
+      }
+
+      if(direction == "left-on"){
+        this.left = "on";
+        if(this.direction == "none") {
+          this.direction = "left";
+        } else if (this.direction == "right") {
+          this.direction = "none";
+        }
+      }
+
+      if(direction == "left-off"){
+        this.left = "off";
+        if(this.right == "on") {
+          this.direction = "right";
+        } else {
+          this.direction = "none";
+        }
+      }
+    }
+
+    if(action == "gas"){
+      this.gas = direction;
+    }
+  }
+
+  car.el = $("<div class='car'></div>");
+  car.el.width(scaling);
+  car.el.height(scaling);
+
+  $(".track").append(car.el)
+
+  var nameEl = $("<div class='name'>" + car.driver + "</div>");
+  car.nameEl = nameEl;
+
+  if(car.showname){
+    car.el.append(car.nameEl);
+  }
+
+  var shadow = $("<div class='shadow'></div>");
+  car.shadow = shadow;
+
+  var body = $("<div class='body'></div>");
+  car.body = body;
+
+  var randomColor = Math.floor(Math.random() * trackData.carcolors.length);
+
+  var chosenColor = trackData.carcolors[randomColor]
+
+  car.body.css("background", chosenColor);
+
+  car.el.append(shadow);
+  car.el.append(body);
+
+  return car;
 }

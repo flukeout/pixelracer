@@ -1,4 +1,3 @@
-
 var playerStates = {};
 
 sockjs.onopen = function(e) {
@@ -29,26 +28,10 @@ sockjs.onmessage = function(e) {
   //When someone else joins via a browser
   //Load all the existing cars into the othercars array
   if(details.type == "welcome") {
-    myid = message.id;
-    var car = newCar(message.id);
-    car.changeDriver("bob");
-    cars.push(car);
 
-    for(var i = 0; i < cars.length; i++){
-      if(cars[i].id == myid){
-        keyboardcar = cars[i];
-      }
-    }
-
-    for(var i = 0; i < details.othercars.length; i++){
-      addOtherCar(details.othercars[i]);
-    }
-
-    race.welcome(details);
+    race.welcome(details,message.id);
 
     // Load the track we got from the server
-    // Should be it's own thing though
-    prepareTrack(details.track);
 
   }
 
@@ -81,8 +64,13 @@ sockjs.onmessage = function(e) {
     race.updateLap(currentlap);
   }
 
-  // All of the modes
+  //If a player finished his or her race
+  if(details.type == "playerfinished") {
+    var player = message.message.player;
+    race.playerFinishedRace(player);
+  }
 
+  // All of the modes
   if(details.type == "startrace") {
     race.startRace(message.message.totallaps);
   }
@@ -93,7 +81,8 @@ sockjs.onmessage = function(e) {
 
   if(details.type == "raceover") {
     var winner = message.message.winner;
-    race.finishRace(winner);
+    var stats = message.message.stats;
+    race.finishRace(winner,stats);
   }
 
   if(details.type == "startcountdown") {

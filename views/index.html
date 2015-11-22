@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block script %}
+  <script src="/js/tracks.js"></script>
   <script src="/js/utils.js"></script>
   <script src="/js/app.js" type="text/javascript" charset="utf-8"></script>
   <script src="/js/multiplayer.js"></script>
@@ -20,26 +21,67 @@
     <div class="lap-wrapper">
       <div class="lap-info">
         <div>Lap <span class="lap-count"></span>/<span class="total-laps"></span></div>
-        <!-- <div class="lap-time-wrapper">
-          <span class="lap-time">0</span>
-        </div> -->
       </div>
       <div class="message"></div>
-      <!-- <div class="best-time-wrapper">
-        Best <span class="best-time">0</span>
-      </div> -->
     </div>
-      <!-- <div class="restart">(R)estart</div> -->
-      <!-- <div class="last-lap"></div> -->
   </div>
 
+
   <div class="track-wrapper">
-
     <div class="track">
-
-      <!-- <div class="ghost"></div> -->
       <canvas class="skids"></canvas>
-      <!-- <div class="place"></div> -->
+    </div>
+  </div>
+
+  <div class="stats-wrapper">
+    <div class="stats">
+
+      <div class="this-race">
+        <h1>Race Results</h1>
+        <div class="details">
+          <div class="detail">
+            <span class='position'>1.</span>
+            <span class='name'>BOB</span>
+            <span class='points'>+ 10 pts</span>
+          </div>
+          <div class="detail">
+            <span class='position'>2.</span>
+            <span class='name'>XXX</span>
+            <span class='points'>+ 5 pts</span>
+          </div>
+        </div>
+
+        <div class="lap-stats">
+          <div class="fastest-lap">
+            <h3>Best Lap</h3>
+            <span class="driver">BOB</span><span class="time">1.02</span>
+          </div>
+
+          <div class="slowest-lap">
+            <h3>Worst Lap</h3>
+            <span class="driver">BOB</span><span class="time">2.02</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="overall">
+
+        <h1>Overall<h1>
+        <div class="details">
+          <div class="detail">
+            <span class='position'>1.</span>
+            <span class='name'>BOB</span>
+            <span class='points'>10 pts</span>
+          </div>
+          <div class="detail">
+            <span class='position'>2.</span>
+            <span class='name'>XXX</span>
+            <span class='points'>5 pts</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     </div>
   </div>
 
