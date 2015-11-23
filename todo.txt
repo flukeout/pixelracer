@@ -1,14 +1,15 @@
-MULTIPLAYER
-
-* BUG - car stayed purple when it should have been white ..
-* BUG - car.place = 0, orders it 1st in the Race Summary, should replace it with DNF........ DNF
-* BUG - really dark skids when you run into a ledge..... .. . .. . .
-
-* Make it not depend on a 15x scaling?
+* Make it run through all the tracks on multiplayer, not random...
 
 BUGS
-* The flex display is messing with the track sizing.. make sure you enforce a minimum and maximum <- (K)
+ * BUG - other player ghost car was white on .noir jump
+ * BUG - wrong lap count shown before race
+ * More time after race is over and a player wins......
+ * BUG - car.place = 0, orders it 1st in the Race Summary, should replace it with DNF........ DNF
+ * BUG - really dark skids when you run into a ledge.....
 
+IMPROVEMENTS
+ * Make it not depend on a 15x scaling?
+ * The flex display is messing with the track sizing.. make sure you enforce a minimum and maximum <- (K)
 
 TILES
 * LAVA (explode and respawn)
@@ -28,7 +29,6 @@ MULTIPLAYER FEATURES
 SINGLE PLAYER
 * Pick a track, race your ghost
 
-
 SEND A GHOST
 + Send a lap challange... try to beat this lap time  pixelracer/ad3adb
 + slight decrease in top speed for each lap winner
@@ -39,17 +39,5 @@ SEND A GHOST
   + make it so that the input basically sends a new value when it's updated, not just
     wether it is on or off in absolute terms. yo.
 
-
-+ make it so the scaling depends on the viewport and not on a fixed value
-  + this will help with stuff
-
-
 + gamepad API
-
 + tilt car relative to winner
-
-
-+ should we build an array of all the x,y values of the track instead of
-sampling pixels?
-  + that way - we could add in power ups as well and could check against them.
-  + true enough, not just pixel values....

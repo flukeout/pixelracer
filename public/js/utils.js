@@ -617,8 +617,9 @@ function newCar(id,config){
     $(".driver-name").val(car.driver);
   }
 
-  //CHAT MESSAGE
+  //SHOW A CHAT MESSAGE
   car.showMessage = function(message){
+
     car.el.find(".name").css("opacity",0);
     var messageEl = $("<div class='message'>"+message+"</div>");
     car.el.prepend(messageEl);

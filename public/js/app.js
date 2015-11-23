@@ -120,6 +120,7 @@ var race = {
 
   },
   updateLap : function(lap){
+    //This is a received event???
     console.log("updateLap",lap);
 
     this.currentlap = lap;
@@ -174,7 +175,26 @@ var race = {
 
   },
   finishLap : function(car){
+    //Sends out an event when the car finishes a lap
+
     console.log("race.finishLap() " + car.laps);
+
+    if(car.laps <= this.totallaps + 1) {
+      var laptext = "Lap " + car.laps;
+      if(car.laps == this.totallaps){
+        laptext = "Final Lap";
+      } else if(car.laps >= this.totallaps){
+        laptext = "DONE!!";
+      }
+
+      car.showMessage(laptext);
+      var update = {
+        "driver" : car.driver,
+        "type" : "chat",
+        "text": laptext
+      }
+      sockjs.send(JSON.stringify(update));
+    }
 
     var update = {
       "type" : "finishlap",
@@ -210,6 +230,7 @@ var race = {
 
     var playerStandings = [];
 
+    //Check for slowest and fastest laps
     for(var key in stats){
       var player = stats[key];
 
@@ -221,6 +242,10 @@ var race = {
       if(player.worstlap > slowestlap.time){
         slowestlap.time = player.worstlap;
         slowestlap.driver = player.driver;
+      }
+
+      if(player.place == 0) {
+        player.place = 9999999;
       }
 
       playerStandings.push(player);
@@ -241,7 +266,12 @@ var race = {
     for(var i = 0; i < playerStandings.length; i++){
       var player = playerStandings[i];
       var details = $("<div class='detail'></div>");
-      details.append("<span class='position'>"+player.place+". </span>");
+
+      if(player.place == 9999999) {
+        player.place = "DNF";
+      }
+
+      details.append("<span class='position'>"+ player.place +". </span>");
       details.append("<span class='name'>"+player.driver+"</span>");
       details.append("<span class='points'>"+player.newPoints+" pts</span>");
       $(".stats-wrapper .this-race .details").append(details);
@@ -291,7 +321,6 @@ var race = {
 
 var chatting = false;
 
-
 function sendChat(message){
 
   var car = getCar(myid);
@@ -304,6 +333,7 @@ function sendChat(message){
   sockjs.send(JSON.stringify(update));
 
   car.showMessage(message);
+
   addChat(car.driver,message,myid);
 }
 
