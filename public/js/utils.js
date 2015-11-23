@@ -250,6 +250,8 @@ function spawnCars(){
     var car = cars[c];
     spawnCar(car);
   }
+
+
 }
 
 function spawnCar(car){
@@ -423,7 +425,7 @@ function driveCar(car) {
       if(opacity > .12){
         opacity = .12;
       }
-      if(car.currentPosition == "road") {
+      if(car.currentPosition == "road" || car.currentPosition == "overpass") {
         ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
         ctx.fillRect(car.x * scaling, car.y * scaling, scaling, scaling);
       } else {
@@ -482,6 +484,7 @@ function driveCar(car) {
   } else {
     car.speed = 1;
   }
+
 
   // CAR ENGINE
 
