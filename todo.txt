@@ -1,10 +1,15 @@
-* Make it run through all the tracks on multiplayer, not random...
+Better indicator of progress during a game?
+
+BOB -----|-----|-----|-----O
+LUK -----|-----|-----O
+TIM -----|-----O
+DIN -----|-----|-----O
+
+
 
 BUGS
  * BUG - other player ghost car was white on .noir jump
- * BUG - wrong lap count shown before race
  * More time after race is over and a player wins......
- * BUG - car.place = 0, orders it 1st in the Race Summary, should replace it with DNF........ DNF
  * BUG - really dark skids when you run into a ledge.....
 
 IMPROVEMENTS

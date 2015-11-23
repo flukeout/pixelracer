@@ -1,6 +1,19 @@
 var trackData = {}; //palceholder for current track
 
 var trackList = {
+  "yellow.png" : {
+    filename : "yellow.png",
+    carcolors : ["#424130"],
+    trailcolor : "#424130",
+    leaveSkids : false,
+    laps : 5,
+    hexes : {
+      "#eee76a" : "road",
+      "#ffffff" : "finish",
+      "#e7dc2a" : "road",
+      "#8d8512" : "jump"
+    }
+  },
   "noirjump.png" : {
     filename : "noirjump.png",
     carcolors : ["#db0fed"],
@@ -15,8 +28,7 @@ var trackList = {
       "#373737" : "overpass",
       "#c9c9c9" : "jump"
     }
-  }
-  ,
+  },
   "superjump.png" : {
     filename : "superjump.png",
     carcolors : ["#ffffff"],
