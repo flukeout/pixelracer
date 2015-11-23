@@ -77,8 +77,6 @@ sockjs.onmessage = function(e) {
     race.raceOverCountdown(message.message.time);
   }
 
-
-
   if(details.type == "startwarmup") {
     race.startWarmup(message.message);
   }
@@ -90,7 +88,8 @@ sockjs.onmessage = function(e) {
   }
 
   if(details.type == "startcountdown") {
-    race.startCountdown();
+    var lapcount = details.laps;
+    race.startCountdown(lapcount);
   }
 
   if(details.type == "padjoined") {

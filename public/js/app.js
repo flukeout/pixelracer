@@ -22,12 +22,8 @@ var race = {
 
     var storedName = localStorage.getItem("drivername");
 
-
-
     myid = id;
     this.prepareTrack(details.track);
-
-
 
     var car = newCar(id,{"trailColor":trackData.trailcolor});
     cars.push(car);
@@ -39,7 +35,6 @@ var race = {
       $(".driver-name-ui").show();
       $(".driver-name-ui input").val("").focus();
     }
-
 
     $(".track").hide();
 
@@ -72,7 +67,6 @@ var race = {
     }
   },
   startWarmup : function(){
-
     $(".laps .countdown-timer").hide();
     $(".stats-wrapper").hide();
 
@@ -102,8 +96,9 @@ var race = {
     this.timeLeft = time;
     this.raceCountdown = true;
   },
-  startCountdown : function(){
+  startCountdown : function(laps){
 
+    this.totallaps = laps;
     showMessage(this.totallaps + " lap race!");
     this.mode = "countdown";
 
@@ -413,7 +408,6 @@ function gameLoop() {
     race.timeLeft = race.timeLeft - delta;
     $(".laps .countdown-timer .time-left").text(formatTime(race.timeLeft));
   }
-
 
   //Drive each car and send a server update
   for(var i = 0; i < cars.length; i++){
