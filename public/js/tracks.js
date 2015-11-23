@@ -1,6 +1,22 @@
 var trackData = {}; //palceholder for current track
 
 var trackList = {
+  "splash.png" : {
+    filename : "splash.png",
+    carcolors : ["#ffffff"],
+    trailcolor : "#ffffff",
+    leaveSkids : false,
+    laps : 3,
+    hexes : {
+      "#e4d900" : "road", //yellow
+
+      "#ec008c" : "road", //magenta
+
+      "#00aeef" : "road", //blue
+      "#009dd8" : "finish",
+      "#151515" : "jump"
+    }
+  },
   "yellow.png" : {
     filename : "yellow.png",
     carcolors : ["#424130"],
