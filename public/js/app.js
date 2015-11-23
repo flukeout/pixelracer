@@ -16,6 +16,23 @@ var race = {
     trackData = trackList[track];
     prepareTrack(trackData.filename);
     this.track = trackData.filename;
+
+
+    //This should really happen where... not here.. but here it is...
+    //nontheless
+
+    for(var k in othercars){
+      var othercar = othercars[k];
+      console.log(othercar);
+      othercar.el.find(".body").css("background",trackData.carcolors[0]);
+      othercar.el.find(".name").css("color",trackData.carcolors[0]);
+    }
+
+
+
+
+
+
   },
   welcome : function(details,id){
     console.log("race.welcome()");
@@ -492,7 +509,6 @@ function updateGhostCars(){
         c.rotation =      thisState.rotation;
         c.gas =           thisState.gas;
         c.height =        thisState.height || 0;
-
         delete playerStates[k];
 
       }
