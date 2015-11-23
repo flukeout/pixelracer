@@ -28,11 +28,7 @@ sockjs.onmessage = function(e) {
   //When someone else joins via a browser
   //Load all the existing cars into the othercars array
   if(details.type == "welcome") {
-
     race.welcome(details,message.id);
-
-    // Load the track we got from the server
-
   }
 
   if(details.type == "changetrack") {
@@ -53,9 +49,10 @@ sockjs.onmessage = function(e) {
 
   //If a car joined (self or other browser)
   if(details.type == "chat") {
+    console.log("Received chat from server");
     var driver = message.message.driver;
     var text = message.message.text;
-    addChat(driver,text);
+    addChat(driver,text,message.id);
   }
 
   //If a car joined (self or other browser)
@@ -74,6 +71,13 @@ sockjs.onmessage = function(e) {
   if(details.type == "startrace") {
     race.startRace(message.message.totallaps);
   }
+
+  //Race over countdown....
+  if(details.type == "raceOverCountdown") {
+    race.raceOverCountdown(message.message.time);
+  }
+
+
 
   if(details.type == "startwarmup") {
     race.startWarmup(message.message);
@@ -174,9 +178,24 @@ function addOtherCar(id){
   newCar.shadow = car.el.find(".shadow");
   newCar.rotation = 0;
   newCar.height = 0;
-  othercars[id] = newCar;
-}
+  newCar.el.find(".body").css("background",trackData.carcolors[0]); // make other cars pink.... or whatever
+  newCar.el.find(".name").css("color",trackData.carcolors[0]); // make other cars pink.... or whatever
 
+  newCar.showMessage = function(message){
+    car.el.find(".name").css("opacity",0);
+    var messageEl = $("<div class='message'>"+message+"</div>");
+    car.el.prepend(messageEl);
+    setTimeout(function(el) {
+      return function() {
+        el.parent().find(".name").css("opacity",.8);
+        el.remove();
+      };
+    }(messageEl), 2000);
+  }
+
+  othercars[id] = newCar;
+
+}
 
 // builds a ghostcar
 function newGhostCar(carID){
@@ -186,23 +205,19 @@ function newGhostCar(carID){
   car.el.append("<div class='name'>BOB</div>");
   car.el.width(scaling);
   car.el.height(scaling);
-
   car.shadow = $("<div class='shadow'></div>");
-
   car.el.append("<div class='body'></div>");
   car.el.find(".body").append(car.shadow);
-
   $(".track").append(car.el)
-
   return car;
 }
 
-// sockjs.onclose = function()  {
-//   console.log("closing");
-// };
 
-
-function addChat(driver,text){
+function addChat(driver,text,id){
+  console.log("addChat() from " + id);
+  if(othercars[id]){
+    othercars[id].showMessage(text);
+  }
   var message = $("<div class='message'><span class='driver'></span> <span class='message-text'></span></div>");
   message.find(".driver").text(driver);
   message.find(".message-text").text(text);

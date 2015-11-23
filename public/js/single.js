@@ -31,7 +31,6 @@ $(document).ready(function(){
 
 });
 
-
 var race = {
   ghostRecording : false,
   ghostData : [],
@@ -84,8 +83,8 @@ var race = {
         return function() {
           t.updateTime = true;
           $(".delta-time").hide();
-        }; }(this), 1000);
-
+        };
+      }(this), 1000);
     }
 
     var timeString = "";
@@ -141,6 +140,7 @@ function prepareRandomTrack(){
 
   var randomIndex = Math.floor(Math.random() * tracknames.length);
   var trackName = tracknames[randomIndex];
+  var trackName = "oval-8.png";
   trackData = trackList[trackName];
 
   prepareTrack(trackData.filename);

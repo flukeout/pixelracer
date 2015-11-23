@@ -85,6 +85,7 @@ var trackList = {
     leaveSkids : true,
     hexes : {
       "#5a5a5a" : "road",
+      "#4c4a4a" : "road",
       "#8fcf4b" : "grass",
       "#f1aa22" : "turbo",
       "#b97d37" : "windmill",

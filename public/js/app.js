@@ -7,36 +7,52 @@ var race = {
   totallaps: 2,
   currentlap: 0,
   laptime : 0,
+  track : "",
   winner : 0,
+  raceCountdown : false,
+  timeLeft : 0,
   prepareTrack: function(track){
     console.log("race.prepareTrack() " + track);
     trackData = trackList[track];
     prepareTrack(trackData.filename);
+    this.track = trackData.filename;
   },
   welcome : function(details,id){
     console.log("race.welcome()");
 
-    myid = id;
+    var storedName = localStorage.getItem("drivername");
 
+
+
+    myid = id;
     this.prepareTrack(details.track);
 
 
-    var car = newCar(id,{"trailColor":trackData.trailcolor});
-    car.changeDriver("bob");
-    cars.push(car);
 
+    var car = newCar(id,{"trailColor":trackData.trailcolor});
+    cars.push(car);
+    car.el.hide();
+
+    if(storedName){
+      car.changeDriver(storedName);
+    } else {
+      $(".driver-name-ui").show();
+      $(".driver-name-ui input").val("").focus();
+    }
+
+
+    $(".track").hide();
+
+    //Only show the car after spawning it
     setTimeout(function(){
+      $(".track").show();
+      car.el.show();
       spawnCar(car);
     },1000);
 
-
-
-
-    for(var i = 0; i < cars.length; i++){
-      if(cars[i].id == id){
-        keyboardcar = cars[i];
-      }
-    }
+    // Set the currently added car to be the keyboard car
+    // so we can move it with keys
+    keyboardcar = car;
 
     for(var i = 0; i < details.othercars.length; i++){
       addOtherCar(details.othercars[i]);
@@ -57,6 +73,7 @@ var race = {
   },
   startWarmup : function(){
 
+    $(".laps .countdown-timer").hide();
     $(".stats-wrapper").hide();
 
     showMessage("warmup");
@@ -77,15 +94,22 @@ var race = {
       car.speed = 0;
     }
   },
+  raceOverCountdown: function(time){
+    console.log("race.raceOverCountdown() - time left: " + time);
+
+    $(".laps .countdown-timer").show();
+    $(".laps .countdown-timer .time-left").text(time);
+    this.timeLeft = time;
+    this.raceCountdown = true;
+  },
   startCountdown : function(){
 
-    showMessage("race time!");
+    showMessage(this.totallaps + " lap race!");
     this.mode = "countdown";
 
     setTimeout(function(){
       spawnCars();
     },1000);
-
 
     for(var c in cars) {
       var car = cars[c];
@@ -93,8 +117,8 @@ var race = {
     }
 
     $(".laps .lap-info").hide();
-
     $(".laps .message").text("").show();
+
     setTimeout(function(){  $(".laps .message").text("READY");    },3000);
     setTimeout(function(){  $(".laps .message").text("SET");    },4000);
     setTimeout(function(){  $(".laps .message").text("GO!!!");    },5000);
@@ -219,7 +243,6 @@ var race = {
       return 0;
     });
 
-
     for(var i = 0; i < playerStandings.length; i++){
       var player = playerStandings[i];
       var details = $("<div class='detail'></div>");
@@ -251,15 +274,16 @@ var race = {
       $(".stats-wrapper .overall .details").append(details);
     }
 
-
     $(".stats .fastest-lap .driver").text(fastestlap.driver);
     $(".stats .fastest-lap .time").text(formatTime(fastestlap.time));
     $(".stats .slowest-lap .driver").text(slowestlap.driver);
     $(".stats .slowest-lap .time").text(formatTime(slowestlap.time));
 
-
   },
   finishRace : function(winner,stats){
+    this.raceCountdown = false;
+
+    $(".laps .countdown-timer").hide();
     console.log("race.finishRace() " + winner);
     console.log(stats);
 
@@ -284,12 +308,12 @@ function sendChat(message){
   }
   sockjs.send(JSON.stringify(update));
 
-  addChat(car.driver,message);
+  car.showMessage(message);
+  addChat(car.driver,message,myid);
 }
 
 
 // When a car finishes a lap
-
 
 $(document).ready(function(){
 
@@ -297,34 +321,52 @@ $(document).ready(function(){
 
   $(window).on("keypress", function(e){
 
-    if(e.keyCode == 13) {
-      if(chatting == false){
-        $(".chat-input").show().focus();
-        $(".chat-input-wrapper .instructions").hide();
-        chatting = true;
-      } else if (chatting == true){
-        var message = $(".chat-input").val();
-        if(message.length > 0){
-          sendChat(message);
+    if($(".driver-name-ui:visible").length == 0){
+      if(e.keyCode == 13) {
+        if(chatting == false){
+          $(".chat-input").show().focus();
+          $(".chat-input-wrapper .instructions").hide();
+          chatting = true;
+          $(".chat-input-wrapper").css("opacity",1);
+        } else if (chatting == true){
+          var message = $(".chat-input").val();
+          if(message.length > 0){
+            sendChat(message);
+          }
+          $(".chat-input").val("").blur().hide();
+          chatting = false;
+          $(".chat-input-wrapper .instructions").show();
+          $(".chat-input-wrapper").css("opacity",.4);
         }
-        $(".chat-input").val("").blur().hide();
-        chatting = false;
-        $(".chat-input-wrapper .instructions").show();
       }
     }
   });
 
-
-  $(".driver-name").on("click", function(e){
-    $(this).select();
+  $(".change-name").on("click", function(e){
+    $(".driver-name-ui").toggle();
+    $(".driver-name").select();
   });
 
   $(".driver-name").on("keyup", function(e){
     var newName = $(this).val();
     var car = getCar(myid);
     car.changeDriver(newName);
-    if(e.keyCode == 13) {
+    if(e.keyCode == 13 && newName.length != 0) {
+      $(".driver-name-ui").hide();
       $(this).blur();
+    } else {
+      $(".driver-name").focus();
+    }
+  });
+
+  $(".driver-name-ui a").on("click", function(e){
+    var newName = $(".driver-name-ui input").val();
+    var car = getCar(myid);
+    if(newName.length != 0){
+      car.changeDriver(newName);
+      $(".driver-name-ui").hide();
+    } else {
+      $(".driver-name").focus();
     }
   });
 
@@ -365,6 +407,13 @@ function gameLoop() {
   var now = new Date().getTime();
   delta = now - (time || now);
   time = now;
+
+  //Do the race countdown timer...
+  if(race.raceCountdown){
+    race.timeLeft = race.timeLeft - delta;
+    $(".laps .countdown-timer .time-left").text(formatTime(race.timeLeft));
+  }
+
 
   //Drive each car and send a server update
   for(var i = 0; i < cars.length; i++){

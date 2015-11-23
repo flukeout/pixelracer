@@ -123,8 +123,27 @@ canvas.track-source {
     left: ~"calc(50% - 100px)";
     text-align: center;
     font-size: 12px;
-    opacity: .65;
+    opacity: .8;
     transform: rotateX(-70deg) translateY(-30px);
+    transition: opacity .2s ease-out;
+    z-index: 1;
+  }
+
+  .message {
+    position: absolute;
+    color: black;
+    background: white;
+    left: 0px;
+    bottom: 0px;
+    text-align: center;
+    font-size: 10px;
+    line-height: 15px;
+    padding: 5px 8px 3px 8px;
+    transform: rotateX(-70deg) translateY(-30px);
+    border-radius: 2px;
+    animation: chatbubble .15s ease-out;
+    transform-origin: bottom left;
+    z-index: 2;
   }
 
   .body {
@@ -140,6 +159,21 @@ canvas.track-source {
     opacity: .3;
   }
 
+}
+
+@keyframes chatbubble {
+  0% {
+    opacity: 0;
+    transform: rotateX(-70deg) translateY(-30px) scale(1);
+  }
+  60% {
+    opacity: 1;
+    transform: rotateX(-70deg) translateY(-35px) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateX(-70deg) translateY(-30px) scale(1);
+  }
 }
 
 
@@ -179,6 +213,10 @@ canvas.track-source {
 .two {
   background: transparent;
   opacity: 1;
+
+  .message {
+    opacity: .7;
+  }
 
   .body {
     background: white;
@@ -335,12 +373,39 @@ canvas.track-source {
 }
 
 .driver-name-ui {
+  display: none;
   text-align: center;
+  background: rgba(0,0,0,.8);
+  padding: 80px 60px;
+  z-index: 99;
+  position: absolute;
+  top: 200px;
+  width: 500px;
+  box-sizing: border-box;
+  left: ~"calc(50% - 250px)";
+  color: white;
+
+  a.confirm {
+    color: inherit;
+    font-size: inherit;
+    text-decoration: none;
+    margin-left: 15px;
+    font-size: 28px;
+    background: white;
+    color: black;
+    padding: 7px 5px 5px 5px;
+  }
+
+  h2 {
+    font-size: 22px;
+    line-height: 30px;
+    margin: 0 0 25px 0;
+  }
 
   input {
-    font-size: 18px;
-    width: 80px;
-    text-align: center;
+    font-size: 28px;
+    width: 95px;
+    text-align: left;
     color: white;
     background: transparent;
     padding: 0 0 4px 0;
@@ -409,7 +474,6 @@ canvas.track-source {
   font-size: 11px;
   line-height: 16px;
   opacity: .7;
-
   color: #8fcf4b;
 
   .message {
@@ -421,12 +485,15 @@ canvas.track-source {
   }
 }
 
+
+
 .chat-input-wrapper {
   margin-top: 10px;
   width: 100%;
   text-align: center;
-  opacity: .5;
+  opacity: .4;
   color: white;
+  margin: 0 0 15px 0;
 
   input {
     display: none;
@@ -508,7 +575,18 @@ canvas.track-source {
   position: fixed;
   width: 100%;
   bottom: 50px;
+  text-align: center;
 }
+
+
+.change-name {
+  color: white;
+  opacity: .4;
+  &:hover {
+    opacity: 1;
+  }
+}
+
 
 .stats-wrapper {
   position: absolute;
@@ -597,3 +675,34 @@ canvas.track-source {
   }
 
 }
+
+// .track-wrapper {
+//   top: 210px;
+// }
+//
+// .track-bg {
+//   position: absolute;
+//   top: 50px;
+//   background: pink;
+//   width: 810px;
+//   height: 500px;
+//   margin: 0 auto;
+//   left: ~"calc(50% - 405px)";
+//   background: ~"url(/tracks/noirjump-bg.png)";
+//   background-position: top;
+//   background-repeat: no-repeat;
+//   background-size: 100%;
+//   opacity: .3;
+//   image-rendering: pixelated;
+//   image-rendering: -moz-crisp-edges;
+//   transform-style: preserve-3d;
+//
+// }
+
+
+.countdown-timer {
+  display: none;
+}
+
+
+

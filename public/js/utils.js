@@ -21,7 +21,7 @@ function showMessage(message){
   $(".game-message").css("opacity",1);
 
   setTimeout(function(){
-    $(".game-message .message").text(message).css("opacity",1);
+    $(".game-message .message").html(message).css("opacity",1);
   },500);
 
   setTimeout(function(){
@@ -174,9 +174,6 @@ function prepareTrack(level){
 
 }
 
-
-
-
 function getCar(id){
   var foundcar;
   for(var c in cars){
@@ -207,7 +204,6 @@ function rgbToHex(r, g, b) {
     throw "Invalid color component";
   return ((r << 16) | (g << 8) | b).toString(16);
 }
-
 
 function tiltTrack(){
 
@@ -278,18 +274,19 @@ function driveCar(car) {
   car.x = Math.round(car.showx / scaling);
   car.y = Math.round(car.showy / scaling);
 
-  //If nothing comes up - it's 'grass' - meaning slow..........
-  // we should only do this, in case it's different from the last one...
+  //Only check the terain if we've moved pixels...
 
-  var currentPosition = checkPosition(car.x,car.y) || "grass";
+  if(car.x != car.lastx || car.y != car.lasty) {
+    car.currentPosition = checkPosition(car.x,car.y) || "grass";
+  }
 
   // SPEED
-  if(currentPosition == "turbo") {
+  if(car.currentPosition == "turbo") {
     car.speed = car.speed + 4;
   }
 
-  if(car.speed > 10){
-    car.speed = 10;
+  if(car.speed > car.maxAbsoluteSpeed){
+    car.speed = car.maxAbsoluteSpeed;
   }
 
   var speedchange = car.acceleration;
@@ -326,7 +323,7 @@ function driveCar(car) {
     turning = false;
   }
 
-  if(currentPosition == "water"){
+  if(car.currentPosition == "water"){
     turnspeed = turnspeed / 3;
   }
 
@@ -392,7 +389,22 @@ function driveCar(car) {
   car.nextx = Math.round((car.showx + xd) / scaling);
   car.nexty = Math.round((car.showy + yd) / scaling);
 
-  var nextPosition = checkPosition(car.nextx,car.nexty);
+  var movedPixelPosition = false;
+
+  var nextPosition;
+  if(car.x != car.nextx || car.y != car.nexty) {
+    movedPixelPosition = true;
+  }
+
+  if(movedPixelPosition) {
+    nextPosition = checkPosition(car.nextx,car.nexty);
+  } else {
+    nextPosition = car.currentPosition;
+  }
+  //Write down the old position
+  car.lastx = car.x;
+  car.lasty = car.y;
+
 
   // CAR SKIDS
 
@@ -408,8 +420,10 @@ function driveCar(car) {
       var averagepercent = (speedpercent + turnpercent) / 2 * 100;
       var jam  = -75 + averagepercent;
       var opacity = jam/25 * .1;
-
-      if(currentPosition == "road") {
+      if(opacity > .12){
+        opacity = .12;
+      }
+      if(car.currentPosition == "road") {
         ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
         ctx.fillRect(car.x * scaling, car.y * scaling, scaling, scaling);
       } else {
@@ -437,27 +451,27 @@ function driveCar(car) {
 
   $(".place").css("left",car.x * scaling).css("top",car.y * scaling);
 
-  if(currentPosition == "grass" && car.mode != "jumping"){
+  if(car.currentPosition == "grass" && car.mode != "jumping"){
     if(car.speed > 1){
       car.speed = 1;
     }
   }
 
   if(car.mode == "normal") {
-    if(currentPosition == "overpass" && nextPosition == "ledge" ) {
+    if(car.currentPosition == "overpass" && nextPosition == "ledge" ) {
       move = false;
     }
-    if(currentPosition == "road" && nextPosition == "ledge" ) {
+    if(car.currentPosition == "road" && nextPosition == "ledge" ) {
       car.mode = "under";
     }
   } else if (car.mode == "under") {
-    if(currentPosition == "overpass" && nextPosition == "road"){
+    if(car.currentPosition == "overpass" && nextPosition == "road"){
       move = false;
     }
-    if(currentPosition == "ledge" && nextPosition == "road") {
+    if(car.currentPosition == "ledge" && nextPosition == "road") {
       car.mode = "normal";
     }
-    if(currentPosition == "ledge" && nextPosition == "grass") {
+    if(car.currentPosition == "ledge" && nextPosition == "grass") {
       move = false;
     }
   }
@@ -485,7 +499,7 @@ function driveCar(car) {
 
   car.el.attr("mode",car.mode);
 
-  if(currentPosition == "finish" && car.angle > 180 && car.angle < 360){
+  if(car.currentPosition == "finish" && car.angle > 180 && car.angle < 360){
     if(car.x != car.nextx) {
       car.laps++;
       race.finishLap(car);
@@ -493,7 +507,7 @@ function driveCar(car) {
     }
   }
 
-  if(car.mode == "normal" && currentPosition == "jump" && car.speed > 1) {
+  if(car.mode == "normal" && car.currentPosition == "jump" && car.speed > 1) {
     car.jumpElapsed = 0;
     car.jumpTotal = car.speed * scaling / 2.5 ;//jump distance relative to speed
     car.mode = "jumping";
@@ -537,7 +551,7 @@ function driveCar(car) {
   car.el.css("transform", "translateY("+car.showy+"px) translateX("+car.showx+"px)");
 
   //makes the body jump
-  if(currentPosition == "overpass" && car.mode == "normal") {
+  if(car.currentPosition == "overpass" && car.mode == "normal") {
     car.body.css("transform", "scale(1.1) rotateZ("+car.angle+"deg) translateZ("+car.jumpHeight+"px");
   } else {
     car.body.css("transform", " rotateZ("+car.angle+"deg) translateZ("+car.jumpHeight+"px");
@@ -559,12 +573,15 @@ function newCar(id,config){
     showy : 230,
     nextx :0,
     nexty : 0,
+    lastx : 0,
+    lasty : 0,
     mode: "normal",
     driver : "Bob",
     showname : true,
     laps : 0,
     wheelturn : false,
     maxspeed : 5,
+    maxAbsoluteSpeed : 10,
     direction : "none",
     speed : 0,
     trailColor : "#ffffff",
@@ -592,7 +609,25 @@ function newCar(id,config){
   car.changeDriver = function(name){
     car.driver = name.substr(0,3).toUpperCase();
     car.el.find(".name").text(car.driver);
+
+    if(car.id == myid){
+      localStorage.setItem("drivername", car.driver);
+    }
+
     $(".driver-name").val(car.driver);
+  }
+
+  //CHAT MESSAGE
+  car.showMessage = function(message){
+    car.el.find(".name").css("opacity",0);
+    var messageEl = $("<div class='message'>"+message+"</div>");
+    car.el.prepend(messageEl);
+    setTimeout(function(el) {
+      return function() {
+        el.parent().find(".name").css("opacity",.8);
+        el.remove();
+      };
+    }(messageEl), 2000);
   }
 
   car.setDirection = function(action, direction){
