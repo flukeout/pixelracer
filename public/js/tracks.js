@@ -9,9 +9,7 @@ var trackList = {
     laps : 3,
     hexes : {
       "#e4d900" : "road", //yellow
-
       "#ec008c" : "road", //magenta
-
       "#00aeef" : "road", //blue
       "#009dd8" : "finish",
       "#151515" : "jump"
@@ -55,6 +53,22 @@ var trackList = {
       "#5a5a5a" : "road",
       "#8fcf4b" : "grass",
       "#f1aa22" : "turbo",
+      "#2194ca" : "water",
+      "#6ba52d" : "tree",
+      "#ffffff" : "finish",
+      "#d4c921" : "jump"
+    }
+  },
+  "chasm.png" : {
+    filename : "chasm.png",
+    carcolors : ["#ffffff"],
+    trailcolor : "#32a6dc",
+    leaveSkids : true,
+    laps : 5,
+    hexes : {
+      "#5a5a5a" : "road",
+      "#8fcf4b" : "grass",
+      "#bcb21b" : "turbo",
       "#2194ca" : "water",
       "#6ba52d" : "tree",
       "#ffffff" : "finish",

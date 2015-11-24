@@ -510,7 +510,7 @@ function driveCar(car) {
     }
   }
 
-  if(car.mode == "normal" && car.currentPosition == "jump" && car.speed > 1) {
+  if(car.mode == "normal" && car.currentPosition == "jump" && car.speed >= car.minJumpSpeed) {
     car.jumpElapsed = 0;
     car.jumpTotal = car.speed * scaling / 2.5 ;//jump distance relative to speed
     car.mode = "jumping";
@@ -594,6 +594,7 @@ function newCar(id,config){
     jumpElapsed: 0,
     jumpTotal: 0,
     jumpHeight : 0,
+    minJumpSpeed : 2.5,
     angle: 270,
     acceleration : .06,
     turnacceleration: .5,
