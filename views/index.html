@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% set currentPage = "single" %}
+
+{% block title %}
+  Welcome To Pixelracer
+{% endblock %}
+
+{% block script %}
+  <link rel="stylesheet/less" href="/css/home.less" type="text/css">
+{% endblock %}
+
+{% block content %}
+
+  <div class="track-wrapper">
+    <div class="track"></div>
+  </div>
+
+
+  <div class="home-menu">
+    <h2>GET READY FOR</h2>
+    <h1>Pixelracer</h1>
+
+    <div class="menu">
+      <a href="/multiplayer">
+        <h3>Online Race</h3>
+        <p>Race against other players online for points!</p>
+      </a>
+      <a href="/single">
+        <h3>Single-Player <br>Time Trial</h3>
+        <p>Practice the tracks and get the fastest lap times!</p>
+      </a>
+    </div>
+  </div>
+
+
+
+{% endblock %}
+

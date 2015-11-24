@@ -24,7 +24,7 @@ app.use(express.static('public'));
 
 // Views
 app.get('/', function(req, res) {
-  res.render('multiplayer.html');
+  res.render('index.html');
 });
 
 app.get('/multiplayer', function(req, res) {

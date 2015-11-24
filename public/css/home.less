@@ -1,0 +1,88 @@
+body {
+  color: white;
+}
+
+
+
+h1 {
+  color: white;
+  text-align: center;
+  font-size: 45px;
+  margin: 0 0 0 0;
+}
+
+h2 {
+  text-align: center;
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  opacity: .7;
+}
+
+.home-menu {
+  position: relative;
+  width: 500px;
+  margin: 0 auto;
+  background: rgba(0,0,0,.8);
+  padding: 50px;
+}
+
+.menu {
+  margin: 40px 0 0 0;
+}
+
+.menu a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  width: 350px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+  border: solid 5px #888;
+  margin-bottom: 20px;
+
+  h3 {
+    line-height: 150%;
+    margin: 0 0 15px 0;
+  }
+
+  p {
+    line-height: 160%;
+    font-size: 13px;
+    opacity: .5;
+    margin: 0;
+  }
+
+  &:hover {
+    background: rgba(255,255,255,.2);
+  }
+}
+
+.track-wrapper {
+  transform: rotateX(55deg);
+  transform-style: preserve-3d;
+  position: absolute;
+  top: -20px;
+  left: ~"calc(50% - 375px)";
+  height: 600px;
+  width: 750px;
+}
+
+.track {
+  z-index: 0;
+  position: absolute;
+  height: 600px;
+  width: 750px;
+  background: ~"url(/tracks/chasm.png)";
+  background-size: 100%;
+  animation: trackspin 12s linear infinite;
+}
+
+@keyframes trackspin {
+  0% {
+    transform: rotateZ(0deg) ;
+  }
+  100% {
+    transform: rotateZ(359deg);
+  }
+}
