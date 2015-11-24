@@ -8,7 +8,9 @@
 {% block script %}
   <script src="/js/tracks.js"></script>
   <script src="/js/utils.js"></script>
+  <script src="/js/editor.js"></script>
   <script src="/js/single.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet/less" href="/css/inspector.less" type="text/css">
   <link rel="stylesheet/less" href="/css/single.less" type="text/css">
 {% endblock %}
 
@@ -31,25 +33,32 @@
   <div class="track-wrapper">
 
     <div class="track">
-
-      <!-- we shoudl inject this -->
+      <!-- we should inject this -->
       <div class="ghost">
         <div class="shadow"></div>
         <div class="body"></div>
       </div>
 
       <canvas class="skids"></canvas>
+
+      <div id="track-editor-cursor">
+             <div class="cube">
+               <div class="front"></div>
+               <div class="back"></div>
+               <div class="right"></div>
+               <div class="left"></div>
+               <div class="top"></div>
+               <div class="bottom"></div>
+             </div>
+           </div>
     </div>
   </div>
 
-  <!-- chat messages go here -->
+  <div id="inspector"></div>
 
   <div class="game-message">
     <div class="message"></div>
   </div>
-
-
-
 
 {% endblock %}
 
