@@ -51,13 +51,10 @@ app.get('/single', function(req, res) {
 
 
 
-var port = env.PORT || 5000;
-var server = app.listen(port, function () {
+var server = app.listen(process.env.PORT, function () {
   var host = server.address().address;
   var port = server.address().port;
 });
-
-console.log('Starting server on port ' + port);
 
 socket.server(server);
 
