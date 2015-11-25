@@ -142,7 +142,6 @@ function prepareRandomTrack(){
 
   var randomIndex = Math.floor(Math.random() * tracknames.length);
   var trackName = tracknames[randomIndex];
-  trackName = "ampersand.png";
   trackData = trackList[trackName];
 
   prepareTrack(trackData.filename);
