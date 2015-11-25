@@ -363,10 +363,6 @@ function driveCar(car) {
     car.speed = car.speed - speedchange;
   }
 
-  // car.maxspeed = car.maxspeed + car.maxspeedModifier;
-
-  console.log(car.maxspeed);
-
   if(car.speed > car.maxspeed) {
     car.speed = car.speed - speedchange;
   }
