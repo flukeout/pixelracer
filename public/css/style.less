@@ -114,6 +114,7 @@ canvas.track-source {
   top: 0px;
   left: 0px;
   transform-style: preserve-3d;
+  z-index: 1;
 
   .name {
     position: absolute;
@@ -673,30 +674,6 @@ canvas.track-source {
 
 }
 
-// .track-wrapper {
-//   top: 210px;
-// }
-//
-// .track-bg {
-//   position: absolute;
-//   top: 50px;
-//   background: pink;
-//   width: 810px;
-//   height: 500px;
-//   margin: 0 auto;
-//   left: ~"calc(50% - 405px)";
-//   background: ~"url(/tracks/noirjump-bg.png)";
-//   background-position: top;
-//   background-repeat: no-repeat;
-//   background-size: 100%;
-//   opacity: .3;
-//   image-rendering: pixelated;
-//   image-rendering: -moz-crisp-edges;
-//   transform-style: preserve-3d;
-//
-// }
-
-
 .countdown-timer {
   display: none;
 }
@@ -719,5 +696,65 @@ nav {
     padding: 10px;
     text-decoration: none;
 
+  }
+}
+
+.finish-line {
+
+  position: absolute;
+  transform: translateX(-2px);
+  z-index: 0;
+  border: solid 2px orange;
+  border-width: 0px 2px 0px 2px;
+  width: 15px;
+  box-sizing: content-box;
+
+
+  .line {
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+}
+
+.finishpop .line {
+  animation: finishpop .3s linear;
+  animation-timing-function: ease-out;
+}
+
+@keyframes finishpop {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-8px);
+    animation-timing-function: ease-in;
+  }
+  55% {
+    transform: translateX(0px);
+    animation-timing-function: ease-out;
+  }
+  75% {
+    transform: translateX(3px);
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
+@keyframes finishpopOld {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateZ(150px);
+    opacity: 0;
   }
 }

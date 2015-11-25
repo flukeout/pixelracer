@@ -127,6 +127,8 @@ var race = {
 
     this.laptime = 0;
     this.currentlap++;
+
+    trackAnimation();
   }
 }
 
@@ -140,6 +142,7 @@ function prepareRandomTrack(){
 
   var randomIndex = Math.floor(Math.random() * tracknames.length);
   var trackName = tracknames[randomIndex];
+  trackName = "ampersand.png";
   trackData = trackList[trackName];
 
   prepareTrack(trackData.filename);

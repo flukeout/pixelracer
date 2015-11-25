@@ -1,3 +1,5 @@
+Make the finish line the correct colors...
+
 Better indicator of progress during a game?
 
  * BOB -----|-----|-----|-----O
@@ -12,10 +14,7 @@ IMPROVEMENTS
  * The flex display is messing with the track sizing.. make sure you enforce a minimum and maximum <- (K)
 
 
-MULTIPLAYER FEATURES
-+ add an indicator for who is leading
-+ add an indicator for who won the race
-+ perfect lap..
+
 
 TILES
 * LAVA (explode and respawn)
@@ -26,11 +25,17 @@ TILES
 
 
 MVP
-* Add an index page
 * Add way to switch tracks in single player
-* Add nav along top of modes
+
+
+
 
 =========
+
+MULTIPLAYER FEATURES
++ add an indicator for who is leading
++ add an indicator for who won the race
++ perfect lap..
 
 SEND A GHOST
 + Send a lap challange... try to beat this lap time  pixelracer/ad3adb

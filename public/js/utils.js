@@ -88,6 +88,10 @@ function audioStuff(){
 function trackAnimation(){
   $(".track-wrapper").addClass("trackpop");
 
+  $(".finish-line").removeClass("finishpop");
+  $(".finish-line").width($(".finish-line").width());
+  $(".finish-line").addClass("finishpop");
+
   setTimeout(function(){
     $(".track-wrapper").removeClass("trackpop");
   },200);
@@ -169,10 +173,62 @@ function prepareTrack(level){
       }
     }
 
+    addFinishLine();
 
   });
 
 }
+
+function addFinishLine(){
+  console.log("addFinishline() - utils.js");
+
+  $(".track").remove(".finish-line");
+
+  //This is such garbage... come on.
+  var startX = 999999999;
+  var endX = -1;
+  var startY = 999999999;
+  var endY = -1;
+
+  var sP = trackData.startPositions;
+
+  for(i = 0; i < sP.length; i++){
+    if(sP[i].x < startX) {
+      startX = sP[i].x
+    }
+    if(sP[i].x > endX) {
+      endX = sP[i].x
+    }
+
+    if(sP[i].y < startY) {
+      startY = sP[i].y
+    }
+    if(sP[i].y > endY) {
+      endY = sP[i].y
+    }
+  }
+
+
+  var finishColor = "orange";
+  var roadColor = "pink";
+
+  for(var k in trackData.hexes){
+    if(trackData.hexes[k] == "road"){
+      roadColor = k;
+    }
+    if(trackData.hexes[k] == "finish"){
+      finishColor = k;
+    }
+  }
+
+  var finishLine = $("<div class='finish-line'><div class='line'></div></div>");
+  $(".track").append(finishLine);
+  finishLine.css("top",startY * scaling).css("left",startX * scaling).height((endY - startY + 1) * scaling).width(scaling);
+  finishLine.find(".line").css("background",finishColor);
+  finishLine.css("background",roadColor);
+  finishLine.css("border-color",roadColor);
+}
+
 
 function getCar(id){
   var foundcar;
@@ -307,6 +363,10 @@ function driveCar(car) {
     car.speed = car.speed - speedchange;
   }
 
+  // car.maxspeed = car.maxspeed + car.maxspeedModifier;
+
+  console.log(car.maxspeed);
+
   if(car.speed > car.maxspeed) {
     car.speed = car.speed - speedchange;
   }
@@ -317,8 +377,11 @@ function driveCar(car) {
 
   // CAR TURNING
 
+
+
   // Rate at which the car turns
-  var turnspeed = car.maxspeed - 1;
+  // var turnspeed = car.maxspeed - 1;
+  var turnspeed = 4;
   var turning = true;
 
   if(car.mode == "jumping" || car.mode == "frozen") {
@@ -375,11 +438,18 @@ function driveCar(car) {
     if(car.angle < 0){
       car.angle = car.angle + 360;
     }
-
-
-
   // END TURNING
 
+
+  //GRASS SPEED
+  if(car.currentPosition == "grass" && car.mode != "jumping"){
+    car.maxspeed = 2;
+    if(car.speed > 2){
+      car.speed = 2;
+    }
+  } else {
+    car.maxspeed = 5;
+  }
 
   // CAR POSITION
 
@@ -453,11 +523,6 @@ function driveCar(car) {
 
   $(".place").css("left",car.x * scaling).css("top",car.y * scaling);
 
-  if(car.currentPosition == "grass" && car.mode != "jumping"){
-    if(car.speed > 1){
-      car.speed = 1;
-    }
-  }
 
   if(car.mode == "normal") {
     if(car.currentPosition == "overpass" && nextPosition == "ledge" ) {
@@ -584,6 +649,7 @@ function newCar(id,config){
     laps : 0,
     wheelturn : false,
     maxspeed : 5,
+    maxspeedModifier : 0,
     maxAbsoluteSpeed : 10,
     direction : "none",
     speed : 0,
