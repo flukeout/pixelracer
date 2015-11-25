@@ -117,7 +117,7 @@ canvas.track-source {
   top: 0px;
   left: 0px;
   transform-style: preserve-3d;
-  z-index: 1;
+  z-index: 3;
 
   .name {
     position: absolute;
@@ -757,5 +757,84 @@ nav {
   100% {
     transform: translateZ(150px);
     opacity: 0;
+  }
+}
+
+
+.track-chooser {
+  color: white;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0;
+  right: 0;
+
+  background: rgba(0,0,0,1);
+
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    margin: 0 0 25px 0;
+
+  }
+
+  .content {
+    margin: 0 auto;
+    padding: 40px;
+  }
+
+  .tracks {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .track-option {
+    width: 160px;
+    font-size: 12px;
+    text-align: center;
+    perspective: 800;
+    cursor: pointer;
+    padding:25px;
+    transition: all ease-out .1s;
+
+    .track-thumbnail {
+      padding: 25px 0;
+      margin-bottom: 25px;
+
+      img {
+        transform: scale(2);
+        image-rendering: pixelated;
+        image-rendering: -moz-crisp-edges;
+        opacity: .8;
+        transition: all ease-out .1s;
+      }
+    }
+
+    color: rgba(255,255,255,.4);
+    transition: color .1s ease-out;
+
+    &:hover {
+      background: rgba(255,255,255,.1);
+      color: white;
+
+      img {
+        opacity: 1;
+        transform: scale(2.2);
+      }
+    }
+
+
+  }
+}
+
+.change-track {
+  color: white;
+  opacity: .5;
+
+  &:hover {
+    opacity: 1;
+    text-decoration: none;
   }
 }

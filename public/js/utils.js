@@ -182,7 +182,9 @@ function prepareTrack(level){
 function addFinishLine(){
   console.log("addFinishline() - utils.js");
 
-  $(".track").remove(".finish-line");
+  $(".track .finish-line").remove();
+
+
 
   //This is such garbage... come on.
   var startX = 999999999;
@@ -771,4 +773,38 @@ function newCar(id,config){
   car.el.append(body);
 
   return car;
+}
+
+
+
+function buildTrackChooser(){
+  console.log("buildTrackChooser()");
+
+  for(var k in trackList){
+    var track = trackList[k];
+
+    var trackOption = $("<div class='track-option' track='"+track.filename+"'></div>");
+
+    var trackThumb = $("<div class='track-thumbnail'><img src='/tracks/"+track.filename+"'/></div>");
+    trackOption.append(trackThumb);
+
+    var trackName = $("<div class='track-name'>" + track.filename + "</div>");
+    trackOption.append(trackName);
+
+    $(".track-chooser .tracks").append(trackOption)
+
+    trackOption.on("click",function(){
+      var track = $(this).attr('track');
+      trackData = trackList[track];
+      prepareTrack(trackData.filename);
+      race.startTrial();
+      $(".track-chooser").hide();
+    });
+
+  }
+
+  $(".change-track").on("click",function(){
+    $(".track-chooser").show();
+  })
+
 }

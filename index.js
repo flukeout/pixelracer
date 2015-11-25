@@ -36,6 +36,10 @@ app.get('/pad', function(req, res) {
   res.render('pad.html');
 });
 
+app.get('/local', function(req, res) {
+  res.render('local.html');
+});
+
 
 app.get('/single', function(req, res) {
   res.render('single.html');

@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+
+{% set currentPage = "race" %}
+
+{% block title %}
+  Pixelracer
+{% endblock %}
+
+{% block script %}
+  <script src="/js/tracks.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/app.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/multiplayer.js"></script>
+  <script src="/js/controller.js"></script>
+{% endblock %}
+
+{% block content %}
+
+  <canvas class="track-source"></canvas>
+
+  <div class="laps">
+    <div class="lap-wrapper">
+      <div class="lap-info">
+        <div>Lap <span class="lap-count"></span>/<span class="total-laps"></span></div>
+      </div>
+      <div class="message"></div>
+    </div>
+    <div class="countdown-timer">
+      Race over in <span class="time-left"></span>
+    </div>
+  </div>
+
+
+  <div class="track-wrapper">
+    <div class="track">
+      <canvas class="skids"></canvas>
+    </div>
+  </div>
+
+  <div class="stats-wrapper">
+    <div class="stats">
+
+      <div class="this-race">
+        <h1>Race Results</h1>
+        <div class="details">
+          <div class="detail">
+            <span class='position'>1.</span>
+            <span class='name'>BOB</span>
+            <span class='points'>+ 10 pts</span>
+          </div>
+          <div class="detail">
+            <span class='position'>2.</span>
+            <span class='name'>XXX</span>
+            <span class='points'>+ 5 pts</span>
+          </div>
+        </div>
+
+        <div class="lap-stats">
+          <div class="fastest-lap">
+            <h3>Best Lap</h3>
+            <span class="driver">BOB</span><span class="time">1.02</span>
+          </div>
+
+          <div class="slowest-lap">
+            <h3>Worst Lap</h3>
+            <span class="driver">BOB</span><span class="time">2.02</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="overall">
+
+        <h1>Overall<h1>
+        <div class="details">
+          <div class="detail">
+            <span class='position'>1.</span>
+            <span class='name'>BOB</span>
+            <span class='points'>10 pts</span>
+          </div>
+          <div class="detail">
+            <span class='position'>2.</span>
+            <span class='name'>XXX</span>
+            <span class='points'>5 pts</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+  </div>
+
+  <!-- chat messages go here -->
+  <!-- <div class="chat"></div> -->
+
+  <div class="bottom-stuff">
+    <div class="chat-input-wrapper">
+      <span class="instructions">Hit Enter to chat</span>
+      <input maxlength="25" class="chat-input" />
+    </div>
+    <div>
+      <a class="change-name" href="#">Change Name</a>
+    </div>
+  </div>
+
+  <div class="driver-name-ui">
+    <h2>What's your name?</h2>
+    <input class="driver-name" maxlength="3" type="text" /><a class="confirm" href="#">OK</a>
+  </div>
+
+  <div class="game-message">
+    <div class="message"></div>
+  </div>
+
+{% endblock %}

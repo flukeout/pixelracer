@@ -12,8 +12,11 @@ IMPROVEMENTS
  * More time after race is over and a player wins......
  * Make it not depend on a 15x scaling?
  * The flex display is messing with the track sizing.. make sure you enforce a minimum and maximum <- (K)
+ * The fade in thing on track switching suuuucks.... fix it.
 
 
+BUGS
+* Best lap shows one lap after you get it in single player mode, not right away. Should be right away.
 
 
 TILES

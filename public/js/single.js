@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-  race.startTrial();
+  // race.startTrial();
   audioStuff(); // build into the car??
 
   $(window).on("keydown",function(e){
@@ -27,6 +27,8 @@ $(document).ready(function(){
     }
   });
 
+  buildTrackChooser();
+
   gameLoop();
 
 });
@@ -40,12 +42,12 @@ var race = {
   currentlap: 0,
   laptime : 0,
   bestlap : "",
-  startTrial: function(laps){
+  startTrial: function(){
 
     console.log("race.startTrial() - begin the single player time trial");
 
     $(".track-wrapper").css("opacity",0);
-    prepareRandomTrack();
+
 
     showMessage("do fast laps!");
 
@@ -142,10 +144,13 @@ function prepareRandomTrack(){
 
   var randomIndex = Math.floor(Math.random() * tracknames.length);
   var trackName = tracknames[randomIndex];
-  trackData = trackList[trackName];
 
+  trackData = trackList[trackName];
   prepareTrack(trackData.filename);
 }
+
+
+
 
 function gameLoop() {
 

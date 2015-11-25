@@ -28,11 +28,6 @@ var race = {
       othercar.el.find(".name").css("color",trackData.carcolors[0]);
     }
 
-
-
-
-
-
   },
   welcome : function(details,id){
     console.log("race.welcome()");
