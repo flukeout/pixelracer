@@ -16,9 +16,6 @@ input {
   font-family: 'Press Start 2P';
 }
 
-body {
-  perspective: 900px;
-}
 
 canvas.track-source {
   display: none;
@@ -538,11 +535,11 @@ canvas.track-source {
   bottom: 100px;
   display: flex;
   display: -moz-flex;
+  perspective: 900px;
   align-items: center;
   transition: opacity 1s linear;
   transform: rotateZ(0deg);
   transform-style: preserve-3d;
-
 }
 
 .game-message {
@@ -768,14 +765,13 @@ nav {
   left: 0px;
   bottom: 0;
   right: 0;
-
+  display: none;
   background: rgba(0,0,0,1);
 
   h1 {
     text-align: center;
     font-size: 28px;
     margin: 0 0 25px 0;
-
   }
 
   .content {

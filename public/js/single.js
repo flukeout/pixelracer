@@ -1,6 +1,5 @@
 $(document).ready(function(){
 
-  // race.startTrial();
   audioStuff(); // build into the car??
 
   $(window).on("keydown",function(e){
@@ -29,6 +28,15 @@ $(document).ready(function(){
 
   buildTrackChooser();
 
+  var lastTrack = localStorage.getItem("lastSingleTrack");
+
+  if(!lastTrack){
+    $(".track-chooser").show();
+  } else {
+    race.changeTrack(lastTrack);
+    race.startTrial();
+  }
+
   gameLoop();
 
 });
@@ -36,18 +44,19 @@ $(document).ready(function(){
 var race = {
   ghostRecording : false,
   ghostData : [],
+  tinyGhostData : [],
   ghostFrameIndex : 0,
   ghostPlayData : [],
   updateTime : false,
   currentlap: 0,
   laptime : 0,
+  track : "",
   bestlap : "",
   startTrial: function(){
 
     console.log("race.startTrial() - begin the single player time trial");
 
     $(".track-wrapper").css("opacity",0);
-
 
     showMessage("do fast laps!");
 
@@ -63,14 +72,42 @@ var race = {
       var car = newCar("single", {"showname" : false, "trailColor" : trackData.trailcolor});
       cars.push(car);
       keyboardcar = car;
-
       spawnCars();
-
+      $(".track-wrapper").show();
       $(".track-wrapper").css("opacity",1);
     },500);
+  },
+  changeTrack: function(trackName){
+    console.log("race.changeTrack() - " + trackName);
+
+    $(".track-wrapper").css("opacity",0);
+    $(".track-wrapper").hide();
+    prepareTrack(trackName);
+    localStorage.setItem("lastSingleTrack",trackName);
+    this.track = trackName;
+    this.resetStandings();
+  },
+  resetStandings : function(){
+    console.log("race.resetStandings()");
+
+    var standingsEl = $(".standings");
+    $("body").removeClass("with-standings");
+
+    if(trackTimes[this.track]){
+      var times = trackTimes[this.track];
+      standingsEl.find(".gold").text(formatTime(times.gold));
+      standingsEl.find(".silver").text(formatTime(times.silver));
+      standingsEl.find(".bronze").text(formatTime(times.bronze));
+      $("body").addClass("with-standings");
+    }
 
   },
   finishLap : function(car){
+
+    //Spit out the 'minified' ghost data
+    // console.log(JSON.stringify(race.tinyGhostData));
+
+    console.log(this.laptime);
 
     this.ghostRecording = true;
     this.updateTime = false;
@@ -80,7 +117,6 @@ var race = {
     if(this.currentlap == 0) {
       this.updateTime = true;
     } else {
-
       setTimeout(function(t) {
         return function() {
           t.updateTime = true;
@@ -111,13 +147,25 @@ var race = {
 
       $(".delta-time").text(timeString);
       $(".best-time-wrapper").show();
-      $(".best-time").text(formatTime(this.bestlap));
 
+      //If person got the best lap
       if(this.laptime < this.bestlap){
         this.bestlap = this.laptime;
         this.ghostPlayData = this.ghostData;
       }
 
+      // Give em the achievemenets....
+      // Need to create a data structure that remembers these
+      var medalTimes = trackTimes[this.track];
+      for(var k in medalTimes){
+        if(this.bestlap <= medalTimes[k]){
+          $("." + k).addClass("achieved");
+          car.showMessage("Got " + k + "!");     //But... only if they already haven't?
+        }
+      }
+
+
+      $(".best-time").text(formatTime(this.bestlap));
     }
 
     if(this.ghostPlayData.length == 0) {
@@ -125,8 +173,8 @@ var race = {
     }
 
     this.ghostData = [];
+    this.tinyGhostData = [];
     this.ghostFrameIndex = 0;
-
     this.laptime = 0;
     this.currentlap++;
 
@@ -149,9 +197,6 @@ function prepareRandomTrack(){
   prepareTrack(trackData.filename);
 }
 
-
-
-
 function gameLoop() {
 
   var now = new Date().getTime();
@@ -165,6 +210,7 @@ function gameLoop() {
   }
 
   // Ghost Stuff - I SHOULD TAKE THIS OUT OF DRIVECAR
+
   if(race.ghostRecording){
     race.ghostData.push({
       "time" : race.laptime,
@@ -172,10 +218,18 @@ function gameLoop() {
       "y" : keyboardcar.showy,
       "angle" : keyboardcar.angle,
       "jumpHeight" : car.jumpHeight
-    })
+    });
+
+    if (car.jumpHeight > 0) {
+      car.jumpHeight = car.jumpHeight.toFixed(1);
+    }
+
+    race.tinyGhostData.push(race.laptime +","+ keyboardcar.showx.toFixed(1)+","+keyboardcar.showy.toFixed(1)+","+keyboardcar.angle.toFixed(1)+","+car.jumpHeight);
+
   }
 
   // PLAY THE GHOST
+
   if(race.ghostPlayData.length > 1) {
     for(var i = race.ghostFrameIndex-1; i < race.ghostPlayData.length; i++){
       var frame = race.ghostPlayData[i];

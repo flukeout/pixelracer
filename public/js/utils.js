@@ -97,13 +97,12 @@ function trackAnimation(){
   },200);
 }
 
-// var tracks = ["moon.png","twitter.png","ampersand.png","oval-8.png","oval.png","turbo-8.png"];
-// var tracks = ["floppy.png"];
-
-
 function prepareTrack(level){
+  console.log("utils.prepareTrack() - " + level);
   canvasTrack = $("canvas.track-source");
   context = canvasTrack[0].getContext("2d");
+
+  trackData = trackList[level];
 
   var image = new Image();
   $("body").append(image);
@@ -334,7 +333,7 @@ function driveCar(car) {
   car.x = Math.round(car.showx / scaling);
   car.y = Math.round(car.showy / scaling);
 
-  //Only check the terain if we've moved pixels...
+  //Only check the current terrIain if we are on a new pixel
 
   if(car.x != car.lastx || car.y != car.lasty) {
     car.currentPosition = checkPosition(car.x,car.y) || "grass";
@@ -379,7 +378,7 @@ function driveCar(car) {
   // Rate at which the car turns
   // var turnspeed = car.maxspeed - 1;
   var turnspeed = 4;
-  var turning = true;
+  var turning = car.maxspeed - 1;
 
   if(car.mode == "jumping" || car.mode == "frozen") {
     turning = false;
@@ -661,7 +660,7 @@ function newCar(id,config){
     angle: 270,
     acceleration : .06,
     turnacceleration: .5,
-    turnvelocity : 0, // Max turn per frame
+    turnvelocity : 0,
     gas : "off",
     left : "off",
     right : "off"
@@ -672,21 +671,18 @@ function newCar(id,config){
     car[key] = carconfig[key];
   }
 
-  //Limit the driver name to 3 uppercase letters
+  // Limit the driver name to 3 uppercase letters
   car.changeDriver = function(name){
     car.driver = name.substr(0,3).toUpperCase();
     car.el.find(".name").text(car.driver);
-
     if(car.id == myid){
       localStorage.setItem("drivername", car.driver);
     }
-
     $(".driver-name").val(car.driver);
   }
 
-  //SHOW A CHAT MESSAGE
+  // SHOW A CHAT MESSAGE
   car.showMessage = function(message){
-
     car.el.find(".name").css("opacity",0);
     var messageEl = $("<div class='message'>"+message+"</div>");
     car.el.prepend(messageEl);
@@ -796,7 +792,7 @@ function buildTrackChooser(){
     trackOption.on("click",function(){
       var track = $(this).attr('track');
       trackData = trackList[track];
-      prepareTrack(trackData.filename);
+      race.changeTrack(trackData.filename);
       race.startTrial();
       $(".track-chooser").hide();
     });

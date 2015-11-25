@@ -1,4 +1,17 @@
-var trackData = {}; //palceholder for current track
+var trackData = {}; //palceholder for current track -  gets populated, yo.
+
+var trackTimes = {
+  "oval-8.png" : {
+    gold : 3000,
+    silver : 3500,
+    bronze : 4000
+  },
+  "chasm.png" : {
+    gold : 5750,
+    silver : 6250,
+    bronze : 7000
+  },
+}
 
 var trackList = {
   "splash.png" : {

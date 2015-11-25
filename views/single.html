@@ -18,62 +18,73 @@
 
   <canvas class="track-source"></canvas>
 
-  <div class="laps">
-    <div class="lap-time-wrapper">
-      <span class="lap-time">0.00</span>
-    </div>
-    <div class="best-time-wrapper">
-      Best <span class="best-time"></span>
-    </div>
-    <div>
-      <span class="delta-time"></span>
-    </div>
-  </div>
+  <div class="main-wrapper">
 
-  <div class="track-wrapper">
-
-    <div class="track">
-      <!-- we should inject this -->
-      <div class="ghost">
-        <div class="shadow"></div>
-        <div class="body"></div>
+    <div class="laps">
+      <div class="lap-time-wrapper">
+        <span class="lap-time">0.00</span>
       </div>
+      <div class="best-time-wrapper">
+        Best <span class="best-time"></span>
+      </div>
+      <div>
+        <span class="delta-time"></span>
+      </div>
+    </div>
 
-      <canvas class="skids"></canvas>
+    <div class="track-wrapper">
 
-      <div id="track-editor-cursor">
-         <div class="cube">
-           <div class="front"></div>
-           <div class="back"></div>
-           <div class="right"></div>
-           <div class="left"></div>
-           <div class="top"></div>
-           <div class="bottom"></div>
+      <div class="track">
+        <!-- we should inject this -->
+        <div class="ghost">
+          <div class="shadow"></div>
+          <div class="body"></div>
+        </div>
+
+        <canvas class="skids"></canvas>
+
+        <div id="track-editor-cursor">
+           <div class="cube">
+             <div class="front"></div>
+             <div class="back"></div>
+             <div class="right"></div>
+             <div class="left"></div>
+             <div class="top"></div>
+             <div class="bottom"></div>
+           </div>
          </div>
-       </div>
 
-  </div>
-</div>
-
-  <div id="inspector"></div>
-
-  <div class="bottom-stuff">
-    <a class="change-track" href="#">Change Track</a>
-  </div>
-
-
-  <div class="game-message">
-    <div class="message"></div>
-  </div>
-
-
-  <div class="track-chooser">
-    <div class="content">
-      <h1>Choose a Track</h1>
-      <div class="tracks"></div>
     </div>
   </div>
 
+    <div id="inspector"></div>
+
+    <div class="bottom-stuff">
+      <a class="change-track" href="#">Change Track</a>
+    </div>
+
+    <div class="game-message">
+      <div class="message"></div>
+    </div>
+
+    <div class="track-chooser">
+      <div class="content">
+        <h1>Choose a Track</h1>
+        <div class="tracks"></div>
+      </div>
+    </div>
+
+</div> <!-- /main-wrapper -->
+
+<div class="standings">
+  <h1>Medals</h1>
+
+  <div class="standing gold"></div>
+  <div class="standing silver"></div>
+  <div class="standing bronze"></div>
+  <div class="standing player"></div>
+
+</div>
 
 
 {% endblock %}
