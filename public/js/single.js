@@ -2,6 +2,21 @@ $(document).ready(function(){
 
   audioStuff(); // build into the car??
 
+  $(window).on("keypress",function(e){
+    if(e.keyCode == 114){
+      race.quickRestart();
+    }
+    if(e.keyCode == 99){
+      $(".track-chooser").show();
+    }
+  });
+
+
+  $(".quick-restart").on("click",function(){
+    race.quickRestart();
+  })
+
+
   $(window).on("keydown",function(e){
     if(e.keyCode == 37) {
       keyboardcar.setDirection("steering","left-on");
@@ -52,6 +67,20 @@ var race = {
   laptime : 0,
   track : "",
   bestlap : "",
+  quickRestart : function(){
+    spawnCars();
+    this.currentlap = 0;
+    this.ghostRecording = false;
+    this.ghostData = [];
+    for(var k in cars){
+      var c = cars[k];
+      console.log(c);
+      c.speed = 0;
+      c.mode = "normal";
+      c.jumpHeight = 0;
+      c.showx = c.showx + 6 * scaling;
+    }
+  },
   startTrial: function(){
 
     console.log("race.startTrial() - begin the single player time trial");
@@ -164,7 +193,6 @@ var race = {
         }
       }
 
-
       $(".best-time").text(formatTime(this.bestlap));
     }
 
@@ -223,7 +251,7 @@ function gameLoop() {
     if (car.jumpHeight > 0) {
       car.jumpHeight = car.jumpHeight.toFixed(1);
     }
-
+    // This is that fricken compressed data format attempt....
     race.tinyGhostData.push(race.laptime +","+ keyboardcar.showx.toFixed(1)+","+keyboardcar.showy.toFixed(1)+","+keyboardcar.angle.toFixed(1)+","+car.jumpHeight);
 
   }

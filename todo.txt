@@ -1,3 +1,9 @@
+SINGLE PLAYER TIME TRIAL
+* [R] to restart the race.. behind the finish a bit so you can go full speed
+* Don't say got bronze after the first time you got it
+* Add mode frozen until the track is in view and raceable
+
+
 Compression for replays...
 One lap of chasm..
  * Recording every frame, with a comma delimited format costs 10.22 KB (this is at 60fps)
