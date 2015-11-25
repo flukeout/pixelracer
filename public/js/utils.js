@@ -799,6 +799,14 @@ function buildTrackChooser(){
 
   }
 
+  $(window).on("keydown",function(e){
+    if(e.keyCode == 27 && $(".track-chooser:visible").length > 0){
+      $(".track-chooser").hide();
+    }
+  });
+
+
+
   $(".change-track").on("click",function(){
     $(".track-chooser").show();
   })

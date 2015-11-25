@@ -1,25 +1,10 @@
 BUG
-* Sometimes after a track change (like chasm.png), the car gets stuck at 0,0
+* Hide the 'medals' stuff when the trackpicker is on.... maybe I should fixed position the track picker?
+
 
 SINGLE PLAYER TIME TRIAL
 * Don't say got bronze after the first time you got it
-
-
-So, at 10 laps, we've got... 50kb of data per racer per race.
-1MB gets us .... 20 races??
-
-
-Make the finish line the correct colors...
-
-Better indicator of progress during a game?
-
- * BOB -----|-----|-----|-----O
- * LUK -----|-----|-----O
- * TIM -----|-----O
- * DIN -----|-----|-----O
-
-MIGHT BE FUN FOR BRONZE / GOLD / SILVER TOO??
-
+  * This necessitates a bit of an achievement datastructure..! DON'T IT NOW
 
 IMPROVEMENTS
  * Fix how the max speed stuff is done - it ain't right.
@@ -29,7 +14,6 @@ IMPROVEMENTS
 
 BUGS
 * Best lap shows one lap after you get it in single player mode, not right away. Should be right away.
-
 
 TILES
 * LAVA (explode and respawn)
@@ -41,9 +25,6 @@ TILES
 
 MVP
 * Add way to switch tracks in single player
-
-
-
 
 =========
 
@@ -70,3 +51,15 @@ Compression for replays...
 One lap of chasm..
  * Recording every frame, with a comma delimited format costs 10.22 KB (this is at 60fps)
  * At 30fps, we can get this down to 5kb, let's say?
+
+
+========
+
+Better indicator of progress during a game?
+
+ * BOB -----|-----|-----|-----O
+ * LUK -----|-----|-----O
+ * TIM -----|-----O
+ * DIN -----|-----|-----O
+
+MIGHT BE FUN FOR BRONZE / GOLD / SILVER TOO??

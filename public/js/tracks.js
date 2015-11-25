@@ -1,3 +1,5 @@
+var playerAchievements = {}; // So that we can remember.. what you have gotten.....
+
 var trackData = {}; //palceholder for current track -  gets populated, yo.
 
 var trackTimes = {

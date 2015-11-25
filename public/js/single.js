@@ -62,6 +62,7 @@ var race = {
   ghostPlayData : [],
   updateTime : false,
   currentlap: 0,
+  ghostPlaying : false,
   laptime : 0,
   track : "",
   bestlap : "",
@@ -72,6 +73,7 @@ var race = {
     this.ghostRecording = false;
     this.ghostData = [];
     this.updateTime = false;
+    this.ghostPlaying = false;
 
     for(var k in cars){
       var c = cars[k];
@@ -116,7 +118,6 @@ var race = {
     localStorage.setItem("lastSingleTrack",trackName);
     this.track = trackName;
 
-
     this.laptime = 0;
     this.currentlap = 0;
     this.ghostRecording = false;
@@ -134,9 +135,9 @@ var race = {
 
     if(trackTimes[this.track]){
       var times = trackTimes[this.track];
-      standingsEl.find(".gold").text(formatTime(times.gold));
-      standingsEl.find(".silver").text(formatTime(times.silver));
-      standingsEl.find(".bronze").text(formatTime(times.bronze));
+      standingsEl.find(".gold").text(formatTime(times.gold)+"s");
+      standingsEl.find(".silver").text(formatTime(times.silver)+"s");
+      standingsEl.find(".bronze").text(formatTime(times.bronze)+"s");
       $("body").addClass("with-standings");
     }
 
@@ -150,6 +151,7 @@ var race = {
 
     this.ghostRecording = true;
     this.updateTime = false;
+    this.ghostPlaying = true;
 
     $(".delta-time").show();
 
@@ -268,7 +270,7 @@ function gameLoop() {
 
   // PLAY THE GHOST
 
-  if(race.ghostPlayData.length > 1) {
+  if(race.ghostPlayData.length > 1 && race.ghostPlaying) {
     for(var i = race.ghostFrameIndex-1; i < race.ghostPlayData.length; i++){
       var frame = race.ghostPlayData[i];
       if(frame){
