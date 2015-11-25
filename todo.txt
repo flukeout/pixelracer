@@ -1,13 +1,5 @@
 SINGLE PLAYER TIME TRIAL
-* [R] to restart the race.. behind the finish a bit so you can go full speed
 * Don't say got bronze after the first time you got it
-* Add mode frozen until the track is in view and raceable
-
-
-Compression for replays...
-One lap of chasm..
- * Recording every frame, with a comma delimited format costs 10.22 KB (this is at 60fps)
- * At 30fps, we can get this down to 5kb, let's say?
 
 So, at 10 laps, we've got... 50kb of data per racer per race.
 1MB gets us .... 20 races??
@@ -22,13 +14,14 @@ Better indicator of progress during a game?
  * TIM -----|-----O
  * DIN -----|-----|-----O
 
+MIGHT BE FUN FOR BRONZE / GOLD / SILVER TOO??
+
 
 IMPROVEMENTS
  * Fix how the max speed stuff is done - it ain't right.
  * More time after race is over and a player wins......
  * Make it not depend on a 15x scaling?
  * The flex display is messing with the track sizing.. make sure you enforce a minimum and maximum <- (K)
-
 
 BUGS
 * Best lap shows one lap after you get it in single player mode, not right away. Should be right away.
@@ -66,3 +59,10 @@ SEND A GHOST
 
 + gamepad API
 + tilt car relative to winner
+
+
+
+Compression for replays...
+One lap of chasm..
+ * Recording every frame, with a comma delimited format costs 10.22 KB (this is at 60fps)
+ * At 30fps, we can get this down to 5kb, let's say?

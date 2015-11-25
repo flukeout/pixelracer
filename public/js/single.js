@@ -11,11 +11,9 @@ $(document).ready(function(){
     }
   });
 
-
   $(".quick-restart").on("click",function(){
     race.quickRestart();
   })
-
 
   $(window).on("keydown",function(e){
     if(e.keyCode == 37) {
@@ -69,9 +67,13 @@ var race = {
   bestlap : "",
   quickRestart : function(){
     spawnCars();
+    this.laptime = 0;
     this.currentlap = 0;
     this.ghostRecording = false;
     this.ghostData = [];
+    this.updateTime = false;
+
+
     for(var k in cars){
       var c = cars[k];
       console.log(c);
@@ -289,6 +291,8 @@ function gameLoop() {
 
   if(race.updateTime){
     $(".lap-time").text(formatTime(race.laptime));
+  } else {
+    $(".lap-time").text(formatTime(0));
   }
 
   tiltTrack();
