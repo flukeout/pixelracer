@@ -222,11 +222,11 @@ function addFinishLine(){
   }
 
   var finishLine = $("<div class='finish-line'><div class='line'></div></div>");
-  $(".track").append(finishLine);
   finishLine.css("top",startY * scaling).css("left",startX * scaling).height((endY - startY + 1) * scaling).width(scaling);
   finishLine.find(".line").css("background",finishColor);
   finishLine.css("background",roadColor);
   finishLine.css("border-color",roadColor);
+  $(".track").append(finishLine);
 }
 
 
@@ -358,8 +358,7 @@ function driveCar(car) {
     car.speed = car.speed + speedchange;
   } else if (car.mode == "jumping") {
     //no change to car speed
-  }
-  else {
+  } else {
     car.speed = car.speed - speedchange;
   }
 
