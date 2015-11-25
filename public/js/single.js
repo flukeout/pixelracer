@@ -66,6 +66,9 @@ var race = {
   laptime : 0,
   track : "",
   bestlap : "",
+  hardReset : function(){
+    console.log("add some shit here - yo");
+  },
   quickRestart : function(){
     spawnCars();
     this.laptime = 0;
@@ -74,6 +77,7 @@ var race = {
     this.ghostData = [];
     this.updateTime = false;
     this.ghostPlaying = false;
+    $(".lap-time").text(formatTime(race.laptime));
 
     for(var k in cars){
       var c = cars[k];
@@ -116,11 +120,14 @@ var race = {
     $(".track-wrapper").hide();
     prepareTrack(trackName);
     localStorage.setItem("lastSingleTrack",trackName);
-    this.track = trackName;
 
+    this.track = trackName;
     this.laptime = 0;
+    this.bestlap = 0;
     this.currentlap = 0;
     this.ghostRecording = false;
+    this.ghostPlayData = [];
+    this.ghostPlaying = false;
     this.ghostData = [];
     this.updateTime = false;
     // end of reset block
@@ -301,8 +308,6 @@ function gameLoop() {
 
   if(race.updateTime){
     $(".lap-time").text(formatTime(race.laptime));
-  } else {
-    $(".lap-time").text(formatTime(0));
   }
 
   tiltTrack();

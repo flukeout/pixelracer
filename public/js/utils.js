@@ -771,8 +771,6 @@ function newCar(id,config){
   return car;
 }
 
-
-
 function buildTrackChooser(){
   console.log("buildTrackChooser()");
 
@@ -796,7 +794,6 @@ function buildTrackChooser(){
       race.startTrial();
       $(".track-chooser").hide();
     });
-
   }
 
   $(window).on("keydown",function(e){

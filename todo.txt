@@ -1,6 +1,7 @@
 BUG
 * Hide the 'medals' stuff when the trackpicker is on.... maybe I should fixed position the track picker?
-
+* Changing tracks after a ghost is recorded really fucks things in single.js
+* NEED a hard reset there on everyting
 
 SINGLE PLAYER TIME TRIAL
 * Don't say got bronze after the first time you got it
