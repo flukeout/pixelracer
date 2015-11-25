@@ -7,9 +7,9 @@ var trackTimes = {
     bronze : 4000
   },
   "chasm.png" : {
-    gold : 5750,
-    silver : 6250,
-    bronze : 7000
+    gold : 5500,
+    silver : 6000,
+    bronze : 6500
   },
 }
 

@@ -73,7 +73,6 @@ var race = {
     this.ghostData = [];
     this.updateTime = false;
 
-
     for(var k in cars){
       var c = cars[k];
       console.log(c);
@@ -116,6 +115,15 @@ var race = {
     prepareTrack(trackName);
     localStorage.setItem("lastSingleTrack",trackName);
     this.track = trackName;
+
+
+    this.laptime = 0;
+    this.currentlap = 0;
+    this.ghostRecording = false;
+    this.ghostData = [];
+    this.updateTime = false;
+    // end of reset block
+
     this.resetStandings();
   },
   resetStandings : function(){
@@ -138,7 +146,7 @@ var race = {
     //Spit out the 'minified' ghost data
     // console.log(JSON.stringify(race.tinyGhostData));
 
-    console.log(this.laptime);
+    console.log("race.finishLap()");
 
     this.ghostRecording = true;
     this.updateTime = false;

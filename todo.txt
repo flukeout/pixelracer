@@ -1,5 +1,9 @@
+BUG
+* Sometimes after a track change (like chasm.png), the car gets stuck at 0,0
+
 SINGLE PLAYER TIME TRIAL
 * Don't say got bronze after the first time you got it
+
 
 So, at 10 laps, we've got... 50kb of data per racer per race.
 1MB gets us .... 20 races??
