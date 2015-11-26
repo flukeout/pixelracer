@@ -1,9 +1,13 @@
-BUG
-* Hide the 'medals' stuff when the trackpicker is on.... maybe I should fixed position the track picker?
-* Changing tracks after a ghost is recorded really fucks things in single.js
-* NEED a hard reset there on everyting
+
+IMPROVEMENTS
+* NEED a hard reset on single player...........
+* RESET IT HERE...
+  hardReset : function(){
+    console.log("add some shit here - yo");
+  },
 
 SINGLE PLAYER TIME TRIAL
+* Spawn the player further behind the start line, since it's too close to get a good time
 * Don't say got bronze after the first time you got it
   * This necessitates a bit of an achievement datastructure..! DON'T IT NOW
 

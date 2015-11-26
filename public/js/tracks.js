@@ -1,21 +1,95 @@
 var playerAchievements = {}; // So that we can remember.. what you have gotten.....
 
-var trackData = {}; //palceholder for current track -  gets populated, yo.
+var trackData = {}; //Place holder for current track -  gets populated, yo.
 
 var trackTimes = {
+  "html5.png" : {
+    gold : 7250,
+    silver : 7750,
+    bronze : 8250
+  },
+  "moon.png" : {
+    gold : 4750,
+    silver : 5500,
+    bronze : 6000
+  },
+  "splash.png" : {
+    gold : 7500,
+    silver : 8000,
+    bronze : 9000
+  },
+  "oval.png" : {
+    gold : 3000,
+    silver : 3500,
+    bronze : 4000
+  },
   "oval-8.png" : {
     gold : 3000,
     silver : 3500,
     bronze : 4000
+  },
+  "ampersand.png" : {
+    gold : 6250,
+    silver : 6750,
+    bronze : 7250
   },
   "chasm.png" : {
     gold : 5500,
     silver : 6000,
     bronze : 6500
   },
+  "yellow.png" : {
+    gold : 8000,
+    silver : 8500,
+    bronze : 9000
+  },
+  "noirjump.png" : {
+    gold : 8000,
+    silver : 9000,
+    bronze : 10000
+  },
+  "superjump.png" : {
+    gold : 8000,
+    silver : 9000,
+    bronze : 10000
+  },
+  "twitter.png" : {
+    gold : 5250,
+    silver : 6000,
+    bronze : 6500
+  },
+  "turbo-8.png" : {
+    gold : 3750,
+    silver : 4500,
+    bronze : 5000
+  }
+
+
 }
 
 var trackList = {
+  "html5.png" : {
+    filename : "html5.png",
+    carcolors : ["#d04415"],
+    trailcolor : "#d04415",
+    leaveSkids : false,
+    laps : 3,
+    hexes : {
+      "#ffffff" : "road", //yellow
+      "#616161" : "road",
+      "#444444" : "road",
+      "#c7c7c7" : "road",
+      "#535353" : "road",
+      "#3a3a3a" : "road", //road shadow
+      "#e1e1e1" : "road",
+      "#ad3209" : "ledge",
+      "#414141" : "turbo",
+      "#bababa" : "finish",
+      "#343434" : "jump",
+      "#c25115" : "jump"
+    }
+  },
+
   "splash.png" : {
     filename : "splash.png",
     carcolors : ["#ffffff"],

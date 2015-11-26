@@ -64,25 +64,23 @@
 
 .with-standings {
   .main-wrapper {
-    width: ~"calc(100% - 250px)";
+    width: ~"calc(100% - 275px)";
   }
   .standings {
     display: block;
   }
 }
 
-
 .bottom-stuff {
   position: absolute;
 }
-
 
 .standings {
   display: none;
   position: absolute;
   right: 0;
   height: 100%;
-  width: 250px;
+  width: 275px;
   background: #222;
   padding: 25px;
   box-sizing: border-box;
@@ -98,7 +96,7 @@
     color: rgba(255,255,255,.5);
     position: relative;
     margin-bottom: 15px;
-    padding: 10px 10px 10px 35px;
+    padding: 10px 10px 10px 44px;
     opacity: .2;
 
     &.achieved {
@@ -109,30 +107,33 @@
       content: "";
       position: absolute;
       left: 0;
-      top: 8px;
-      height: 19px;
-      width: 19px;
-      border-radius: 50%;
+      top: 3px;
+      height: 30px;
+      width: 30px;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 100%;
+      image-rendering: pixelated;
     }
 
     &.gold {
       color: gold;
       &:after {
-        background: gold;
+        background-image: ~"url(/img/medal-gold.png)";
       }
     }
 
     &.silver {
       color: silver;
       &:after {
-        background: silver;
+        background-image: ~"url(/img/medal-silver.png)";
       }
     }
 
     &.bronze {
       color: #CD7F32;
       &:after {
-        background: #CD7F32;
+        background-image: ~"url(/img/medal-bronze.png)";
       }
     }
   }

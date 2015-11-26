@@ -774,13 +774,17 @@ nav {
 
 .track-chooser {
   color: white;
-  position: absolute;
+  position: fixed;
   top: 0px;
   left: 0px;
   bottom: 0;
   right: 0;
   display: none;
   background: rgba(0,0,0,1);
+  z-index: 5;
+
+
+
 
   h1 {
     text-align: center;
@@ -809,9 +813,40 @@ nav {
     padding:25px;
     transition: all ease-out .1s;
 
+    .medals {
+      height: 15px;
+      margin: 15px 0 10px 0;
+
+      * {
+        height: 20px;
+        width: 20px;
+        display: inline-block;
+        margin: 0 6px;
+        opacity: .2;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        image-rendering: pixelated;
+      }
+
+      .achieved {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+      .gold {
+        background-image: ~"url(/img/medal-gold.png)";
+      }
+      .silver {
+        background-image: ~"url(/img/medal-silver.png)";
+      }
+      .bronze {
+        background-image: ~"url(/img/medal-bronze.png)";
+      }
+    }
+
     .track-thumbnail {
       padding: 25px 0;
-      margin-bottom: 25px;
+      margin-bottom: 15px;
       perspective: 400px;
 
       img {

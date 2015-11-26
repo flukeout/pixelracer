@@ -133,6 +133,8 @@ var race = {
     // end of reset block
 
     this.resetStandings();
+
+    updateMedalsUI();
   },
   resetStandings : function(){
     console.log("race.resetStandings()");
@@ -197,7 +199,7 @@ var race = {
       $(".best-time-wrapper").show();
 
       //If person got the best lap
-      if(this.laptime < this.bestlap){
+      if(this.laptime <= this.bestlap){
         this.bestlap = this.laptime;
         this.ghostPlayData = this.ghostData;
       }
@@ -207,8 +209,7 @@ var race = {
       var medalTimes = trackTimes[this.track];
       for(var k in medalTimes){
         if(this.bestlap <= medalTimes[k]){
-          $("." + k).addClass("achieved");
-          car.showMessage("Got " + k + "!");     //But... only if they already haven't?
+          updateAchievements(this.track,k,car);
         }
       }
 
@@ -313,4 +314,52 @@ function gameLoop() {
   tiltTrack();
 
   window.requestAnimationFrame(gameLoop);
+}
+
+
+function updateAchievements(track, achievement, car){
+
+  console.log("updateAchievements() - " + track,achievement);
+
+  var playerAchievements = JSON.parse(localStorage.getItem("playerAchievements")) || {};
+
+  if(!playerAchievements[track]) {
+    playerAchievements[track] = {};
+  }
+
+  if(!playerAchievements[track][achievement]){
+    playerAchievements[track][achievement] = true;
+
+    car.showMessage("Got " + achievement + "!"); //But... only if they already haven't?
+  }
+
+  localStorage.setItem("playerAchievements",JSON.stringify(playerAchievements));
+
+  updateMedalsUI();
+
+}
+
+function updateMedalsUI(){
+
+  console.log("updateMedalsUI()");
+  $(".achieved").removeClass("achieved");
+
+  // Figure out which medals the player has already earned
+  var playerMedals = JSON.parse(localStorage.getItem("playerAchievements")) || {};
+
+  // Highlight all the medals that this person has both on the chooser
+  // and on the standings UI at the right side of the screen
+
+  for(var k in playerMedals){
+    var trackData = playerMedals[k];
+    var trackName = k;
+    for(var j in trackData){
+      $(".track-chooser [track='"+trackName+"']").find("." + j).addClass("achieved");
+
+      if(trackName == race.track) {
+        $(".standings ." + j).addClass("achieved");
+      }
+    }
+  }
+
 }

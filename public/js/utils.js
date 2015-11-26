@@ -563,7 +563,7 @@ function driveCar(car) {
 
   car.el.attr("mode",car.mode);
 
-  if(car.currentPosition == "finish" && car.angle > 180 && car.angle < 360){
+  if(car.currentPosition == "finish" && car.mode != "jumping" && car.angle > 180 && car.angle < 360){
     if(car.x != car.nextx) {
       car.laps++;
       race.finishLap(car);
@@ -785,6 +785,9 @@ function buildTrackChooser(){
     var trackName = $("<div class='track-name'>" + track.filename + "</div>");
     trackOption.append(trackName);
 
+    var medals = $("<div class='medals'><div class='gold'/><div class='silver'/><div class='bronze'/></div>");
+    trackOption.append(medals);
+
     $(".track-chooser .tracks").append(trackOption)
 
     trackOption.on("click",function(){
@@ -802,10 +805,7 @@ function buildTrackChooser(){
     }
   });
 
-
-
   $(".change-track").on("click",function(){
     $(".track-chooser").show();
-  })
-
+  });
 }
