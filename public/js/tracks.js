@@ -4,7 +4,7 @@ var trackData = {}; //Place holder for current track -  gets populated, yo.
 
 var trackTimes = {
   "html5.png" : {
-    gold : 7250,
+    gold : 7150,
     silver : 7750,
     bronze : 8250
   },
