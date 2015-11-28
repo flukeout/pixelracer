@@ -18,6 +18,7 @@ var trackData = {};
 
 function showMessage(message){
   console.log("showMessage() - " + message);
+
   $(".game-message").css("opacity",1);
 
   setTimeout(function(){
@@ -253,7 +254,11 @@ function easeInCubic(currentIteration, startValue, changeInValue, totalIteration
 function checkPosition(x,y){
   var p = context.getImageData(x, y, 1, 1).data;
   var hex = "#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6);
-  return trackData.hexes[hex];
+  if(hex == "#000000") {
+    return "void";
+  } else {
+    return trackData.hexes[hex];
+  }
 }
 
 function rgbToHex(r, g, b) {
@@ -320,6 +325,17 @@ function spawnCar(car){
   car.nameEl.css("color",trackData.carcolors[0]);
   car.trailColor = trackData.trailcolor;
 
+  car.crashed = false;
+  car.xRotation = 0;
+  car.yRotation = 0;
+  car.zRotation = 0;
+  car.xRotationSpeed = 0;
+  car.yRotationSpeed = 0;
+  car.zRotationSpeed = 0;
+  car.mode = "normal";
+  car.zPosition = 0;
+
+
   $(".ghost").find(".body").css("background",trackData.carcolors[0]);
 
   car.x = trackData.startPositions[random].x + 2;
@@ -357,7 +373,7 @@ function driveCar(car) {
 
   if(car.gas == "on" && car.speed <= car.maxspeed) {
     car.speed = car.speed + speedchange;
-  } else if (car.mode == "jumping") {
+  } else if (car.zPosition  > 0 || car.zPosition < 0) {
     //no change to car speed
   } else {
     car.speed = car.speed - speedchange;
@@ -380,7 +396,7 @@ function driveCar(car) {
   var turnspeed = 4;
   var turning = car.maxspeed - 1;
 
-  if(car.mode == "jumping" || car.mode == "frozen") {
+  if(car.zPosition > 0 || car.zPosition < 0 || car.mode == "frozen" || car.mode == "crashed") {
     turning = false;
   }
 
@@ -438,7 +454,7 @@ function driveCar(car) {
 
 
   //GRASS SPEED
-  if(car.currentPosition == "grass" && car.mode != "jumping"){
+  if(car.currentPosition == "grass" && car.zPosition == 0){
     car.maxspeed = 2;
     if(car.speed > 2){
       car.speed = 2;
@@ -473,7 +489,6 @@ function driveCar(car) {
   car.lastx = car.x;
   car.lasty = car.y;
 
-
   // CAR SKIDS
 
   // Leave a skid mark on the track
@@ -483,7 +498,7 @@ function driveCar(car) {
   var turnpercent = Math.abs(car.turnvelocity) / 4;
   var speedpercent = car.speed / car.maxspeed;
 
-  if(trackData.leaveSkids) {
+  if(trackData.leaveSkids && car.mode != "jumping") {
     if(car.x != car.nextx || car.y != car.nexty){
       var averagepercent = (speedpercent + turnpercent) / 2 * 100;
       var jam  = -75 + averagepercent;
@@ -571,43 +586,98 @@ function driveCar(car) {
     }
   }
 
-  if(car.mode == "normal" && car.currentPosition == "jump" && car.speed >= car.minJumpSpeed) {
-    car.jumpElapsed = 0;
-    car.jumpTotal = car.speed * scaling / 2.5 ;//jump distance relative to speed
+
+
+  //JUMPING
+
+  if(car.currentPosition == "jump" && car.speed >= car.minJumpSpeed && car.zPosition == 0){
+    // car.zVelocity = .5 * car.speed;
+    car.zVelocity = .7 * car.speed; // .5 car speed for normal jump
     car.mode = "jumping";
   }
 
-  //Jump the car
+  //Only crash at fulll speed..
+  if(car.currentPosition == "wall" && car.speed >= 4.75 && car.zPosition == 0){
+    // car.zVelocity = .5 * car.speed;
+    car.zVelocity = .5 * car.speed; // .5 car speed for normal jump
+    car.mode = "crash";
 
-  car.jumpHeight = 0;
+    // car.el.css("opacity",0);
 
-  if(car.mode == "jumping") {
-    var maxHeight = car.jumpTotal / scaling;
+    var min = 8;
+    var max = 16;
+    car.xRotationSpeed = min + Math.random() * (max - min);
+    var min = 1;
+    var max = 4;
+    car.yRotationSpeed = min + Math.random() * (max - min);
+    var min = 1;
+    var max = 4;
+    car.zRotationSpeed = min + Math.random() * (max - min);
 
-    if(car.jumpElapsed < car.jumpTotal /2) {
-      car.jumpHeight = easeOutCubic(car.jumpElapsed + 1 , 0, maxHeight , car.jumpTotal/2);
-    } else {
-      car.jumpHeight = easeInCubic(car.jumpElapsed - car.jumpTotal/2, maxHeight, -1 * maxHeight, car.jumpTotal/2);
+    // make 3 particles on crash
+    for(var j = 0; j < 4; j++){
+      makeParticle(car.x, car.y, car.speed, car.angle);
     }
 
-    car.jumpHeight = car.jumpHeight * scaling;
-    car.jumpElapsed++; //moon
+  }
 
-    if(car.jumpElapsed >= car.jumpTotal){
-      car.mode = "normal";
-    }
+
+  //Apply any car rotations if the car is flyin'....
+  if(car.zPosition > 0 || car.zPosition < 0) {
+    car.xRotation = car.xRotation + car.xRotationSpeed;
+    car.yRotation = car.yRotation + car.yRotationSpeed;
+    car.zRotation = car.zRotation + car.zRotationSpeed;
+  }
+
+  if(car.currentPosition == "void" || car.zPosition > 0) {
+    // car.mode = "jumping";
+    car.zVelocity = car.zVelocity - car.gravity
+  }
+
+  car.zPosition = car.zPosition + car.zVelocity;
+
+  if(car.zPosition < 0 && car.currentPosition == "void") {
+    car.mode = "gone";
+  } else {
+    // car.shadow.hide();
+  }
+
+  // Safe Landing
+  if(car.zPosition < 0 && car.zVelocity < 0 && car.mode != "gone" && car.mode != "crash"){
+    console.log("safe landing");
+    car.mode = "normal";
+    car.zPosition = 0;
+    car.zVelocity = 0;
+    car.zRotation = 0;
+    car.xRotation = 0;
+    car.yRotation = 0;
+  }
+
+    // Crash landing
+  if(car.zPosition < 0 && car.zVelocity < 0 && car.mode != "gone" && car.mode == "crash"){
+    car.zPosition = 5;
+    car.speed = 0;
+    car.zRotationSpeed = 0;
+    car.xRotationSpeed = 0;
+    car.yRotationSpeed = 0;
   }
 
   // CAR JUMP TRAIL
-  if(car.jumpHeight > 0){
+  if(car.zPosition != 0){
     if(car.x != car.nextx || car.y != car.nexty){
       var trail = $("<div class='trail'></div>");
-      trail.css("background",car.trailColor || "#32a6dc")
+      if(car.mode == "crash") {
+        trail.css("background","#000000");
+      } else {
+        trail.css("background",car.trailColor || "#32a6dc")
+      }
       trail.height(scaling).width(scaling);
       trail.css("left",car.x * scaling).css("top",car.y * scaling);
-      trail.css("transform","translateZ("+ car.jumpHeight +"px)");
-      $(".track").prepend(trail);
-      setTimeout(function(el) { return function() { el.remove(); }; }(trail), 400);
+      trail.css("transform","translateZ("+ car.zPosition +"px)");
+
+
+      // $(".track").append(trail); // <- gotta figure this out i guess
+      // setTimeout(function(el) { return function() { el.remove(); }; }(trail), 400);
     }
   }
 
@@ -616,10 +686,12 @@ function driveCar(car) {
 
   //makes the body jump
   if(car.currentPosition == "overpass" && car.mode == "normal") {
-    car.body.css("transform", "scale(1.1) rotateZ("+car.angle+"deg) translateZ("+car.jumpHeight+"px");
+    car.jumper.css("transform", "scale(1.1) rotateZ("+car.angle+"deg) translateZ("+car.zPosition+"px");
+    car.body.css("transform", "rotateZ("+car.zRotation+"deg)");
   } else {
-    car.body.css("transform", " rotateZ("+car.angle+"deg) translateZ("+car.jumpHeight+"px");
-    car.nameEl.css("transform", "translateZ("+ parseInt(38 + car.jumpHeight) + "px) rotateX(-70deg)");
+    car.jumper.css("transform", " rotateZ("+car.angle+"deg) translateZ("+car.zPosition+"px");
+    car.body.css("transform", "rotateX("+car.xRotation+"deg) rotateY("+car.yRotation+"deg) rotateZ("+car.zRotation+"deg)");
+    car.nameEl.css("transform", "translateZ("+ parseInt(38 + car.zPosition) + "px) rotateX(-70deg)");
   }
 
   car.shadow.css("transform", "rotateZ("+car.angle+"deg)");
@@ -633,12 +705,19 @@ function newCar(id,config){
     id : id,
     x : 0,
     y : 0,
+    crashed : false,
     showx : 410,
+    xRotationSpeed : 0,
+    yRotationSpeed : 0,
+    zRotationSpeed : 0,
     showy : 230,
     nextx :0,
     nexty : 0,
     lastx : 0,
     lasty : 0,
+    zRotation : 0,
+    xRotation: 0,
+    yRotation: 0,
     mode: "normal",
     driver : "Bob",
     showname : true,
@@ -656,6 +735,9 @@ function newCar(id,config){
     jumpElapsed: 0,
     jumpTotal: 0,
     jumpHeight : 0,
+    zVelocity : 0,
+    zPosition : 0,
+    gravity : .175,
     minJumpSpeed : 2.5,
     angle: 270,
     acceleration : .06,
@@ -759,6 +841,11 @@ function newCar(id,config){
   var body = $("<div class='body'></div>");
   car.body = body;
 
+  var jumper = $("<div class='jumper'></div>");
+  car.jumper = jumper;
+
+  car.jumper.append(body);
+
   var randomColor = Math.floor(Math.random() * trackData.carcolors.length);
 
   var chosenColor = trackData.carcolors[randomColor]
@@ -766,7 +853,7 @@ function newCar(id,config){
   car.body.css("background", chosenColor);
 
   car.el.append(shadow);
-  car.el.append(body);
+  car.el.append(jumper);
 
   return car;
 }
@@ -808,4 +895,100 @@ function buildTrackChooser(){
   $(".change-track").on("click",function(){
     $(".track-chooser").show();
   });
+}
+
+
+var particles = [];
+
+// Ooky going to leave this off for now
+function makeParticle(x,y, speed, angle){
+
+  // and... apply some motion and stuff to these...?
+  // Move them in a similar direction ot the car...... ?
+  var particle = {};
+
+  var min = 1;
+  var max = 5;
+  particle.zVel = min + Math.random() * (max - min);
+
+  var minAngle = -20;
+  var maxAngle = 20;
+  var angleChange = minAngle + Math.random() * (maxAngle - minAngle);
+  angle = angle + angleChange;
+
+  var adjacent = Math.cos(toRadians(angle)) * speed;
+  var opposite = Math.sin(toRadians(angle)) * speed;
+  var xd = opposite;
+  var yd = -1 * adjacent;
+
+  particle.zVel = .5 * speed;
+  particle.xVel = xd;
+  particle.yVel = yd;
+
+  particle.xPos = x * scaling;
+  particle.yPos = y * scaling;
+  particle.zPos = 0;
+
+  particle.xRot = 0;
+  particle.yRot = 0;
+  particle.zRot = 0;
+
+  var min = 2;
+  var max = 10;
+  particle.xRotVel = min + Math.random() * (max - min);
+
+  var min = 2;
+  var max = 10;
+  particle.yRotVel = min + Math.random() * (max - min);
+
+  var min = 2;
+  var max = 10;
+  particle.zRotVel = min + Math.random() * (max - min);
+
+  var trail = $("<div class='particle'></div>");
+  var rotator = $("<div class='rotator'></div>");
+  trail.append(rotator);
+
+  trail.find(".rotator").css("background","white");
+
+  trail.height(scaling).width(scaling);
+  // trail.css("left",x * scaling).css("top",y * scaling);
+
+  particle.el = trail;
+
+  //If i want the trail to go up too... then i have to add a wrapper
+  // $(".trail-wrapper").prepend(trail); // <- gotta figure this out i guess
+  $(".track").append(particle.el); // <- gotta figure this out i guess
+
+
+  console.log(trail);
+  setTimeout(function(el,p) {
+    return function(){
+      el.remove();
+      particles = [];
+    };
+  }(trail,particle), 1000);
+
+  particles.push(particle);
+
+}
+
+function animateParticles(){
+  for(var i = 0; i < particles.length; i++){
+    var p = particles[i];
+
+    //Position
+    p.xPos = p.xPos + p.xVel;
+    p.yPos = p.yPos + p.yVel;
+    p.zPos = p.zPos + p.zVel;
+    p.zVel = p.zVel - .175;
+    p.el.css("transform", "translateY("+p.yPos+"px)  translateX("+p.xPos+"px) translateZ("+p.zPos+"px)");
+
+    //Rotation
+    p.xRot = p.xRot + p.xRotVel;
+    p.yRot = p.yRot + p.yRotVel;
+    p.zRot = p.zRot + p.zRotVel;
+    p.el.find(".rotator").css("transform", "rotateX("+p.xRot+"deg) rotateY("+p.yRot+"deg) rotateZ("+p.zRot+"deg)");
+
+  }
 }

@@ -237,7 +237,7 @@ var trackList = {
     leaveSkids : true,
     hexes : {
       "#5a5a5a" : "road",
-      "#8fcf4b" : "grass",
+      "#8dd140" : "wall", // used to be grass
       "#f1aa22" : "turbo",
       "#b97d37" : "windmill",
       "#2194ca" : "water",
@@ -246,7 +246,7 @@ var trackList = {
       "#a9a9a9" : "ledge",
       "#373737" : "overpass",
       "#7dba3d" : "lamp",
-      "#d4c921" : "jump"
+      "#6da42e" : "wall"
     }
   },
   "turbo-8.png" : {

@@ -464,7 +464,7 @@ function gameLoop() {
       "gas" : car.gas,
       "driver" : car.driver,
       "rotation" : car.angle,
-      "height" : car.jumpHeight,
+      "height" : car.zPosition,
       "velocity" : car.speed,
       "turnvelocity" : car.turnvelocity
     }

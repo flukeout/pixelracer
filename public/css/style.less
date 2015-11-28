@@ -69,7 +69,6 @@ canvas.track-source {
   transform-style: preserve-3d;
 }
 
-
 .skids {
   display: block;
   position: absolute;
@@ -87,6 +86,7 @@ canvas.track-source {
   position: absolute;
   background: #32a6dc;
   opacity: .25;
+  z-index: 3;
   transform-style: preserve-3d;
 }
 
@@ -147,6 +147,16 @@ canvas.track-source {
     text-align: left;
     white-space: nowrap;
   }
+
+  .jumper {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+
 
   .body {
     position: absolute;
@@ -884,4 +894,22 @@ nav {
     opacity: 1;
     text-decoration: none;
   }
+}
+
+
+.particle {
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  z-index: 3;
+  transform-style: preserve-3d;
+}
+
+.rotator {
+  transform-style: preserve-3d;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
 }

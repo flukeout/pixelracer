@@ -313,6 +313,10 @@ function gameLoop() {
 
   tiltTrack();
 
+  if(particles.length > 0) {
+    animateParticles();
+  }
+
   window.requestAnimationFrame(gameLoop);
 }
 
