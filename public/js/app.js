@@ -17,13 +17,11 @@ var race = {
     prepareTrack(trackData.filename);
     this.track = trackData.filename;
 
-
     //This should really happen where... not here.. but here it is...
     //nontheless
 
     for(var k in othercars){
       var othercar = othercars[k];
-      console.log(othercar);
       othercar.el.find(".body").css("background",trackData.carcolors[0]);
       othercar.el.find(".name").css("color",trackData.carcolors[0]);
     }

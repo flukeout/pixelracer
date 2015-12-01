@@ -4,7 +4,7 @@ var trackData = {}; //Place holder for current track -  gets populated, yo.
 
 var trackTimes = {
   "html5.png" : {
-    gold : 7150,
+    gold : 7000,
     silver : 7750,
     bronze : 8250
   },
@@ -237,7 +237,7 @@ var trackList = {
     leaveSkids : true,
     hexes : {
       "#5a5a5a" : "road",
-      "#8dd140" : "wall", // used to be grass
+
       "#f1aa22" : "turbo",
       "#b97d37" : "windmill",
       "#2194ca" : "water",
@@ -246,7 +246,7 @@ var trackList = {
       "#a9a9a9" : "ledge",
       "#373737" : "overpass",
       "#7dba3d" : "lamp",
-      "#6da42e" : "wall"
+      "#d5d5d5" : "wall"
     }
   },
   "turbo-8.png" : {
@@ -268,5 +268,24 @@ var trackList = {
       "#7dba3d" : "lamp",
       "#d4c921" : "jump"
     }
+  },
+  "testground.png" : {
+    filename : "testground.png",
+    carcolors : ["#ffffff"],
+    trailcolor : "#32a6dc",
+    laps : 10,
+    leaveSkids : true,
+    hexes : {
+      "#5a5a5a" : "road",
+      "#515151" : "road",
+      "#f1aa22" : "turbo",
+      "#b97d37" : "windmill",
+      "#ffffff" : "finish",
+      "#d4c921" : "jump",
+      "#bcbcbc" : "wall",
+      "#d5d5d5" : "wall"
+
+    }
   }
+
 }

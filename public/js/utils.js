@@ -312,19 +312,24 @@ function spawnCars(){
     var car = cars[c];
     spawnCar(car);
   }
-
-
 }
 
-function spawnCar(car){
+function spawnCar(car,x,y,angle){
+
   console.log("spawnCar() - spawning individual car");
-  car.angle = 270;
+  if(angle == undefined) {
+    car.angle = 270;
+  } else {
+    car.angle = angle;
+  }
+
   var random = Math.floor(Math.random() * trackData.startPositions.length);
 
   car.body.css("background",trackData.carcolors[0]);
   car.nameEl.css("color",trackData.carcolors[0]);
   car.trailColor = trackData.trailcolor;
 
+  car.speed = 0;
   car.crashed = false;
   car.xRotation = 0;
   car.yRotation = 0;
@@ -333,13 +338,17 @@ function spawnCar(car){
   car.yRotationSpeed = 0;
   car.zRotationSpeed = 0;
   car.mode = "normal";
-  car.zPosition = 0;
-
+  car.zPosition = 100;
 
   $(".ghost").find(".body").css("background",trackData.carcolors[0]);
 
-  car.x = trackData.startPositions[random].x + 2;
-  car.y = trackData.startPositions[random].y;
+  if(x != undefined && y != undefined){
+    car.x = x;
+    car.y = y;
+  } else {
+    car.x = trackData.startPositions[random].x + 2;
+    car.y = trackData.startPositions[random].y;
+  }
   car.showx = car.x * scaling;
   car.showy = car.y * scaling;
 }
@@ -353,6 +362,12 @@ function driveCar(car) {
 
   if(car.x != car.lastx || car.y != car.lasty) {
     car.currentPosition = checkPosition(car.x,car.y) || "grass";
+    if(car.mode != "crashed" && car.mode != "gone" && car.mode != "jumping" && car.zPosition == 0){
+      car.positionHistory.push({x : car.x, y: car.y, angle : car.angle});
+      if(car.positionHistory.length  > 10) {
+        car.positionHistory.shift();
+      }
+    }
   }
 
   // SPEED
@@ -365,6 +380,7 @@ function driveCar(car) {
   }
 
   var speedchange = car.acceleration;
+
   var frameAdjuster = 16.67 / delta;
 
   speedchange = speedchange * frameAdjuster;
@@ -373,23 +389,20 @@ function driveCar(car) {
 
   if(car.gas == "on" && car.speed <= car.maxspeed) {
     car.speed = car.speed + speedchange;
-  } else if (car.zPosition  > 0 || car.zPosition < 0) {
-    //no change to car speed
+  } else if (car.mode == "crashed") {
+
   } else {
-    car.speed = car.speed - speedchange;
+    if(car.speed > 0) {
+      car.speed = car.speed - speedchange;
+    }
+    if(car.speed < 0) {
+      car.speed = car.speed + speedchange;
+    }
   }
 
-  if(car.speed > car.maxspeed) {
-    car.speed = car.speed - speedchange;
-  }
 
-  if(car.speed < 0){
-    car.speed = 0;
-  }
 
   // CAR TURNING
-
-
 
   // Rate at which the car turns
   // var turnspeed = car.maxspeed - 1;
@@ -463,43 +476,90 @@ function driveCar(car) {
     car.maxspeed = 5;
   }
 
+
+
+
+
+  //end wall shit
+
   // CAR POSITION
+  var done = false;
+  // this should be more like the vectors of
+  while(done == false) {
 
-  var adjacent = Math.cos(toRadians(car.angle)) * car.speed;
-  var opposite = Math.sin(toRadians(car.angle)) * car.speed;
-  var xd = opposite;
-  var yd = -1 * adjacent;
+    var adjacent = Math.cos(toRadians(car.angle)) * car.speed;
+    var opposite = Math.sin(toRadians(car.angle)) * car.speed;
+    var xd = opposite;
+    var yd = -1 * adjacent;
 
-  car.nextx = Math.round((car.showx + xd) / scaling);
-  car.nexty = Math.round((car.showy + yd) / scaling);
+    car.nextx = Math.round((car.showx + xd) / scaling);
+    car.nexty = Math.round((car.showy + yd) / scaling);
 
-  var movedPixelPosition = false;
+    var movedPixelPosition = false;
+    var nextPosition;
 
-  var nextPosition;
-  if(car.x != car.nextx || car.y != car.nexty) {
-    movedPixelPosition = true;
+    if(car.x != car.nextx || car.y != car.nexty) {
+      movedPixelPosition = true;
+    }
+
+    if(movedPixelPosition) {
+      nextPosition = checkPosition(car.nextx,car.nexty);
+    } else {
+      nextPosition = car.currentPosition;
+    }
+
+    if(nextPosition == "wall" && car.zPosition == 0 && car.speed < 4.5 && car.mode != "crashed") {
+
+      var direction = "forward";
+
+      if(car.speed < 0){
+        direction = "backwards";
+      }
+
+      if(direction == "forward") {
+        car.speed = -2;
+      } else {
+        car.speed = 2;
+      }
+
+    } else {
+      done = true;
+    }
+
   }
 
-  if(movedPixelPosition) {
-    nextPosition = checkPosition(car.nextx,car.nexty);
-  } else {
-    nextPosition = car.currentPosition;
-  }
   //Write down the old position
   car.lastx = car.x;
   car.lasty = car.y;
 
-  // CAR SKIDS
+  if(nextPosition == "wall" && car.zPosition == 0){
 
+    if(car.speed >= 4.5 ) {
+
+      car.zVelocity =  .7 * car.speed; // .5 car speed for normal jump
+      car.speed = car.speed * .5;
+      car.mode = "crashed";
+
+      car.xRotationSpeed = getRandom(8,16);
+      car.yRotationSpeed = getRandom(1,3);
+      car.zRotationSpeed = getRandom(1,3);
+
+      // make 3 particles on crash
+      for(var j = 0; j < 10; j++){
+        makeParticle(car.x, car.y, car.speed, car.angle);
+      }
+    }
+  }
+
+  // CAR SKIDS
   // Leave a skid mark on the track
   // If it's on the road - then depends on speed and turning radius
   // If it's not, then just rip it up a bit
 
-  var turnpercent = Math.abs(car.turnvelocity) / 4;
-  var speedpercent = car.speed / car.maxspeed;
-
-  if(trackData.leaveSkids && car.mode != "jumping") {
-    if(car.x != car.nextx || car.y != car.nexty){
+  if(car.x != car.nextx || car.y != car.nexty){
+    if(trackData.leaveSkids && car.mode != "jumping" && car.zPosition == 0) {
+      var turnpercent = Math.abs(car.turnvelocity) / 4;
+      var speedpercent = car.speed / car.maxspeed;
       var averagepercent = (speedpercent + turnpercent) / 2 * 100;
       var jam  = -75 + averagepercent;
       var opacity = jam/25 * .1;
@@ -509,7 +569,7 @@ function driveCar(car) {
       if(car.currentPosition == "road" || car.currentPosition == "overpass") {
         ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
         ctx.fillRect(car.x * scaling, car.y * scaling, scaling, scaling);
-      } else {
+      } else if (car.currentPosition == "grass"){
         ctx.fillStyle = "rgba(0,0,0,.05)";
         ctx.fillRect(car.x * scaling, car.y * scaling, scaling, scaling);
       }
@@ -519,11 +579,11 @@ function driveCar(car) {
   // CAR SKID SOUND
 
   //Controls the Skidding volume oscillator, which is always on
-  if(turnpercent == 1 && speedpercent > .5) {
-    vol.gain.value = .012 * turnpercent || 0;
-  } else {
-    vol.gain.value = 0;
-  }
+  // if(turnpercent == 1 && speedpercent > .5) {
+  //   vol.gain.value = .012 * turnpercent || 0;
+  // } else {
+  //   vol.gain.value = 0;
+  // }
 
 
   var move = true;
@@ -531,9 +591,6 @@ function driveCar(car) {
   if(car.mode == "frozen"){
     move = false;
   }
-
-  $(".place").css("left",car.x * scaling).css("top",car.y * scaling);
-
 
   if(car.mode == "normal") {
     if(car.currentPosition == "overpass" && nextPosition == "ledge" ) {
@@ -564,19 +621,18 @@ function driveCar(car) {
 
   // CAR ENGINE
 
-  var maxfq = 800;
-  var minfq = 400;
-
-  if(car.mode == "jumping"){
-    maxfq = 0;
-  }
-
-  var frequency = minfq + ((car.speed/car.maxspeed) * (maxfq - minfq));
-
-  enginesine.frequency.value = frequency / 10;
-  engine.frequency.value = frequency;
-
-  car.el.attr("mode",car.mode);
+  // var maxfq = 800;
+  // var minfq = 400;
+  //
+  // if(car.mode == "jumping"){
+  //   maxfq = 0;
+  // }
+  //
+  // var frequency = minfq + ((car.speed/car.maxspeed) * (maxfq - minfq));
+  //
+  // enginesine.frequency.value = frequency / 10;
+  // engine.frequency.value = frequency;
+  // car.el.attr("mode",car.mode);
 
   if(car.currentPosition == "finish" && car.mode != "jumping" && car.angle > 180 && car.angle < 360){
     if(car.x != car.nextx) {
@@ -586,39 +642,11 @@ function driveCar(car) {
     }
   }
 
-
-
   //JUMPING
 
   if(car.currentPosition == "jump" && car.speed >= car.minJumpSpeed && car.zPosition == 0){
-    // car.zVelocity = .5 * car.speed;
-    car.zVelocity = .7 * car.speed; // .5 car speed for normal jump
-    car.mode = "jumping";
-  }
-
-  //Only crash at fulll speed..
-  if(car.currentPosition == "wall" && car.speed >= 4.75 && car.zPosition == 0){
-    // car.zVelocity = .5 * car.speed;
     car.zVelocity = .5 * car.speed; // .5 car speed for normal jump
-    car.mode = "crash";
-
-    // car.el.css("opacity",0);
-
-    var min = 8;
-    var max = 16;
-    car.xRotationSpeed = min + Math.random() * (max - min);
-    var min = 1;
-    var max = 4;
-    car.yRotationSpeed = min + Math.random() * (max - min);
-    var min = 1;
-    var max = 4;
-    car.zRotationSpeed = min + Math.random() * (max - min);
-
-    // make 3 particles on crash
-    for(var j = 0; j < 4; j++){
-      makeParticle(car.x, car.y, car.speed, car.angle);
-    }
-
+    car.mode = "jumping";
   }
 
 
@@ -630,20 +658,31 @@ function driveCar(car) {
   }
 
   if(car.currentPosition == "void" || car.zPosition > 0) {
-    // car.mode = "jumping";
     car.zVelocity = car.zVelocity - car.gravity
   }
 
   car.zPosition = car.zPosition + car.zVelocity;
 
   if(car.zPosition < 0 && car.currentPosition == "void") {
+    if(car.mode != "gone") {
+      if(!car.respawning){
+        car.respawn();
+        car.respawning = true;
+      }
+    }
     car.mode = "gone";
   } else {
-    // car.shadow.hide();
+
+  }
+
+  if(car.zPosition < 0){
+    car.shadow.hide();
+  } else {
+    car.shadow.show();
   }
 
   // Safe Landing
-  if(car.zPosition < 0 && car.zVelocity < 0 && car.mode != "gone" && car.mode != "crash"){
+  if(car.zPosition < 0 && car.zVelocity < 0 && car.mode != "gone" && car.mode != "crashed"){
     console.log("safe landing");
     car.mode = "normal";
     car.zPosition = 0;
@@ -653,31 +692,29 @@ function driveCar(car) {
     car.yRotation = 0;
   }
 
-    // Crash landing
-  if(car.zPosition < 0 && car.zVelocity < 0 && car.mode != "gone" && car.mode == "crash"){
-    car.zPosition = 5;
+  // Crash landing
+  if(car.zPosition < 0 && car.zVelocity < 0 && car.mode != "gone" && car.mode == "crashed"){
+    car.zPosition = 0;
     car.speed = 0;
     car.zRotationSpeed = 0;
     car.xRotationSpeed = 0;
     car.yRotationSpeed = 0;
+    if(!car.respawning){
+      car.respawn();
+      car.respawning = true;
+    }
   }
 
   // CAR JUMP TRAIL
-  if(car.zPosition != 0){
+  if(car.zPosition > 0 && car.mode != "crashed"){
     if(car.x != car.nextx || car.y != car.nexty){
       var trail = $("<div class='trail'></div>");
-      if(car.mode == "crash") {
-        trail.css("background","#000000");
-      } else {
-        trail.css("background",car.trailColor || "#32a6dc")
-      }
+      trail.css("background",car.trailColor || "#32a6dc")
       trail.height(scaling).width(scaling);
       trail.css("left",car.x * scaling).css("top",car.y * scaling);
       trail.css("transform","translateZ("+ car.zPosition +"px)");
-
-
-      // $(".track").append(trail); // <- gotta figure this out i guess
-      // setTimeout(function(el) { return function() { el.remove(); }; }(trail), 400);
+      $(".track").append(trail); // <- gotta figure this out i guess
+      setTimeout(function(el) { return function() { el.remove(); }; }(trail), 400);
     }
   }
 
@@ -737,7 +774,7 @@ function newCar(id,config){
     jumpHeight : 0,
     zVelocity : 0,
     zPosition : 0,
-    gravity : .175,
+    gravity : .180,
     minJumpSpeed : 2.5,
     angle: 270,
     acceleration : .06,
@@ -745,12 +782,27 @@ function newCar(id,config){
     turnvelocity : 0,
     gas : "off",
     left : "off",
-    right : "off"
+    right : "off",
+    positionHistory : []
   };
 
   // Updates car defaults based on what is passed in
   for(var key in carconfig){
     car[key] = carconfig[key];
+  }
+
+  car.respawn = function(){
+    setTimeout(function(c){
+      return function() {
+        var x = c.positionHistory[0].x;
+        var y = c.positionHistory[0].y;
+        var angle = c.positionHistory[0].angle;
+        c.respawning = false;
+        if(car.mode != "normal") {
+          spawnCar(c,x,y,angle);
+        }
+      };
+    }(this), 500);
   }
 
   // Limit the driver name to 3 uppercase letters
@@ -907,23 +959,24 @@ function makeParticle(x,y, speed, angle){
   // Move them in a similar direction ot the car...... ?
   var particle = {};
 
-  var min = 1;
-  var max = 5;
-  particle.zVel = min + Math.random() * (max - min);
-
-  var minAngle = -20;
-  var maxAngle = 20;
-  var angleChange = minAngle + Math.random() * (maxAngle - minAngle);
+  var angleChange = getRandom(-20,20);
   angle = angle + angleChange;
 
-  var adjacent = Math.cos(toRadians(angle)) * speed;
-  var opposite = Math.sin(toRadians(angle)) * speed;
-  var xd = opposite;
-  var yd = -1 * adjacent;
+  // var adjacent = Math.cos(toRadians(angle)) * speed;
+  // var opposite = Math.sin(toRadians(angle)) * speed;
+  // var xd = opposite;
+  // var yd = -1 * adjacent;
 
-  particle.zVel = .5 * speed;
+  particle.zVel = speed;
+
+  var xd = getRandom(-3,3);
   particle.xVel = xd;
+
+  var yd = getRandom(-3,3);
   particle.yVel = yd;
+
+  particle.opacity = 1;
+  particle.opacityVelocity = .02;
 
   particle.xPos = x * scaling;
   particle.yPos = y * scaling;
@@ -933,17 +986,9 @@ function makeParticle(x,y, speed, angle){
   particle.yRot = 0;
   particle.zRot = 0;
 
-  var min = 2;
-  var max = 10;
-  particle.xRotVel = min + Math.random() * (max - min);
-
-  var min = 2;
-  var max = 10;
-  particle.yRotVel = min + Math.random() * (max - min);
-
-  var min = 2;
-  var max = 10;
-  particle.zRotVel = min + Math.random() * (max - min);
+  particle.xRotVel = getRandom(2,10);
+  particle.yRotVel = getRandom(2,10);
+  particle.zRotVel = getRandom(2,10);
 
   var trail = $("<div class='particle'></div>");
   var rotator = $("<div class='rotator'></div>");
@@ -951,7 +996,7 @@ function makeParticle(x,y, speed, angle){
 
   trail.find(".rotator").css("background","white");
 
-  trail.height(scaling).width(scaling);
+  trail.height(scaling/2).width(scaling/2);
   // trail.css("left",x * scaling).css("top",y * scaling);
 
   particle.el = trail;
@@ -960,14 +1005,12 @@ function makeParticle(x,y, speed, angle){
   // $(".trail-wrapper").prepend(trail); // <- gotta figure this out i guess
   $(".track").append(particle.el); // <- gotta figure this out i guess
 
-
-  console.log(trail);
   setTimeout(function(el,p) {
     return function(){
       el.remove();
       particles = [];
     };
-  }(trail,particle), 1000);
+  }(trail,particle), 2000);
 
   particles.push(particle);
 
@@ -984,6 +1027,9 @@ function animateParticles(){
     p.zVel = p.zVel - .175;
     p.el.css("transform", "translateY("+p.yPos+"px)  translateX("+p.xPos+"px) translateZ("+p.zPos+"px)");
 
+    p.opacity = p.opacity - p.opacityVelocity;
+    p.el.css("opacity",p.opacity);
+
     //Rotation
     p.xRot = p.xRot + p.xRotVel;
     p.yRot = p.yRot + p.yRotVel;
@@ -991,4 +1037,8 @@ function animateParticles(){
     p.el.find(".rotator").css("transform", "rotateX("+p.xRot+"deg) rotateY("+p.yRot+"deg) rotateZ("+p.zRot+"deg)");
 
   }
+}
+
+function getRandom(min,max){
+  return min + Math.random() * (max - min);
 }

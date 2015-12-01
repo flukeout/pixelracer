@@ -14,10 +14,29 @@ console.log(gamepads);
 
 var gamepads;
 $(document).ready(function(){
+
+  //
+  // setTimeout(function(){
+  //   var car = newCar("one",{"trailColor":trackData.trailcolor});
+  //   cars.push(car);
+  //   car.changeDriver("LP");
+  //
+  //   var car = newCar("two",{"trailColor":trackData.trailcolor});
+  //   cars.push(car);
+  //   car.changeDriver("JR");
+  //
+  //   var car = newCar("three",{"trailColor":trackData.trailcolor});
+  //   car.changeDriver("AL")
+  //   cars.push(car);
+  // },1000);
+  //
+
+
+
   setTimeout(function(){
 
     gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
-
+    console.log(gamepads[0].axes[0]);
     checkControllers();
   },1500);
 });
@@ -31,24 +50,24 @@ function checkControllers(){
      var gp = gamepads[i];
 
      if (gp) {
-       if(i == 1){
+       console.log(gp.axes[0])
          if(gp.buttons[0].pressed){
-           keyboardcar.setDirection("gas","on");
+           cars[i].setDirection("gas","on");
          } else {
-           keyboardcar.setDirection("gas","off");
+           cars[i].setDirection("gas","off");
          }
-         if(gp.buttons[14].pressed){
-           keyboardcar.setDirection("steering","left-on");
+         if(gp.buttons[14].pressed || gp.axes[0] < -.2){
+           cars[i].setDirection("steering","left-on");
          } else {
-           keyboardcar.setDirection("steering","left-off");
+           cars[i].setDirection("steering","left-off");
          }
-         if(gp.buttons[15].pressed){
-           keyboardcar.setDirection("steering","right-on");
+         if(gp.buttons[15].pressed || gp.axes[0] > .2){
+           cars[i].setDirection("steering","right-on");
          } else {
-           keyboardcar.setDirection("steering","right-off");
+           cars[i].setDirection("steering","right-off");
          }
 
-       }
+
      }
    }
 

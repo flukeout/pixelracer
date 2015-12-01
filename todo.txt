@@ -1,17 +1,12 @@
-
-In spawn cars.. reset all the stuff about cars
-
 IMPROVEMENTS
-* NEED a hard reset on single player...........
-* RESET IT HERE...
-  hardReset : function(){
-    console.log("add some shit here - yo");
-  },
+
 
 SINGLE PLAYER TIME TRIAL
 * Spawn the player further behind the start line, since it's too close to get a good time
-* Don't say got bronze after the first time you got it
-  * This necessitates a bit of an achievement datastructure..! DON'T IT NOW
+
+
+---------
+
 
 IMPROVEMENTS
  * Fix how the max speed stuff is done - it ain't right.
@@ -24,11 +19,7 @@ BUGS
 
 TILES
 * LAVA (explode and respawn)
-* HOLE.. fall through and respawn
- * Both of these need a car history or a checkpoint... I think we can keep a few X,Y coords in a history though..
-
-* unpassable terrain <- I guess that's a ledge already...
-
+* Bring back water.. sink??
 
 MVP
 * Add way to switch tracks in single player
