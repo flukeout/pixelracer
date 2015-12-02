@@ -86,20 +86,30 @@ function audioStuff(){
 }
 
 
-function trackAnimation(){
-  $(".track-wrapper").addClass("trackpop");
+function trackAnimation(type){
+  console.log("utils.trackAnimation("+type+")");
+  if(type == "pop") {
+    $(".track-wrapper").addClass("trackpop");
+    setTimeout(function(){
+      $(".track-wrapper").removeClass("trackpop");
+    },200);
+  }
 
-  $(".finish-line").removeClass("finishpop");
-  $(".finish-line").width($(".finish-line").width());
-  $(".finish-line").addClass("finishpop");
+  if(type == "finish") {
+    $(".track-wrapper").addClass("trackpop");
+    $(".finish-line").removeClass("finishpop");
+    $(".finish-line").width($(".finish-line").width());
+    $(".finish-line").addClass("finishpop");
 
-  setTimeout(function(){
-    $(".track-wrapper").removeClass("trackpop");
-  },200);
+    setTimeout(function(){
+      $(".track-wrapper").removeClass("trackpop");
+    },200);
+  }
+
 }
 
 function prepareTrack(level){
-  console.log("utils.prepareTrack() - " + level);
+  console.log("utils.prepareTrack("+level+")");
   canvasTrack = $("canvas.track-source");
   context = canvasTrack[0].getContext("2d");
 
@@ -132,14 +142,15 @@ function prepareTrack(level){
 
     var bodyHeight = $("body").height();
     var offset = (bodyHeight - $(".track-wrapper").height())/2;
-    // $(".track-wrapper").css("margin-top",offset - 50);
 
+    // $(".track-wrapper").css("margin-top",offset - 50);
     // var coin = $("<div class='coin'><div class='vert'></div></div>");
     // $(".track").append(coin)
     // coin.css("left", scaling * 5);
     // coin.css("top", scaling * 5);
 
     trackData.startPositions = [];
+    trackData.checkpointPositions = [];
 
     for(var i = 0; i < parseInt(trackWidth); i++){
       for(var j = 0; j < parseInt(trackHeight); j++){
@@ -147,6 +158,10 @@ function prepareTrack(level){
 
         if(result == "finish"){
           trackData.startPositions.push({"x": i, "y" : j});
+        }
+
+        if(result == "checkpoint"){
+          trackData.checkpointPositions.push({"x": i, "y" : j});
         }
 
         if(result == "lamp"){
@@ -173,11 +188,42 @@ function prepareTrack(level){
       }
     }
 
+
+    makeCheckpoints();
     addFinishLine();
 
   });
 
 }
+
+function makeCheckpoints(){
+  console.log("makeCheckpoints()");
+
+  id = 1;
+
+  for(var i = 0; i < trackData.checkpointPositions.length; i++){
+    var p = trackData.checkpointPositions[i];
+
+    if(p.id == undefined) {
+      p.id = id;
+      id++;
+    }
+
+    for(var j = 0; j < trackData.checkpointPositions.length; j++){
+      var q = trackData.checkpointPositions[j];
+      if(i != j) {
+        if((p.x == q.x && p.y + 1 == q.y) || (p.y == q.y && p.x + 1 == q.x)) {
+          q.id = p.id;
+        }
+      }
+    }
+  }
+
+
+  trackData.checkPoints = id - 1;
+
+}
+
 
 function addFinishLine(){
   console.log("addFinishline() - utils.js");
@@ -339,6 +385,7 @@ function spawnCar(car,x,y,angle){
   car.zRotationSpeed = 0;
   car.mode = "normal";
   car.zPosition = 100;
+  car.laps = 0;
 
   $(".ghost").find(".body").css("background",trackData.carcolors[0]);
 
@@ -346,7 +393,7 @@ function spawnCar(car,x,y,angle){
     car.x = x;
     car.y = y;
   } else {
-    car.x = trackData.startPositions[random].x + 2;
+    car.x = trackData.startPositions[random].x + 4;
     car.y = trackData.startPositions[random].y;
   }
   car.showx = car.x * scaling;
@@ -366,6 +413,17 @@ function driveCar(car) {
       car.positionHistory.push({x : car.x, y: car.y, angle : car.angle});
       if(car.positionHistory.length  > 10) {
         car.positionHistory.shift();
+      }
+    }
+  }
+
+  if(car.currentPosition == "checkpoint") {
+    for(var i = 0; i < trackData.checkpointPositions.length; i++){
+      var p = trackData.checkpointPositions[i];
+      if(car.x == p.x && car.y == p.y) {
+        if(car.checkpoints.indexOf(p.id) < 0){
+          car.checkpoints.push(p.id);
+        }
       }
     }
   }
@@ -403,9 +461,6 @@ function driveCar(car) {
 
 
   // CAR TURNING
-
-  // Rate at which the car turns
-  // var turnspeed = car.maxspeed - 1;
   var turnspeed = 4;
   var turning = car.maxspeed - 1;
 
@@ -477,11 +532,6 @@ function driveCar(car) {
   }
 
 
-
-
-
-  //end wall shit
-
   // CAR POSITION
   var done = false;
   // this should be more like the vectors of
@@ -508,24 +558,21 @@ function driveCar(car) {
       nextPosition = car.currentPosition;
     }
 
+    //If the next position is a wall, then add the bump off
+    //and re-check the next position
     if(nextPosition == "wall" && car.zPosition == 0 && car.speed < 4.5 && car.mode != "crashed") {
-
       var direction = "forward";
-
       if(car.speed < 0){
         direction = "backwards";
       }
-
       if(direction == "forward") {
         car.speed = -2;
       } else {
         car.speed = 2;
       }
-
     } else {
       done = true;
     }
-
   }
 
   //Write down the old position
@@ -544,10 +591,13 @@ function driveCar(car) {
       car.yRotationSpeed = getRandom(1,3);
       car.zRotationSpeed = getRandom(1,3);
 
-      // make 3 particles on crash
       for(var j = 0; j < 10; j++){
         makeParticle(car.x, car.y, car.speed, car.angle);
       }
+
+
+      trackAnimation("pop");
+
     }
   }
 
@@ -566,7 +616,7 @@ function driveCar(car) {
       if(opacity > .12){
         opacity = .12;
       }
-      if(car.currentPosition == "road" || car.currentPosition == "overpass") {
+      if(car.currentPosition == "road" || car.currentPosition == "overpass" || car.currentPosition == "checkpoint") {
         ctx.fillStyle = "rgba(0,0,0,"+opacity+")";
         ctx.fillRect(car.x * scaling, car.y * scaling, scaling, scaling);
       } else if (car.currentPosition == "grass"){
@@ -618,9 +668,7 @@ function driveCar(car) {
     car.speed = 1;
   }
 
-
   // CAR ENGINE
-
   // var maxfq = 800;
   // var minfq = 400;
   //
@@ -636,7 +684,6 @@ function driveCar(car) {
 
   if(car.currentPosition == "finish" && car.mode != "jumping" && car.angle > 180 && car.angle < 360){
     if(car.x != car.nextx) {
-      car.laps++;
       race.finishLap(car);
       car.laptime = 0;
     }
@@ -705,9 +752,10 @@ function driveCar(car) {
     }
   }
 
+
   // CAR JUMP TRAIL
-  if(car.zPosition > 0 && car.mode != "crashed"){
-    if(car.x != car.nextx || car.y != car.nexty){
+  if(car.x != car.nextx || car.y != car.nexty){
+    if(car.zPosition > 0 && car.mode != "crashed"){
       var trail = $("<div class='trail'></div>");
       trail.css("background",car.trailColor || "#32a6dc")
       trail.height(scaling).width(scaling);
@@ -741,6 +789,7 @@ function newCar(id,config){
   var car = {
     id : id,
     x : 0,
+    checkpoints : [],
     y : 0,
     crashed : false,
     showx : 410,

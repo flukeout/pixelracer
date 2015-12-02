@@ -63,8 +63,6 @@ var trackTimes = {
     silver : 4500,
     bronze : 5000
   }
-
-
 }
 
 var trackList = {
@@ -87,6 +85,7 @@ var trackList = {
       "#bababa" : "finish",
       "#343434" : "jump",
       "#c25115" : "jump"
+
     }
   },
 
@@ -114,7 +113,8 @@ var trackList = {
       "#eee76a" : "road",
       "#ffffff" : "finish",
       "#e7dc2a" : "road",
-      "#8d8512" : "jump"
+      "#8d8512" : "jump",
+      "#e0d525" : "checkpoint"
     }
   },
   "noirjump.png" : {
@@ -145,7 +145,8 @@ var trackList = {
       "#2194ca" : "water",
       "#6ba52d" : "tree",
       "#ffffff" : "finish",
-      "#d4c921" : "jump"
+      "#d4c921" : "jump",
+      "#707070" : "checkpoint"
     }
   },
   "chasm.png" : {
@@ -161,7 +162,8 @@ var trackList = {
       "#2194ca" : "water",
       "#6ba52d" : "tree",
       "#ffffff" : "finish",
-      "#d4c921" : "jump"
+      "#d4c921" : "jump",
+      "#707070" : "checkpoint"
     }
   },
   "moon.png" : {
@@ -184,7 +186,8 @@ var trackList = {
     laps : 5,
     hexes : {
       "#5a5a5a" : "road",
-      "#ffffff" : "finish"
+      "#ffffff" : "finish",
+      "#707070" : "checkpoint"
     }
   },
   "ampersand.png" : {
@@ -198,14 +201,14 @@ var trackList = {
       "#5a5a5a" : "road",
       "#8fcf4b" : "grass",
       "#f1aa22" : "turbo",
-      "#b97d37" : "windmill",
       "#2194ca" : "water",
       "#6ba52d" : "tree",
       "#ffffff" : "finish",
       "#a9a9a9" : "ledge",
       "#747474" : "overpass",
       "#7dba3d" : "lamp",
-      "#d4c921" : "jump"
+      "#d4c921" : "jump",
+      "#707070" : "checkpoint"
     }
   },
   "oval-8.png" : {
@@ -236,16 +239,11 @@ var trackList = {
     laps : 12,
     leaveSkids : true,
     hexes : {
+      "#717171" : "checkpoint",
       "#5a5a5a" : "road",
-
-      "#f1aa22" : "turbo",
-      "#b97d37" : "windmill",
-      "#2194ca" : "water",
-      "#6ba52d" : "tree",
       "#ffffff" : "finish",
-      "#a9a9a9" : "ledge",
-      "#373737" : "overpass",
-      "#7dba3d" : "lamp",
+      "#eeeeee" : "lamp",
+      "#b8b8b8" : "wall",
       "#d5d5d5" : "wall"
     }
   },
@@ -266,7 +264,8 @@ var trackList = {
       "#a9a9a9" : "ledge",
       "#373737" : "overpass",
       "#7dba3d" : "lamp",
-      "#d4c921" : "jump"
+      "#d4c921" : "jump",
+      "#707070" : "checkpoint"
     }
   },
   "testground.png" : {

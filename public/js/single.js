@@ -81,7 +81,6 @@ var race = {
 
     for(var k in cars){
       var c = cars[k];
-      console.log(c);
       c.speed = 0;
       c.mode = "normal";
       c.jumpHeight = 0;
@@ -153,81 +152,85 @@ var race = {
   },
   finishLap : function(car){
 
-    //Spit out the 'minified' ghost data
-    // console.log(JSON.stringify(race.tinyGhostData));
+    if(trackData.checkPoints == car.checkpoints.length || car.laps == 0) {
 
-    console.log("race.finishLap()");
+      car.laps++;
+      car.checkpoints = [];
+      this.ghostRecording = true;
+      this.updateTime = false;
+      this.ghostPlaying = true;
 
-    this.ghostRecording = true;
-    this.updateTime = false;
-    this.ghostPlaying = true;
+      $(".delta-time").show();
 
-    $(".delta-time").show();
-
-    if(this.currentlap == 0) {
-      this.updateTime = true;
-    } else {
-      setTimeout(function(t) {
-        return function() {
-          t.updateTime = true;
-          $(".delta-time").hide();
-        };
-      }(this), 1000);
-    }
-
-    var timeString = "";
-    var faster = false;
-    $(".delta-time").removeClass("slower").removeClass("faster");
-
-    if(this.currentlap == 1) {
-      this.bestlap = this.laptime;
-    }
-
-    if(this.currentlap > 0) {
-
-      if(this.laptime - this.bestlap > 0) {
-        timeString = timeString + "+";
-        $(".delta-time").addClass("slower");
+      if(this.currentlap == 0) {
+        this.updateTime = true;
       } else {
-        timeString = timeString + "-";
-        $(".delta-time").addClass("faster");
+        setTimeout(function(t) {
+          return function() {
+            t.updateTime = true;
+            $(".delta-time").hide();
+          };
+        }(this), 1000);
       }
 
-      timeString = timeString + formatTime(Math.abs(this.laptime - this.bestlap))
+      var timeString = "";
+      var faster = false;
+      $(".delta-time").removeClass("slower").removeClass("faster");
 
-      $(".delta-time").text(timeString);
-      $(".best-time-wrapper").show();
-
-      //If person got the best lap
-      if(this.laptime <= this.bestlap){
+      if(this.currentlap == 1) {
         this.bestlap = this.laptime;
+      }
+
+      if(this.currentlap > 0) {
+
+        if(this.laptime - this.bestlap > 0) {
+          timeString = timeString + "+";
+          $(".delta-time").addClass("slower");
+        } else {
+          timeString = timeString + "-";
+          $(".delta-time").addClass("faster");
+        }
+
+        timeString = timeString + formatTime(Math.abs(this.laptime - this.bestlap))
+
+        $(".delta-time").text(timeString);
+        $(".best-time-wrapper").show();
+
+        //If person got the best lap
+        if(this.laptime <= this.bestlap){
+          this.bestlap = this.laptime;
+          this.ghostPlayData = this.ghostData;
+        }
+
+        // Give em the achievemenets....
+        // Need to create a data structure that remembers these
+        var medalTimes = trackTimes[this.track];
+        for(var k in medalTimes){
+          if(this.bestlap <= medalTimes[k]){
+            updateAchievements(this.track,k,car);
+          }
+        }
+
+        $(".best-time").text(formatTime(this.bestlap));
+      }
+
+      if(this.ghostPlayData.length == 0) {
         this.ghostPlayData = this.ghostData;
       }
 
-      // Give em the achievemenets....
-      // Need to create a data structure that remembers these
-      var medalTimes = trackTimes[this.track];
-      for(var k in medalTimes){
-        if(this.bestlap <= medalTimes[k]){
-          updateAchievements(this.track,k,car);
-        }
-      }
+      this.ghostData = [];
+      this.tinyGhostData = [];
+      this.ghostFrameIndex = 0;
+      this.laptime = 0;
+      this.currentlap++;
 
-      $(".best-time").text(formatTime(this.bestlap));
+      trackAnimation("finish");
     }
 
-    if(this.ghostPlayData.length == 0) {
-      this.ghostPlayData = this.ghostData;
     }
 
-    this.ghostData = [];
-    this.tinyGhostData = [];
-    this.ghostFrameIndex = 0;
-    this.laptime = 0;
-    this.currentlap++;
 
-    trackAnimation();
-  }
+
 }
 
 function prepareRandomTrack(){

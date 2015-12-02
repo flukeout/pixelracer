@@ -214,7 +214,7 @@ var race = {
     }
 
     sockjs.send(JSON.stringify(update));
-    trackAnimation();
+    trackAnimation("finish");
   },
   showStats : function(stats){
     console.log("race.showStats()");
