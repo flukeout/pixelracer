@@ -1,5 +1,4 @@
 var playerAchievements = {}; // So that we can remember.. what you have gotten.....
-
 var trackData = {}; //Place holder for current track -  gets populated, yo.
 
 var trackTimes = {
@@ -29,9 +28,9 @@ var trackTimes = {
     bronze : 4000
   },
   "ampersand.png" : {
-    gold : 6250,
-    silver : 6750,
-    bronze : 7250
+    gold : 6100,
+    silver : 6550,
+    bronze : 7000
   },
   "chasm.png" : {
     gold : 5500,
@@ -59,9 +58,9 @@ var trackTimes = {
     bronze : 6500
   },
   "turbo-8.png" : {
-    gold : 3750,
-    silver : 4500,
-    bronze : 5000
+    gold : 3500,
+    silver : 4000,
+    bronze : 4500
   }
 }
 
@@ -75,6 +74,7 @@ var trackList = {
     hexes : {
       "#ffffff" : "road", //yellow
       "#616161" : "road",
+      "#3c3c3c" : "checkpoint",
       "#444444" : "road",
       "#c7c7c7" : "road",
       "#535353" : "road",
@@ -127,9 +127,9 @@ var trackList = {
       "#ffffff" : "road",
       "#e0be35" : "turbo",
       "#e4e4e4" : "finish",
-      "#a9a9a9" : "ledge",
       "#373737" : "overpass",
-      "#c9c9c9" : "jump"
+      "#c9c9c9" : "jump",
+      "#fdfdfd" : "checkpoint"
     }
   },
   "superjump.png" : {

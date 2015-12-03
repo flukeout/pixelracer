@@ -1,12 +1,7 @@
 IMPROVEMENTS
-* When you crash, need to reset the lap - otherwise you can crash and respaw and cross the finish line and get a great time!
-  * BOLLOCKS!
-* Overpass isn't working anymore!.. check into it
+* Make it so you can't fall off the track then respawn in front of the finish and win..
+  * Should every track have a checkpoint then?
 
-* What's a good way to enforce the laps??
-  * Minimum distance traveled?
-  * Checkpoints?
-  * Minimum time between laps?
 
 SINGLE PLAYER TIME TRIAL
 * Spawn the player further behind the start line, since it's too close to get a good time

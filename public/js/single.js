@@ -67,7 +67,7 @@ var race = {
   track : "",
   bestlap : "",
   hardReset : function(){
-    console.log("add some shit here - yo");
+
   },
   quickRestart : function(){
     spawnCars();
@@ -84,11 +84,17 @@ var race = {
       c.speed = 0;
       c.mode = "normal";
       c.jumpHeight = 0;
-      c.showx = c.showx + 6 * scaling;
+      c.showx = c.showx;
+
+      for(var i = 7; i > 0; i--){
+        if(checkPosition(c.x + i,c.y) == "road"){
+          c.showx = c.showx + i * scaling;
+          break;
+        }
+      }
     }
   },
   startTrial: function(){
-
     console.log("race.startTrial() - begin the single player time trial");
 
     $(".track-wrapper").css("opacity",0);
@@ -110,7 +116,7 @@ var race = {
       spawnCars();
       $(".track-wrapper").show();
       $(".track-wrapper").css("opacity",1);
-    },500);
+    },1000);
   },
   changeTrack: function(trackName){
     console.log("race.changeTrack() - " + trackName);

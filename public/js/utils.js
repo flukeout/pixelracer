@@ -362,7 +362,7 @@ function spawnCars(){
 
 function spawnCar(car,x,y,angle){
 
-  console.log("spawnCar() - spawning individual car");
+  console.log("spawnCar("+x,y+") - spawning individual car");
   if(angle == undefined) {
     car.angle = 270;
   } else {
@@ -389,6 +389,7 @@ function spawnCar(car,x,y,angle){
 
   $(".ghost").find(".body").css("background",trackData.carcolors[0]);
 
+  // Place it where you're told, otherwise behind the start line
   if(x != undefined && y != undefined){
     car.x = x;
     car.y = y;
@@ -660,6 +661,8 @@ function driveCar(car) {
       move = false;
     }
   }
+
+  car.el.attr("mode",car.mode);
 
   if(move){
     car.showx = car.showx + xd;
