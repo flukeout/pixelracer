@@ -103,6 +103,21 @@ var trackList = {
       "#151515" : "jump"
     }
   },
+  // "offroad.png" : {
+  //   filename : "offroad.png",
+  //   carcolors : ["#424130"],
+  //   trailcolor : "#424130",
+  //   leaveSkids : false,
+  //   laps : 5,
+  //   hexes : {
+  //     "#c48c3b" : "road",
+  //     "#daa150" : "road",
+  //     "#ffffff" : "finish",
+  //     "#c99241" : "road",
+  //     "#ebc61b" : "jump",
+  //     "#e0d525" : "checkpoint"
+  //   }
+  // },
   "yellow.png" : {
     filename : "yellow.png",
     carcolors : ["#424130"],
@@ -194,6 +209,7 @@ var trackList = {
     filename : "ampersand.png",
     carcolors : ["#ffffff"],
     trailcolor : "#32a6dc",
+    lawnmower : "#8fcf4b",
     laps : 6,
     leaveSkids : true,
     hexes : {

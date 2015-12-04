@@ -1,14 +1,21 @@
 IMPROVEMENTS
+
+* How do you set the grass particle color?
+
 * Make it so you can't fall off the track then respawn in front of the finish and win..
   * Should every track have a checkpoint then?
 
-
-SINGLE PLAYER TIME TRIAL
-* Spawn the player further behind the start line, since it's too close to get a good time
+* Unlockable tracks? - Progression?
+* Should probably do that - make each unlockable..... . . .
+* Add some google analytics!
 
 ---------
 
+MULTIPLAYER
+ * Fix the crashing and flying for multiplayer...
+
 IMPROVEMENTS
+
  * Fix how the max speed stuff is done - it ain't right.
  * More time after race is over and a player wins......
  * Make it not depend on a 15x scaling?
@@ -20,6 +27,7 @@ BUGS
 TILES
 * LAVA (explode and respawn)
 * Bring back water.. sink??
+* Water splashes...?
 
 MVP
 * Add way to switch tracks in single player

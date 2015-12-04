@@ -408,7 +408,13 @@ function driveCar(car) {
 
   //Only check the current terrIain if we are on a new pixel
 
+  movedPixels = false;
+
   if(car.x != car.lastx || car.y != car.lasty) {
+    movedPixels = true;
+  }
+
+  if(movedPixels) {
     car.currentPosition = checkPosition(car.x,car.y) || "grass";
     if(car.mode != "crashed" && car.mode != "gone" && car.mode != "jumping" && car.zPosition == 0){
       car.positionHistory.push({x : car.x, y: car.y, angle : car.angle});
@@ -528,10 +534,16 @@ function driveCar(car) {
     if(car.speed > 2){
       car.speed = 2;
     }
+
+    if(movedPixels && trackData.lawnmower) {
+      for(var i = 0; i < 2; i++){
+        makeParticle(car.x, car.y, car.speed, car.angle, "grass");
+      }
+    }
+
   } else {
     car.maxspeed = 5;
   }
-
 
   // CAR POSITION
   var done = false;
@@ -596,7 +608,6 @@ function driveCar(car) {
         makeParticle(car.x, car.y, car.speed, car.angle);
       }
 
-
       trackAnimation("pop");
 
     }
@@ -607,7 +618,7 @@ function driveCar(car) {
   // If it's on the road - then depends on speed and turning radius
   // If it's not, then just rip it up a bit
 
-  if(car.x != car.nextx || car.y != car.nexty){
+  if(movedPixels){
     if(trackData.leaveSkids && car.mode != "jumping" && car.zPosition == 0) {
       var turnpercent = Math.abs(car.turnvelocity) / 4;
       var speedpercent = car.speed / car.maxspeed;
@@ -693,12 +704,10 @@ function driveCar(car) {
   }
 
   //JUMPING
-
   if(car.currentPosition == "jump" && car.speed >= car.minJumpSpeed && car.zPosition == 0){
     car.zVelocity = .5 * car.speed; // .5 car speed for normal jump
     car.mode = "jumping";
   }
-
 
   //Apply any car rotations if the car is flyin'....
   if(car.zPosition > 0 || car.zPosition < 0) {
@@ -755,9 +764,8 @@ function driveCar(car) {
     }
   }
 
-
   // CAR JUMP TRAIL
-  if(car.x != car.nextx || car.y != car.nexty){
+  if(movedPixels){
     if(car.zPosition > 0 && car.mode != "crashed"){
       var trail = $("<div class='trail'></div>");
       trail.css("background",car.trailColor || "#32a6dc")
@@ -1005,62 +1013,89 @@ function buildTrackChooser(){
 var particles = [];
 
 // Ooky going to leave this off for now
-function makeParticle(x,y, speed, angle){
+function makeParticle(x,y, speed, angle,type){
 
   // and... apply some motion and stuff to these...?
   // Move them in a similar direction ot the car...... ?
-  var particle = {};
+  var particle = {
+    xRot : 0,
+    yRot : 0,
+    zRot : 0
+  };
 
-  var angleChange = getRandom(-20,20);
-  angle = angle + angleChange;
+  if(type == undefined){
+    type = "crash";
+  }
 
-  // var adjacent = Math.cos(toRadians(angle)) * speed;
-  // var opposite = Math.sin(toRadians(angle)) * speed;
-  // var xd = opposite;
-  // var yd = -1 * adjacent;
+  if(type == "grass") {
 
-  particle.zVel = speed;
+    particle.xVel = getRandom(-1.5,1.5);
+    particle.yVel = getRandom(-1.5,1.5);
+    particle.zVel = 1;
+    particle.gravity = .175;
 
-  var xd = getRandom(-3,3);
-  particle.xVel = xd;
+    particle.opacity = 1;
+    particle.opacityVelocity = 0.02;
 
-  var yd = getRandom(-3,3);
-  particle.yVel = yd;
+    particle.xPos = x * scaling;
+    particle.yPos = y * scaling;
+    particle.zPos = 0;
 
-  particle.opacity = 1;
-  particle.opacityVelocity = .02;
+    particle.xRotVel = getRandom(2,8);
+    particle.yRotVel = getRandom(2,8);
+    particle.zRotVel = getRandom(2,8);
 
-  particle.xPos = x * scaling;
-  particle.yPos = y * scaling;
-  particle.zPos = 0;
+  } else {
+    var angleChange = getRandom(-20,20);
+    angle = angle + angleChange;
 
-  particle.xRot = 0;
-  particle.yRot = 0;
-  particle.zRot = 0;
+    // var adjacent = Math.cos(toRadians(angle)) * speed;
+    // var opposite = Math.sin(toRadians(angle)) * speed;
+    // var xd = opposite;
+    // var yd = -1 * adjacent;
 
-  particle.xRotVel = getRandom(2,10);
-  particle.yRotVel = getRandom(2,10);
-  particle.zRotVel = getRandom(2,10);
+    particle.xVel = getRandom(-3,3);
+    particle.yVel = getRandom(-3,3);
+    particle.zVel = speed;
+    particle.gravity = .175;
+
+    particle.opacity = 1;
+    particle.opacityVelocity = 0.02;
+
+    particle.xPos = x * scaling;
+    particle.yPos = y * scaling;
+    particle.zPos = 0;
+
+    particle.xRotVel = getRandom(2,10);
+    particle.yRotVel = getRandom(2,10);
+    particle.zRotVel = getRandom(2,10);
+  }
 
   var trail = $("<div class='particle'></div>");
   var rotator = $("<div class='rotator'></div>");
   trail.append(rotator);
 
-  trail.find(".rotator").css("background","white");
+  if(type == "grass"){
+    trail.find(".rotator").css("background",trackData.lawnmower);
+    particle.zVel = 4;
+  } else {
+    trail.find(".rotator").css("background","white");
+  }
 
   trail.height(scaling/2).width(scaling/2);
-  // trail.css("left",x * scaling).css("top",y * scaling);
 
   particle.el = trail;
 
-  //If i want the trail to go up too... then i have to add a wrapper
-  // $(".trail-wrapper").prepend(trail); // <- gotta figure this out i guess
   $(".track").append(particle.el); // <- gotta figure this out i guess
 
   setTimeout(function(el,p) {
     return function(){
       el.remove();
-      particles = [];
+      for(var i = 0, len = particles.length; i < len; i++){
+        if(particles[i] == p){
+          particles.splice(i, 1);
+        }
+      }
     };
   }(trail,particle), 2000);
 
@@ -1076,7 +1111,7 @@ function animateParticles(){
     p.xPos = p.xPos + p.xVel;
     p.yPos = p.yPos + p.yVel;
     p.zPos = p.zPos + p.zVel;
-    p.zVel = p.zVel - .175;
+    p.zVel = p.zVel - p.gravity;
     p.el.css("transform", "translateY("+p.yPos+"px)  translateX("+p.xPos+"px) translateZ("+p.zPos+"px)");
 
     p.opacity = p.opacity - p.opacityVelocity;
