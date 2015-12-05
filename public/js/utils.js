@@ -167,7 +167,7 @@ function prepareTrack(level){
         if(result == "lamp"){
           var lamp = $("<div class='lamp'></div>");
           $(".track").append(lamp)
-          lamp.css("left", scaling * (i - 1));
+          lamp.css("left", scaling * (i));
           lamp.css("top", scaling * (j - 4));
         }
 
@@ -407,9 +407,7 @@ function driveCar(car) {
   car.y = Math.round(car.showy / scaling);
 
   //Only check the current terrIain if we are on a new pixel
-
   movedPixels = false;
-
   if(car.x != car.lastx || car.y != car.lasty) {
     movedPixels = true;
   }
@@ -465,6 +463,15 @@ function driveCar(car) {
     }
   }
 
+  if(Math.abs(car.speed) < speedchange){
+    car.speed = 0;
+  }
+
+  if(car.speed == 0){
+    car.indicator.css("opacity",.4);
+  } else {
+    car.indicator.css("opacity",0);
+  }
 
 
   // CAR TURNING
@@ -955,8 +962,13 @@ function newCar(id,config){
 
   var jumper = $("<div class='jumper'></div>");
   car.jumper = jumper;
-
   car.jumper.append(body);
+
+  // Direction indicator when car is stopped
+  var indicator = $("<div class='indicator'></div>");
+  car.indicator= indicator;
+  car.jumper.append(indicator);
+
 
   var randomColor = Math.floor(Math.random() * trackData.carcolors.length);
 

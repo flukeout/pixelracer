@@ -157,7 +157,6 @@ canvas.track-source {
     transform-style: preserve-3d;
   }
 
-
   .body {
     position: absolute;
     top: 0px;
@@ -167,11 +166,37 @@ canvas.track-source {
     transform-style: preserve-3d;
   }
 
+  .indicator {
+    position: absolute;
+    transition: opacity .1s ease-out;
+    box-sizing: border-box;
+    transform: translateX(20px) rotate(-45deg) scale(.75);
+    height: 100%;
+    width: 100%;
+    border: solid 2px white;
+    border-width: 6px 6px 0 0 ;
+    animation: indicatorpulse .4s infinite;
+  }
+
   &[mode=under] {
     opacity: .3;
   }
 
 }
+
+@keyframes indicatorpulse {
+  0% {
+    transform: translateY(-20px) rotate(-45deg) scale(.75);
+  }
+  50% {
+    transform: translateY(-23px) rotate(-45deg) scale(.75);
+  }
+  100% {
+    transform: translateY(-20px) rotate(-45deg) scale(.75);
+  }
+}
+
+
 
 @keyframes chatbubble {
   0% {
@@ -282,12 +307,8 @@ canvas.track-source {
       transform: rotateX(-90deg);
       transform-origin: bottom;
     }
-
   }
-
 }
-
-
 
 .tree {
   position: absolute;
@@ -321,13 +342,12 @@ canvas.track-source {
     width: 15px;
     transform-origin: bottom;
     bottom: 0;
-    left: 15px;
+    left: 0px;
     background: -webkit-linear-gradient(top, rgba(0,0,0,0),black);
     transform: rotateX(90deg);
     opacity: .25;
   }
 }
-
 
 .windmill {
   position: absolute;

@@ -1,7 +1,5 @@
 IMPROVEMENTS
 
-* How do you set the grass particle color?
-
 * Make it so you can't fall off the track then respawn in front of the finish and win..
   * Should every track have a checkpoint then?
 

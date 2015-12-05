@@ -103,21 +103,22 @@ var trackList = {
       "#151515" : "jump"
     }
   },
-  // "offroad.png" : {
-  //   filename : "offroad.png",
-  //   carcolors : ["#424130"],
-  //   trailcolor : "#424130",
-  //   leaveSkids : false,
-  //   laps : 5,
-  //   hexes : {
-  //     "#c48c3b" : "road",
-  //     "#daa150" : "road",
-  //     "#ffffff" : "finish",
-  //     "#c99241" : "road",
-  //     "#ebc61b" : "jump",
-  //     "#e0d525" : "checkpoint"
-  //   }
-  // },
+  "offroad.png" : {
+    filename : "offroad.png",
+    carcolors : ["#424130"],
+    trailcolor : "#424130",
+    leaveSkids : false,
+    laps : 5,
+    hexes : {
+      "#c48c3b" : "road",
+      "#bebebe" : "lamp",
+      "#daa150" : "road",
+      "#ffffff" : "finish",
+      "#c99241" : "road",
+      "#ebc61b" : "jump",
+      "#e0d525" : "checkpoint"
+    }
+  },
   "yellow.png" : {
     filename : "yellow.png",
     carcolors : ["#424130"],
@@ -153,6 +154,7 @@ var trackList = {
     trailcolor : "#32a6dc",
     leaveSkids : true,
     laps : 5,
+    lawnmower : "#8fcf4b",
     hexes : {
       "#5a5a5a" : "road",
       "#8fcf4b" : "grass",
@@ -168,6 +170,7 @@ var trackList = {
     filename : "chasm.png",
     carcolors : ["#ffffff"],
     trailcolor : "#32a6dc",
+    lawnmower : "#8fcf4b",
     leaveSkids : true,
     laps : 5,
     hexes : {
