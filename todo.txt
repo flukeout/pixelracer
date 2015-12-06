@@ -1,13 +1,20 @@
 IMPROVEMENTS
+* Flag z indexing is wrong, on offroad for example.
 
-* Make it so you can't fall off the track then respawn in front of the finish and win..
-  * Should every track have a checkpoint then?
 
 * Unlockable tracks? - Progression?
 * Should probably do that - make each unlockable..... . . .
 * Add some google analytics!
 
----------
+* Make it so you can't fall off the track then respawn in front of the finish and win..
+  * Should every track have a checkpoint then?
+
+DESIGN
+* Cooler title screen
+* Figure out track progression and have 'em be unlockable
+*
+
+--------- - - - - - - - - - - - - - > > > > >  0=====||==========> SWORD
 
 MULTIPLAYER
  * Fix the crashing and flying for multiplayer...

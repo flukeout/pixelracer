@@ -168,7 +168,7 @@ function prepareTrack(level){
           var lamp = $("<div class='lamp'></div>");
           $(".track").append(lamp)
           lamp.css("left", scaling * (i));
-          lamp.css("top", scaling * (j - 4));
+          lamp.css("top", scaling * (j - 3));
         }
 
         if(result == "windmill"){
@@ -412,6 +412,7 @@ function driveCar(car) {
     movedPixels = true;
   }
 
+  // Add position to history if it traveled a pixel
   if(movedPixels) {
     car.currentPosition = checkPosition(car.x,car.y) || "grass";
     if(car.mode != "crashed" && car.mode != "gone" && car.mode != "jumping" && car.zPosition == 0){
@@ -421,6 +422,7 @@ function driveCar(car) {
       }
     }
   }
+
 
   if(car.currentPosition == "checkpoint") {
     for(var i = 0; i < trackData.checkpointPositions.length; i++){
@@ -535,6 +537,12 @@ function driveCar(car) {
   // END TURNING
 
 
+    // console.log(car.turnvelocity);
+    var g = Math.sin(car.turnvelocity) * 1; // * car.speed
+
+    // ok so we know the g force of the car... so now what?
+
+
   //GRASS SPEED
   if(car.currentPosition == "grass" && car.zPosition == 0){
     car.maxspeed = 2;
@@ -552,6 +560,8 @@ function driveCar(car) {
     car.maxspeed = 5;
   }
 
+
+
   // CAR POSITION
   var done = false;
   // this should be more like the vectors of
@@ -561,6 +571,17 @@ function driveCar(car) {
     var opposite = Math.sin(toRadians(car.angle)) * car.speed;
     var xd = opposite;
     var yd = -1 * adjacent;
+
+    var gdirection = 1;
+    if(g < 0){
+      gdirection = -1;
+    }
+
+    // var gxd = Math.sin(toRadians(car.angle + 90)) * g;
+    // var gyd = -1 * Math.cos(toRadians(car.angle + 90)) * g;
+    //
+    // xd = xd + gxd;
+    // yd = yd + gyd;
 
     car.nextx = Math.round((car.showx + xd) / scaling);
     car.nexty = Math.round((car.showy + yd) / scaling);

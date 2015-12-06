@@ -325,16 +325,31 @@ canvas.track-source {
 
 .lamp {
   position: absolute;
-  height: 75px;
-  width: 30px;
-  background: url(/img/lamp.gif?1);
+  height: 60px;
+  width: 15px;
+  // background: url(/img/lamp.gif?1);
+  background: #ededed;
   background-size: 100%;
-  top: -45px;
+  top: -30px;
   left: 30px;
   transform-origin: bottom;
   transform: rotateX(-90deg) ;
   transform-style: preserve-3d;
 
+  //Waving flag
+  &:after {
+    content: "";
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    transform-origin: left;
+    top: 0;
+    left: 15px;
+    background: #277eba;
+    animation: flagwave .6s infinite linear;
+  }
+
+  //This is the shadow
   &:before {
     content: "";
     position: absolute;
@@ -376,6 +391,18 @@ canvas.track-source {
 .quit .body {
   animation: blah 1s ease-out forwards;
 }
+
+@keyframes flagwave {
+  0% {
+    transform: rotateY(-6deg);
+  }
+  50% {
+    transform: rotateY(6deg);
+  }
+  100% {
+    transform: rotateY(-6deg);  }
+}
+
 
 @keyframes blah {
   0% {
