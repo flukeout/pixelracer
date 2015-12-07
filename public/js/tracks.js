@@ -2,6 +2,11 @@ var playerAchievements = {}; // So that we can remember.. what you have gotten..
 var trackData = {}; //Place holder for current track -  gets populated, yo.
 
 var trackTimes = {
+  "offroad.png" : {
+    gold : 12000,
+    silver : 12500,
+    bronze : 13000
+  },
   "html5.png" : {
     gold : 7000,
     silver : 7750,
@@ -107,16 +112,21 @@ var trackList = {
     filename : "offroad.png",
     carcolors : ["#424130"],
     trailcolor : "#424130",
+    lawnmower : "#b07726",
     leaveSkids : false,
     laps : 5,
     hexes : {
+      "#de5322" : "wall",
+      "#ca4a1d" : "wall",
+      "#fffffe" : "wall",
+      "#e6e6e6" : "wall",
       "#c48c3b" : "road",
       "#bebebe" : "lamp",
       "#daa150" : "road",
       "#ffffff" : "finish",
       "#c99241" : "road",
       "#ebc61b" : "jump",
-      "#e0d525" : "checkpoint"
+      "#b37e31" : "checkpoint"
     }
   },
   "yellow.png" : {

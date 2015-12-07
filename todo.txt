@@ -1,5 +1,6 @@
 IMPROVEMENTS
-* Flag z indexing is wrong, on offroad for example.
+* Landing on a wall after a jump causes an infinite loop
+
 
 
 * Unlockable tracks? - Progression?

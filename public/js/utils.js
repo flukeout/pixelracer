@@ -423,7 +423,6 @@ function driveCar(car) {
     }
   }
 
-
   if(car.currentPosition == "checkpoint") {
     for(var i = 0; i < trackData.checkpointPositions.length; i++){
       var p = trackData.checkpointPositions[i];
@@ -536,9 +535,8 @@ function driveCar(car) {
     }
   // END TURNING
 
-
     // console.log(car.turnvelocity);
-    var g = Math.sin(car.turnvelocity) * 1; // * car.speed
+    // var g = Math.sin(car.turnvelocity) * 1; // * car.speed
 
     // ok so we know the g force of the car... so now what?
 
@@ -564,24 +562,13 @@ function driveCar(car) {
 
   // CAR POSITION
   var done = false;
-  // this should be more like the vectors of
+
   while(done == false) {
 
     var adjacent = Math.cos(toRadians(car.angle)) * car.speed;
     var opposite = Math.sin(toRadians(car.angle)) * car.speed;
     var xd = opposite;
     var yd = -1 * adjacent;
-
-    var gdirection = 1;
-    if(g < 0){
-      gdirection = -1;
-    }
-
-    // var gxd = Math.sin(toRadians(car.angle + 90)) * g;
-    // var gyd = -1 * Math.cos(toRadians(car.angle + 90)) * g;
-    //
-    // xd = xd + gxd;
-    // yd = yd + gyd;
 
     car.nextx = Math.round((car.showx + xd) / scaling);
     car.nexty = Math.round((car.showy + yd) / scaling);
@@ -597,6 +584,11 @@ function driveCar(car) {
       nextPosition = checkPosition(car.nextx,car.nexty);
     } else {
       nextPosition = car.currentPosition;
+    }
+
+    if(nextPosition == "wall" && car.currentPosition == "wall"){
+      done = true;
+      car.speed = car.maxspeed;
     }
 
     //If the next position is a wall, then add the bump off
@@ -1112,7 +1104,7 @@ function makeParticle(x,y, speed, angle,type){
     trail.find(".rotator").css("background",trackData.lawnmower);
     particle.zVel = 4;
   } else {
-    trail.find(".rotator").css("background","white");
+    trail.find(".rotator").css("background",trackData.carcolors[0]);
   }
 
   trail.height(scaling/2).width(scaling/2);
