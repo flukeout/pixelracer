@@ -124,14 +124,15 @@ function prepareTrack(level){
 
   $(image).on("load",function(){
 
-    $(".lamp, .tree, .windmill").remove();
+    $(".lamp, .tree, .windmill, .water").remove();
 
     context.drawImage(image, 0, 0);
 
     trackHeight = $(this).height();
     trackWidth = $(this).width();
-    $(".track").height(trackHeight * scaling);
-    $(".track").width(trackWidth * scaling);
+    $(".track").height(trackHeight * scaling).width(trackWidth * scaling);
+    $(".track").css("min-height",trackHeight * scaling).css("min-width",trackWidth * scaling);
+
     canvasTrack.height(trackHeight);
     canvasTrack.width(trackWidth);
 
@@ -139,15 +140,6 @@ function prepareTrack(level){
     var skidCanvas = $(".skids");
     ctx = skidCanvas[0].getContext("2d");
     skidCanvas.attr("width", trackWidth * scaling).attr("height",trackHeight * scaling);
-
-    var bodyHeight = $("body").height();
-    var offset = (bodyHeight - $(".track-wrapper").height())/2;
-
-    // $(".track-wrapper").css("margin-top",offset - 50);
-    // var coin = $("<div class='coin'><div class='vert'></div></div>");
-    // $(".track").append(coin)
-    // coin.css("left", scaling * 5);
-    // coin.css("top", scaling * 5);
 
     trackData.startPositions = [];
     trackData.checkpointPositions = [];
@@ -183,6 +175,18 @@ function prepareTrack(level){
           $(".track").append(tree)
           tree.css("left", scaling * (i - 1));
           tree.css("top", scaling * (j - 4));
+        }
+
+        if(result == "water"){
+          var chance = getRandom(0,4);
+          if(chance < 1) {
+            var delay = getRandom(0,3);
+            var el = $("<div class='water'></div>");
+            el.css("animation-delay",delay+"s");
+            $(".track").append(el)
+            el.css("left", scaling * i);
+            el.css("top", scaling * j);
+          }
         }
 
       }

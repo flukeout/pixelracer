@@ -959,3 +959,30 @@ nav {
   height: 100%;
   width: 100%;
 }
+
+
+.water {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: white;
+  animation: water 3s infinite;
+  opacity: 0;
+}
+
+
+@keyframes water {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: .3;
+  }
+  40% {
+    opacity: 0;
+    }
+  100% {
+    opacity: 0;
+  }
+
+}

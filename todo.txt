@@ -1,5 +1,16 @@
 IMPROVEMENTS
-* Landing on a wall after a jump causes an infinite loop
+* Better checkpoints for superjump, you can cheat by going straight down after the first check
+* If you hit an overpass, you should crash too...
+* Have levels be locked..
+* Make
+
+POSSIBLE ACHIEVEMENT TYPES
+* Set up levels and achievements....
+* To pass this level, do - 3 lap race under x time.
+* Do perfect laps.. . . .
+* Hit X jumps
+* That kind of thing?
+* Get one lap under X time.
 
 
 
@@ -13,7 +24,6 @@ IMPROVEMENTS
 DESIGN
 * Cooler title screen
 * Figure out track progression and have 'em be unlockable
-*
 
 --------- - - - - - - - - - - - - - > > > > >  0=====||==========> SWORD
 

@@ -169,7 +169,7 @@ var trackList = {
       "#5a5a5a" : "road",
       "#8fcf4b" : "grass",
       "#f1aa22" : "turbo",
-      "#2194ca" : "water",
+      "#39aed9" : "water",
       "#6ba52d" : "tree",
       "#ffffff" : "finish",
       "#d4c921" : "jump",
